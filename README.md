@@ -1,84 +1,90 @@
-# Traind.online – Social Trend Clustering and Visualization System
+# 🚀 Traind.online — AI-Assisted Reddit Trend Clustering Platform
 
-**Developer**: Haicheng Zhao
-**GUID**: 2960799Z
-**Supervisor**: Md Shakil Ahmed
-**University**: University of Glasgow, MSc IT+ Individual Project
-
----
-
-## Overview
-
-**Traind.online** is a full-stack web application developed to analyze trending Reddit discussions in real time. It uses machine learning techniques to cluster posts into thematic "events" and visualizes subreddit-level engagement over time.
-
-This project was developed as part of the MSc IT+ 12-week individual development project.
+**Author**: Haicheng Zhao  
+**University**: University of Glasgow, MSc IT+ Individual Project  
+**Supervisor**: Md Shakil Ahmed  
+**Duration**: 12 Weeks  
 
 ---
 
-## Project Structure
+## 🧠 Overview
 
-```
-traind.online/
-├── frontend/         React + TypeScript interface (Vite)
-├── backend/          Node.js + TypeScript API
-├── ml/               Python machine learning pipeline
-├── data-collector/   Python Reddit scraper (PRAW)
-├── docs/             Diagrams, API specs
-├── tests/            Unit and integration tests
-└── README            This document
-```
+**Traind.online** is an interactive AI-powered platform that analyzes real-time Reddit discussions to uncover thematic clusters and trending events. Users—ranging from social science researchers to casual observers—can explore public discourse evolution, detect community sentiment, and trace event propagation paths through intuitive visualizations.
+
+Built as a full-stack microservice application, the system separates concerns across frontend, backend, machine learning, and data ingestion services. Clustering is customizable and visualized in real time, making the system useful for analysis, demonstration, and further research.
 
 ---
 
-## Technologies Used
+## 👥 Target Users
 
-* **Frontend**: React, TypeScript, D3.js, Axios
-* **Backend**: Node.js, Express, TypeScript
-* **Machine Learning**: Python, scikit-learn, TF-IDF, MiniBatchKMeans
-* **Database**: MongoDB
-* **Dev Tools**: GitLab, Vite, Nodemon, ts-node, PRAW API
+This platform is tailored for three main personas:
 
----
-
-## Key Features
-
-* Real-time Reddit data collection from selected subreddits
-* Clustering of topics using unsupervised learning
-* Event-based trend visualization and topic tracking
-* Subreddit contribution analytics
-* Interactive and responsive UI for exploring clusters
+- **Trend Analysts**: Research-oriented users interested in discourse evolution and topic correlation.  
+- **Data Enthusiasts**: Technically proficient users eager to explore, adjust parameters, and export results.  
+- **Casual Observers**: General Reddit users seeking a daily snapshot of what’s trending.
 
 ---
 
-## Setup Instructions
+## ✨ Features
 
-1. **Clone the repository** (hosted on SoCS GitLab)
-2. **Install dependencies**:
-
-   * Frontend: `npm install` inside `frontend/`
-   * Backend: `npm install` inside `backend/`
-   * ML/Data tools: `pip install -r requirements.txt` inside `ml/` and `data-collector/`
-3. **Configure environment variables** in `.env` files (MongoDB URI, PRAW credentials)
-4. **Run services**:
-
-   * Backend: `npm run start`
-   * Frontend: `npm run dev`
-   * ML pipeline: Manual or integrated
-   * Data collector: Scheduled or manual Python script
+- 🔐 Secure user authentication with JWT and cookies  
+- 📊 Interactive clustering controls (e.g. `k-value`, vectorizer, distance metric)  
+- 🧠 Real-time ML clustering using TF-IDF + MiniBatchKMeans (via gRPC)  
+- 📈 Topic evolution charts and subreddit breakdowns  
+- 📦 Fully containerized (Docker Compose) for portability and deployment  
+- 📚 REST API for frontend/backend + gRPC for ML communication  
+- 💬 Hover previews, trend timelines, topic drilldowns  
 
 ---
 
-## Status
+## 🛠️ Tech Stack
 
-Project actively developed and deployed locally. Data pipeline, clustering, and frontend visualizations are functioning. Evaluation and testing in progress as part of dissertation phase.
+| Layer              | Technology                                        |
+|--------------------|---------------------------------------------------|
+| **Frontend**       | React (Vite), TypeScript, D3.js                   |
+| **Backend**        | Node.js (Express), REST API, gRPC client          |
+| **ML Module**      | Python, scikit-learn, TF-IDF, KMeans, gRPC server |
+| **Data Store**     | MongoDB (Atlas/local), PostgreSQL (user auth)     |
+| **Ingestion**      | Python + PRAW (Reddit API), cron scheduler        |
+| **DevOps**         | Docker, Docker Compose, PM2                       |
 
 ---
 
-## Assessment Deliverables
+## 🔄 System Architecture
 
-* Dissertation (max 20 pages from Introduction)
-* Source code (with GitLab history)
-* Video demonstration (\~10 minutes)
-* Progress tracker (weekly updates)
-* Viva (Weeks 10–11)
-* Supporting materials (ethics form, diagrams, etc.)
+- **Frontend**: Responsive UI for user interaction and data visualization  
+- **Backend (Node.js)**: Handles auth, API routing, and triggers ML clustering  
+- **ML Service (Python)**: Clustering engine accessed via gRPC  
+- **Data Collector**: Scheduled scraper using PRAW; stores raw Reddit data in MongoDB  
+- **Database**: Hybrid NoSQL (analysis data) and SQL (user data) structure  
+
+---
+
+## 🎯 Project Objectives
+
+- Deliver a professional-grade full-stack application aligned with MSc IT+ outcomes  
+- Enable exploratory analysis and visualization of Reddit trends  
+- Demonstrate microservice architecture and real-time AI integration  
+- Address the needs of both technical and non-technical audiences  
+
+---
+
+## 📈 Live Demo
+
+🔗 [https://traind.online](https://traind.online) *(if deployed)*
+
+---
+
+## 🚧 Project Status
+
+- ✅ Fully functional microservice architecture  
+- ✅ Clustering logic integrated via gRPC  
+- ✅ Frontend interaction for clustering and visualization  
+- ✅ User authentication and session persistence  
+- 🔜 Planned: User history, result caching, export formats, CI/CD
+
+---
+
+## 📜 License
+
+This project is for academic purposes as part of the MSc IT+ individual development project at the University of Glasgow.
