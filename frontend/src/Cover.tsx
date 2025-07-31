@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./Cover.css";
 
 function Cover() {

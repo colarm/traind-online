@@ -1,50 +1,44 @@
-import express, { Application, Request, Response } from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import dotenv from 'dotenv';
-import helmet from 'helmet';
-import routes from './routes';
-import { connectMongo } from './shared/config/mongo.config';
-import { connectPostgres } from './shared/config/postgres.config';
-import { errorHandler } from './shared/middlewares/error.middleware';
+import express from 'express'
+import dotenv from 'dotenv'
+import { PrismaClient } from '@prisma/client'
+import mongoose from 'mongoose'
 
-// Load environment variables
-dotenv.config();
+dotenv.config()
 
-// Create Express app
-const app: Application = express();
-const PORT = process.env.PORT || 4000;
+const app = express()
+const PORT = process.env.PORT || 4000
 
-// Middleware
-app.use(cors());
-app.use(helmet());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Prisma
+const prisma = new PrismaClient()
 
-// Health check
-app.get('/api/health', (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok' });
-});
+// MongoDB
+const MONGO_MAIN_URI = process.env.MONGO_MAIN_URI || 'mongodb://localhost:27017/traind_main'
 
-// API routes
-app.use('/api', routes);
-
-// Error handler
-app.use(errorHandler);
-
-// Start the server
-const startServer = async () => {
+async function startServer() {
   try {
-    await connectMongo();
-    await connectPostgres();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
-    });
-  } catch (err) {
-    console.error('❌ Failed to start server:', err);
-    process.exit(1);
-  }
-};
+    // Connect MongoDB
+    await mongoose.connect(MONGO_MAIN_URI)
+    console.log('✅ Connected to MongoDB')
 
-startServer();
+    // Test Prisma
+    await prisma.$connect()
+    console.log('✅ Connected to PostgreSQL via Prisma')
+
+    app.use(express.json())
+
+    // Example API route
+    app.get('/api/ping', (req, res) => {
+      res.json({ message: 'pong' })
+    })
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`)
+    })
+  } catch (err) {
+    console.error('❌ Failed to start server:', err)
+    process.exit(1)
+  }
+}
+
+startServer()
