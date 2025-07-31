@@ -32,3 +32,8 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.db.yml

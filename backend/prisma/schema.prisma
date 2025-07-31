@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String            @id @default(uuid())
+  email          String            @unique
+  password       String
+  createdAt      DateTime          @default(now())
+
+  // 1-N Relationships
+  trainds        Traind[]
+  stars          Star[]
+  comments       Comment[]
+  parameterSets  ParameterSet[]
+  history        History[]
+  preference     UserPreference?
+
+  @@map("users")
+}
+
+model Traind {
+  id             String            @id @default(uuid())
+  postId         String            // Reddit post ID
+  title          String
+  subreddit      String
+  createdAt      DateTime          @default(now())
+  isPublic       Boolean           @default(false)
+
+  // N-1 Relationships
+  authorId       String
+  author         User              @relation(fields: [authorId], references: [id])
+
+  // 1-N Relationships
+  stars          Star[]
+  comments       Comment[]
+  parameterSets  ParameterSet[]
+  history        History[]
+
+  @@map("trainds")
+}
+
+model Star {
+  id         String   @id @default(uuid())
+  userId     String
+  traindId   String
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+  traind     Traind   @relation(fields: [traindId], references: [id])
+
+  @@unique([userId, traindId])
+  @@map("stars")
+}
+
+model History {
+  id         String   @id @default(uuid())
+  userId     String
+  traindId   String
+  viewedAt   DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id])
+  traind     Traind   @relation(fields: [traindId], references: [id])
+
+  @@map("history")
+}
+
+model Comment {
+  id         String     @id @default(uuid())
+  content    String
+  createdAt  DateTime   @default(now())
+
+  // N-1 Relationships
+  userId     String
+  traindId   String
+
+  user       User       @relation(fields: [userId], references: [id])
+  traind     Traind     @relation(fields: [traindId], references: [id])
+
+  // Self-referential relationship for replies
+  parentId   String?    
+  parent     Comment?   @relation("CommentReply", fields: [parentId], references: [id])
+  replies    Comment[]  @relation("CommentReply")
+
+  @@map("comments")
+}
+
+model ParameterSet {
+  id         String   @id @default(uuid())
+  name       String
+  parameters Json
+  createdAt  DateTime @default(now())
+
+  userId     String
+  traindId   String?
+
+  user       User     @relation(fields: [userId], references: [id])
+  traind     Traind?  @relation(fields: [traindId], references: [id])
+
+  @@map("parameter_sets")
+}
+
+model UserPreference {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  language   String   @default("en")
+  theme      String   @default("light")
+  autoLink   Boolean  @default(true)
+
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@map("user_preferences")
+}
