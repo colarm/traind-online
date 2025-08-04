@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package clustering;
+
+service ClusteringService {
+  rpc RunAnalysis (RunAnalysisRequest) returns (RunAnalysisResponse);
+  rpc GetResult (GetResultRequest) returns (GetResultResponse);
+}
+
+message RunAnalysisRequest {
+  string traindId = 1;
+  string redditId = 2;
+  string parameterSetId = 3;
+  string userId = 4;
+}
+
+message RunAnalysisResponse {
+  string message = 1;
+}
+
+message GetResultRequest {
+  string traindId = 1;
+}
+
+message GetResultResponse {
+  string title = 1;
+  string result = 2;
+}
