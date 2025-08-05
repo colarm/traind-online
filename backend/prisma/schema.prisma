@@ -98,10 +98,12 @@ model ParameterSet {
   parameters Json
   createdAt  DateTime @default(now())
 
-  userId   String
-  traindId String?
+  // N-1 Relationships
+  userId String
+  user   User @relation(fields: [userId], references: [id])
 
-  user   User    @relation(fields: [userId], references: [id])
+  // 1-1 Relationships
+  traindId String?
   traind Traind? @relation(fields: [traindId], references: [id])
 
   @@map("parameter_sets")
