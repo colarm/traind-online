@@ -69,6 +69,7 @@ model History {
   user   User   @relation(fields: [userId], references: [id])
   traind Traind @relation(fields: [traindId], references: [id])
 
+  @@unique([userId, traindId])
   @@map("history")
 }
 

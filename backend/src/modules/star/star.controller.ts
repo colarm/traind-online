@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { starService } from "./star.service";
+import starService from "./star.service";
 
-export const starController = {
+const starController = {
   async add(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
@@ -36,3 +36,5 @@ export const starController = {
     }
   },
 };
+
+export default starController;

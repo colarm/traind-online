@@ -1,8 +1,8 @@
 import { Router } from "express";
-import starController from "./star.controller";
+import historyController from "./history.controller";
 import { authenticate } from "../../shared/middlewares/auth.middleware";
 
-const { add, remove, list } = starController;
+const { add, remove, list } = historyController;
 
 const router = Router();
 
