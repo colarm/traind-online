@@ -55,7 +55,16 @@ const traindService = {
 
     // If the Traind record is found, return null
     if (!traind) {
-      return null;
+      throw new Error("Traind record not found in gRPC service");
+    }
+
+    // Check if the Traind record exists in the database
+    const existing = await prisma.traind.findUnique({
+      where: { id: traindId },
+    });
+    if (!existing) {
+      throw new Error("Traind record not found in database");
+      
     }
 
     // Update the Traind record in the database
@@ -89,6 +98,8 @@ const traindService = {
       where: { id: traindId },
       data: { isPublic },
     });
+
+    console.log(`Traind record ${traindId} visibility updated to ${isPublic}`);
 
     return updatedTraind;
   },

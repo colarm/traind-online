@@ -34,6 +34,7 @@ const traindController = {
     }
   },
 
+  // Get Traind record by ID
   async getTraindById(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
@@ -57,12 +58,12 @@ const traindController = {
   async setVisibility(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
-      const { visible } = req.body;
+      const { isPublic } = req.body;
 
       // Update visibility of Traind record
       const updatedTraind = await traindService.setVisibility(
         traindId,
-        visible
+        isPublic
       );
 
       // If the Traind record is not found, return null

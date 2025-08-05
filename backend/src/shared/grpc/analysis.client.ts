@@ -18,7 +18,13 @@ export default {
     redditId: string;
     parameterSetId: string;
     userId: string;
-  }): Promise<{ message: string }> {
+    }): Promise<{ message: string }> {
+    // This is a mock implementation. Replace with actual gRPC call.
+    return new Promise((resolve, reject) => {
+      resolve({
+        message: "Analysis started successfully",
+      });
+    });
     return new Promise((resolve, reject) => {
       client.RunAnalysis(
         { traindId, redditId, parameterSetId, userId },
@@ -30,7 +36,14 @@ export default {
     });
   },
 
-  getResult(traindId: string): Promise<{ title: any, result: any }> {
+  getResult(traindId: string): Promise<{ title: any; result: any }> {
+    // This is a mock implementation. Replace with actual gRPC call.
+    return new Promise((resolve, reject) => {
+      resolve({
+        title: "Mock Title",
+        result: { analysis: "Mock Result" },
+      });
+    });
     return new Promise((resolve, reject) => {
       client.GetResult({ traindId }, (err: any, res: any) => {
         if (err) reject(err);
