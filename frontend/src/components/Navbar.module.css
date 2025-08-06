@@ -1,0 +1,75 @@
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #0f172a;
+    /* 深背景，类 Tailwind slate-900 */
+    padding: 16px 32px;
+    color: white;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo a {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #38bdf8;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+}
+
+.logo a:hover {
+    color: #7dd3fc;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
+.navList {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+}
+
+.navItem a {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.navItem a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, #0ea5e9, #38bdf8, #7dd3fc);
+    transition: width 0.3s ease;
+}
+
+.navItem a:hover {
+    color: #e0f2fe;
+}
+
+.navItem a:hover::after {
+    width: 100%;
+}
+
+.active a {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.active a::after {
+    width: 100%;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
