@@ -120,3 +120,12 @@ model UserPreference {
 
   @@map("user_preferences")
 }
+
+model Help {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@map("helps")
+}
