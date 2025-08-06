@@ -115,7 +115,6 @@ model UserPreference {
   userId   String  @unique
   language String  @default("en")
   theme    String  @default("light")
-  autoLink Boolean @default(true)
 
   user User @relation(fields: [userId], references: [id])
 
