@@ -114,5 +114,81 @@
 
 .select:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(77, 200, 177, 0.3); /* primary glow */
+  box-shadow: 0 0 0 3px rgba(77, 200, 177, 0.3);
+}
+
+.menuToggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.menuToggle div {
+  width: 24px;
+  height: 3px;
+  background-color: var(--color-text-main);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 768px) {
+  .menuToggle {
+    display: flex;
+  }
+
+  .navList {
+    flex-direction: column;
+    gap: 12px;
+    background-color: rgba(20, 20, 30, 0.96);
+    position: absolute;
+    top: 100%;
+    right: 16px;
+    width: 180px;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .navList.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .navList.closed {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .navItem a {
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: block;
+    transition: background-color 0.2s ease;
+  }
+
+  .navItem a:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+  }
+
+  .navItem a::after {
+    display: none;
+  }
+
+  .active a {
+    background-color: var(--color-primary-dark);
+    color: #fff;
+  }
+
+  .active a::after {
+    display: none;
+  }
 }

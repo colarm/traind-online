@@ -6,6 +6,7 @@ import ThemeSelect from "./ThemeSelect";
 
 const Navbar = () => {
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
     { path: "/", label: "Home" },
@@ -13,6 +14,8 @@ const Navbar = () => {
     { path: "/list", label: "Trainds" },
     { path: "/me", label: "Me" },
   ];
+
+  const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
     <nav className={styles.navbar}>
@@ -22,7 +25,13 @@ const Navbar = () => {
 
       <ThemeSelect />
 
-      <ul className={styles.navList}>
+      <div className={styles.menuToggle} onClick={toggleMenu}>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+
+      <ul className={`${styles.navList} ${isOpen ? styles.open : ""}`}>
         {navItems.map((item) => (
           <li
             key={item.path}
@@ -30,7 +39,9 @@ const Navbar = () => {
               location.pathname === item.path ? styles.active : ""
             }`}
           >
-            <Link to={item.path}>{item.label}</Link>
+            <Link to={item.path} onClick={() => setIsOpen(false)}>
+              {item.label}
+            </Link>
           </li>
         ))}
       </ul>
