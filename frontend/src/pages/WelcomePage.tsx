@@ -11,7 +11,11 @@ const WelcomePage = () => {
           Tr<span className={styles.ai_highlight}>ai</span>nd.online
         </h1>
         <p className={styles.subtitle}>Traind to See, Trend to Know</p>
-        <button className={styles.button} onClick={() => setShowModal(true)}>
+        <button
+          type="button"
+          className={styles.button}
+          onClick={() => setShowModal(true)}
+        >
           🚀 Start Training
         </button>
       </div>
@@ -23,8 +27,9 @@ const WelcomePage = () => {
         >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2 className={styles.modalTitle}>Start Your Analysis</h2>
-            <p style={{ color: "#cbd5e1" }}>Modal content goes here...</p>
+            <p>Modal content goes here...</p>
             <button
+              type="button"
               className={styles.closeButton}
               onClick={() => setShowModal(false)}
             >

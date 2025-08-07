@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
+
+import ThemeSelect from "./ThemeSelect";
 
 const Navbar = () => {
   const location = useLocation();
@@ -17,6 +19,9 @@ const Navbar = () => {
       <div className={styles.logo}>
         <Link to="/">Traind.online</Link>
       </div>
+
+      <ThemeSelect />
+
       <ul className={styles.navList}>
         {navItems.map((item) => (
           <li

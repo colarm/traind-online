@@ -1,75 +1,118 @@
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #0f172a;
-    /* 深背景，类 Tailwind slate-900 */
-    padding: 16px 32px;
-    color: white;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-navbar);
+  padding: 16px 32px;
+  color: var(--color-text-main);
+  box-shadow: 0 2px 12px var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .logo a {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #38bdf8;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-    transition: color 0.3s ease;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
 }
 
 .logo a:hover {
-    color: #7dd3fc;
+  color: var(--color-primary-dark);
 }
 
 .subtitle {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
 }
 
 .navList {
-    display: flex;
-    gap: 28px;
-    list-style: none;
+  display: flex;
+  gap: 28px;
+  list-style: none;
 }
 
 .navItem a {
-    color: #cbd5e1;
-    text-decoration: none;
-    font-weight: 500;
-    position: relative;
-    transition: color 0.3s ease;
+  color: var(--color-text-main);
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
 }
 
 .navItem a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    height: 2px;
-    width: 0%;
-    background: linear-gradient(90deg, #0ea5e9, #38bdf8, #7dd3fc);
-    transition: width 0.3s ease;
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-dark),
+    var(--color-primary)
+  );
+  transition: width 0.3s ease;
 }
 
 .navItem a:hover {
-    color: #e0f2fe;
+  color: var(--color-primary);
 }
 
 .navItem a:hover::after {
-    width: 100%;
+  width: 100%;
 }
 
 .active a {
-    color: #ffffff;
-    font-weight: 600;
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .active a::after {
-    width: 100%;
-    background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-dark),
+    var(--color-primary)
+  );
+}
+
+.select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+
+  background-color: var(--color-navbar);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  padding: 8px 36px 8px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='%236b7280' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.23 7.21a.75.75 0 011.06.02L10 11.06l3.71-3.83a.75.75 0 111.08 1.04l-4.25 4.39a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+
+  transition: all 0.3s ease;
+  margin-right: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.select:hover {
+  background-color: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(77, 200, 177, 0.3); /* primary glow */
 }
