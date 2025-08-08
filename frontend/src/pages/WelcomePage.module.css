@@ -101,3 +101,32 @@
 .closeButton:hover {
   background: var(--color-secondary-dark);
 }
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+
+  .button {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+
+  .modal {
+    padding: 20px;
+  }
+
+  .modalTitle {
+    font-size: 1.5rem;
+  }
+
+  .closeButton {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}

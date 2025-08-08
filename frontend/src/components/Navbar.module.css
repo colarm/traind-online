@@ -134,21 +134,48 @@
 }
 
 @media screen and (max-width: 768px) {
+  .logo a {
+    font-size: 1.2rem;
+  }
+
+  .subtitle {
+    font-size: 0.65rem;
+  }
+
+  .navList {
+    gap: 8px;
+    width: 150px;
+    padding: 12px;
+  }
+
+  .navItem a {
+    font-size: 0.9rem;
+    padding: 6px 10px;
+  }
+
+  .select {
+    font-size: 0.85rem;
+    padding: 6px 28px 6px 12px;
+    margin-right: 8px;
+  }
+
+  .menuToggle div {
+    width: 20px;
+    height: 2px;
+  }
+
   .menuToggle {
     display: flex;
   }
 
   .navList {
     flex-direction: column;
-    gap: 12px;
-    background-color: rgba(20, 20, 30, 0.96);
+    background-color: var(--color-navbar);
     position: absolute;
     top: 100%;
     right: 16px;
-    width: 180px;
-    padding: 16px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 4px 12px var(--color-border);
     transition: opacity 0.3s ease, visibility 0.3s ease;
     opacity: 0;
     visibility: hidden;
@@ -168,7 +195,6 @@
   }
 
   .navItem a {
-    padding: 8px 12px;
     border-radius: 6px;
     display: block;
     transition: background-color 0.2s ease;
@@ -176,7 +202,7 @@
 
   .navItem a:hover {
     background-color: var(--color-primary);
-    color: #fff;
+    color: var(--color-text-main);
   }
 
   .navItem a::after {
@@ -185,7 +211,7 @@
 
   .active a {
     background-color: var(--color-primary-dark);
-    color: #fff;
+    color: var(--color-text-main);
   }
 
   .active a::after {
