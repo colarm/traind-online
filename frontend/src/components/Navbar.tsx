@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
-
 import ThemeSelect from "./ThemeSelect";
+import { logout, checkStatus } from "../api/auth";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const result = await checkStatus();
+      if (result && !result.error) {
+        setIsLoggedIn(result.valid);
+        setUserEmail(result.email || "");
+      } else {
+        console.error("Failed to fetch status", result.error);
+      }
+    };
+    fetchStatus();
+  }, []);
 
   const navItems = [
     { path: "/", label: "Home" },
@@ -16,6 +32,32 @@ const Navbar = () => {
   ];
 
   const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsLoggedIn(false);
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
+  const handleLogin = () => {
+    navigate("/", { state: { modal: "login" } });
+    setTimeout(() => {
+      const event = new Event("open-login-modal");
+      window.dispatchEvent(event);
+    }, 100); // Delay to ensure WelcomePage is mounted
+  };
+
+  const handleRegister = () => {
+    navigate("/", { state: { modal: "register" } });
+    setTimeout(() => {
+      const event = new Event("open-register-modal");
+      window.dispatchEvent(event);
+    }, 100); // Delay to ensure WelcomePage is mounted
+  };
 
   return (
     <nav className={styles.navbar}>
@@ -45,6 +87,38 @@ const Navbar = () => {
           </li>
         ))}
       </ul>
+
+      <div className={styles.userActions}>
+        {isLoggedIn ? (
+          <>
+            <span className={styles.userEmail}>{userEmail}</span>
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={handleLogin}
+            >
+              Login
+            </button>
+            <button
+              type="button"
+              className={styles.actionButton}
+              onClick={handleRegister}
+            >
+              Register
+            </button>
+          </>
+        )}
+      </div>
     </nav>
   );
 };

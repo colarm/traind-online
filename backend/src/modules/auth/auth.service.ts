@@ -34,5 +34,13 @@ export default {
   async logout() {
     // Logout is handled on the client side by removing the token
     return { message: "Logout handled on client side." };
-  }
+  },
+
+  async getUserById(userId: string) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  },
 };

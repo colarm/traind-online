@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { login, register } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 import styles from "./WelcomePage.module.css";
 
 type AuthMode = "login" | "register";
 
 const WelcomePage = () => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [mode, setMode] = useState<AuthMode>("login");
@@ -96,8 +98,13 @@ const WelcomePage = () => {
       if (mode === "login") {
         const user = await login({ email, password });
         console.log("Logged in user:", user);
+        window.location.reload();
       } else {
-        const newUser = await register({ email, password, confirmPassword: confirm });
+        const newUser = await register({
+          email,
+          password,
+          confirmPassword: confirm,
+        });
         console.log("Registered user:", newUser);
       }
       close();
@@ -111,6 +118,26 @@ const WelcomePage = () => {
       setSubmitting(false);
     }
   };
+
+  const enterAsGuest = () => {
+    navigate("/train");
+  };
+
+  useEffect(() => {
+    const handleOpenLoginModal = () => open("login");
+    const handleOpenRegisterModal = () => open("register");
+
+    window.addEventListener("open-login-modal", handleOpenLoginModal);
+    window.addEventListener("open-register-modal", handleOpenRegisterModal);
+
+    return () => {
+      window.removeEventListener("open-login-modal", handleOpenLoginModal);
+      window.removeEventListener(
+        "open-register-modal",
+        handleOpenRegisterModal
+      );
+    };
+  }, []);
 
   return (
     <div className={styles.fullscreen}>
@@ -134,6 +161,15 @@ const WelcomePage = () => {
             onClick={(e) => open("register", e.currentTarget)}
           >
             📝 Register
+          </button>
+        </div>
+        <div className={styles.guestLink}>
+          <button
+            type="button"
+            className={styles.linkButton}
+            onClick={enterAsGuest}
+          >
+            Enter as Guest
           </button>
         </div>
       </div>

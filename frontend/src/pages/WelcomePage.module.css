@@ -212,6 +212,31 @@
   padding: 0;
 }
 
+.guestLink {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.guestLink .linkButton {
+  background: none;
+  color: var(--color-secondary-dark);
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.guestLink .linkButton:hover {
+  color: var(--color-secondary);
+}
+
+.guestLink .linkButton:focus {
+  outline: none;
+  text-decoration: none;
+}
+
 .overlayShow {
   animation: overlayFadeIn 180ms ease forwards;
 }
