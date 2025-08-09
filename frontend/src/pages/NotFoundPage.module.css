@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg);
+  color: var(--color-text-main);
+}
+
+.title {
+  font-size: 6rem;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.subtitle {
+  font-size: 1.5rem;
+  margin-top: 16px;
+  color: var(--color-text-secondary);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.animation {
+  width: 120px;
+  height: 120px;
+  margin: 32px 0 64px;
+  position: relative;
+}
+
+.animation::before,
+.animation::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--color-primary) 60%,
+    transparent 60%
+  );
+  box-shadow: 0 0 20px var(--color-primary), 0 0 40px var(--color-primary-dark);
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.animation::after {
+  transform: rotate(45deg);
+  animation: breathe-rotate 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px var(--color-primary),
+      0 0 40px var(--color-primary-dark);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px var(--color-primary),
+      0 0 60px var(--color-primary-dark);
+  }
+}
+
+@keyframes breathe-rotate {
+  0%,
+  100% {
+    transform: scale(1) rotate(45deg);
+    box-shadow: 0 0 20px var(--color-primary),
+      0 0 40px var(--color-primary-dark);
+  }
+  50% {
+    transform: scale(1.1) rotate(45deg);
+    box-shadow: 0 0 30px var(--color-primary),
+      0 0 60px var(--color-primary-dark);
+  }
+}
+
+.homeButton {
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.homeButton:hover {
+  background-color: var(--color-primary-dark);
+  box-shadow: 0 2px 6px var(--color-border);
+}
+
+.homeButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus);
+}
+
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 3rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .animation {
+    width: 80px;
+    height: 80px;
+  }
+
+  .homeButton {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+  }
+}
