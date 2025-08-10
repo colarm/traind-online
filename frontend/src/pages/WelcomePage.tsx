@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { login, register } from "../api/auth";
+import { login, register, checkStatus } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import styles from "./WelcomePage.module.css";
 
@@ -7,10 +7,21 @@ type AuthMode = "login" | "register";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
+
+  // Check if user is already logged in
+  useEffect(() => {
+    (async () => {
+      const res = await checkStatus();
+      if (res && res.valid) {
+        navigate("/train");
+      }
+    })();
+  }, [navigate]);
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [mode, setMode] = useState<AuthMode>("login");
   const [submitting, setSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const firstInputRef = useRef<HTMLInputElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
@@ -22,6 +33,7 @@ const WelcomePage = () => {
     setMode(m);
     setShowModal(true);
     setIsClosing(false);
+    setErrorMsg("");
   };
 
   const close = () => {
@@ -31,10 +43,10 @@ const WelcomePage = () => {
     setTimeout(() => {
       setShowModal(false);
       openerRef.current?.focus();
+      setErrorMsg("");
     }, 200);
   };
 
-  // Focus first input on open + basic escape handling
   useEffect(() => {
     if (!showModal) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -44,7 +56,6 @@ const WelcomePage = () => {
     };
     document.addEventListener("keydown", onKeyDown);
     firstInputRef.current?.focus();
-    // prevent background scroll
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
@@ -53,7 +64,6 @@ const WelcomePage = () => {
     };
   }, [showModal]);
 
-  // Very light focus trap
   useEffect(() => {
     if (!showModal || !dialogRef.current) return;
     const dialog = dialogRef.current;
@@ -89,34 +99,37 @@ const WelcomePage = () => {
     const confirm = String(form.get("confirmPassword") || "");
 
     if (mode === "register" && password !== confirm) {
-      alert("Passwords don’t match.");
+      setErrorMsg("Passwords don’t match.");
       return;
     }
 
-    try {
-      setSubmitting(true);
-      if (mode === "login") {
-        const user = await login({ email, password });
-        console.log("Logged in user:", user);
-        window.location.reload();
-      } else {
-        const newUser = await register({
-          email,
-          password,
-          confirmPassword: confirm,
-        });
-        console.log("Registered user:", newUser);
+    setSubmitting(true);
+    setErrorMsg("");
+    if (mode === "login") {
+      const user = await login({ email, password });
+      if (user.error) {
+        setErrorMsg(user.error);
+        setSubmitting(false);
+        return;
       }
+      console.log("Logged in user:", user);
+      window.location.reload();
       close();
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("An unknown error occurred.");
+    } else {
+      const newUser = await register({
+        email,
+        password,
+        confirmPassword: confirm,
+      });
+      if (newUser.error) {
+        setErrorMsg(newUser.error);
+        setSubmitting(false);
+        return;
       }
-    } finally {
-      setSubmitting(false);
+      console.log("Registered user:", newUser);
+      close();
     }
+    setSubmitting(false);
   };
 
   const enterAsGuest = () => {
@@ -222,6 +235,11 @@ const WelcomePage = () => {
             </h2>
 
             <form className={styles.form} onSubmit={onSubmit}>
+              {errorMsg && (
+                <div className={styles.errorMsg} role="alert">
+                  {errorMsg}
+                </div>
+              )}
               <div className={styles.formRow}>
                 <label className={styles.label} htmlFor="email">
                   E‑mail

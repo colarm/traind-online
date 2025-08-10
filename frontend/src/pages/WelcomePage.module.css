@@ -1,3 +1,15 @@
+.errorMsg {
+  color: var(--color-error);
+  background: color-mix(in srgb, var(--color-error) 8%, #fff 92%);
+  border: 1px solid var(--color-error);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 1rem;
+  text-align: left;
+  word-break: break-all;
+}
+
 .fullscreen {
   flex: 1;
   width: 100%;

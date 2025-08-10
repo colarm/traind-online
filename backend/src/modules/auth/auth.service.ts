@@ -19,21 +19,16 @@ export default {
 
   async login(email: string, password: string) {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) throw new Error("Invalid credentials");
+    if (!user) throw new Error("User does not exist");
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new Error("Invalid credentials");
+    if (!isMatch) throw new Error("Password is incorrect");
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
       expiresIn: "7d",
     });
 
     return { token, user: { id: user.id, email: user.email } };
-  },
-
-  async logout() {
-    // Logout is handled on the client side by removing the token
-    return { message: "Logout handled on client side." };
   },
 
   async getUserById(userId: string) {
