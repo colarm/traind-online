@@ -1,9 +1,6 @@
 import httpClient from "./axios";
 
-export async function login(credentials: {
-  email: string;
-  password: string;
-}): Promise<any> {
+export async function login(credentials: { email: string; password: string }) {
   try {
     const response = await httpClient.post("/auth/login", credentials);
     return response.data;
@@ -16,7 +13,7 @@ export async function register(userDetails: {
   email: string;
   password: string;
   confirmPassword: string;
-}): Promise<any> {
+}) {
   try {
     const response = await httpClient.post("/auth/register", userDetails);
     return response.data;
@@ -25,7 +22,7 @@ export async function register(userDetails: {
   }
 }
 
-export async function logout(): Promise<any> {
+export async function logout() {
   try {
     await httpClient.post("/auth/logout");
     return { success: true };
@@ -34,7 +31,7 @@ export async function logout(): Promise<any> {
   }
 }
 
-export async function checkStatus(): Promise<any> {
+export async function checkStatus() {
   try {
     const response = await httpClient.get("/auth/status");
     return response.data;

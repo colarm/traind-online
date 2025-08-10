@@ -13,7 +13,7 @@ const WelcomePage = () => {
     (async () => {
       const res = await checkStatus();
       if (res && res.valid) {
-        navigate("/train");
+        navigate("/trainds");
       }
     })();
   }, [navigate]);
@@ -133,7 +133,7 @@ const WelcomePage = () => {
   };
 
   const enterAsGuest = () => {
-    navigate("/train");
+    navigate("/trainds");
   };
 
   useEffect(() => {
