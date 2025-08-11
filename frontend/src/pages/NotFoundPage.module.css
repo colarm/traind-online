@@ -99,7 +99,7 @@
 
 .homeButton {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-button-dark);
   border: none;
   padding: 12px 24px;
   border-radius: 8px;
