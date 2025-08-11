@@ -1,27 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./ThemeSelect.module.css";
-
-const themes = [
-  { label: "🌫️ Cool White", value: "theme-cool-white" },
-  { label: "🌙 Nocturne Pulse", value: "theme-nocturne-pulse" },
-  { label: "🌿 Mint Focus", value: "theme-mint-focus" },
-  { label: "🌗 Joy Flow", value: "theme-joy-flow" },
-];
+import { themes, getCurrentTheme, changeTheme } from "../utils/themeManager";
 
 const ThemeSelect = () => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("theme-nocturne-pulse");
+  const [selected, setSelected] = useState(() => getCurrentTheme());
   const ref = useRef<HTMLDivElement>(null);
 
+  // Apply theme when selected changes
   useEffect(() => {
-    document.body.classList.remove(
-      "theme-cool-white",
-      "theme-nocturne-pulse",
-      "theme-mint-focus",
-      "theme-joy-flow"
-    );
-
-    document.body.classList.add(selected);
+    changeTheme(selected);
   }, [selected]);
 
   useEffect(() => {

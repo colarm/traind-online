@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import ThemeSelect from "./ThemeSelect";
 import { logout, checkStatus } from "../api/auth";
 
 const Navbar = () => {
@@ -63,8 +62,6 @@ const Navbar = () => {
       <div className={styles.logo}>
         <Link to="/">Traind.online</Link>
       </div>
-
-      <ThemeSelect />
 
       <div className={styles.menuToggle} onClick={toggleMenu}>
         <div></div>

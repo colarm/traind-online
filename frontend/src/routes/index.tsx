@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import WelcomePage from "../pages/WelcomePage";
 import TrainingPage from "../pages/TrainingPage";
 import MyTraindsPage from "../pages/MyTraindsPage";
+import MePage from "../pages/MePage";
 import NotFound from "../pages/NotFoundPage";
 
 const routes = [
@@ -10,6 +11,7 @@ const routes = [
   <Route path="/training" element={<TrainingPage />} key="training" />,
   <Route path="/my-trainds" element={<MyTraindsPage />} key="my-trainds" />,
   <Route path="/trainds" element={<MyTraindsPage />} key="trainds-redirect" />, // Redirect old route
+  <Route path="/me" element={<MePage />} key="me" />,
   <Route path="*" element={<NotFound />} key="notfound" />,
 ];
 

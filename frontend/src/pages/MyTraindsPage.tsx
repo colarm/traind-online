@@ -85,7 +85,7 @@ const MyTraindsPage: React.FC = () => {
             ? {
                 ...traind,
                 _count: {
-                  stars: result.starCount,
+                  stars: result.starCount || traind._count?.stars || 0,
                   comments: traind._count?.comments || 0,
                 },
               }

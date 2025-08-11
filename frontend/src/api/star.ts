@@ -1,30 +1,25 @@
 import httpClient from "./axios";
+import { TraindWithPagination } from "./traind";
 
-// API response types for star operations
-export interface StarResponse {
-  success: boolean;
-  isStarred: boolean;
-  starCount: number;
+export interface StarItem {
+  id: string;
+  userId: string;
+  traindId: string;
+  createdAt: string;
+  traind?: TraindWithPagination;
 }
 
-// Get star status for a traind
-export async function getStarStatus(traindId: string): Promise<StarResponse> {
-  try {
-    const response = await httpClient.get(`/star/status/${traindId}`);
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        "Failed to get star status"
-    );
-  }
+export interface StarListResponse {
+  stars: StarItem[];
+  totalCount: number;
+  hasNextPage: boolean;
+  nextCursor?: string | null;
 }
 
-// Star a traind
-export async function starTraind(traindId: string): Promise<StarResponse> {
+// Add star to a traind
+export async function starTraind(traindId: string): Promise<StarItem> {
   try {
-    const response = await httpClient.post("/star", { traindId });
+    const response = await httpClient.post("/star/add", { traindId });
     return response.data;
   } catch (error: any) {
     throw new Error(
@@ -35,11 +30,10 @@ export async function starTraind(traindId: string): Promise<StarResponse> {
   }
 }
 
-// Unstar a traind
-export async function unstarTraind(traindId: string): Promise<StarResponse> {
+// Remove star from a traind
+export async function unstarTraind(traindId: string): Promise<void> {
   try {
-    const response = await httpClient.delete(`/star/${traindId}`);
-    return response.data;
+    await httpClient.post("/star/remove", { traindId });
   } catch (error: any) {
     throw new Error(
       error?.response?.data?.error ||
@@ -49,19 +43,58 @@ export async function unstarTraind(traindId: string): Promise<StarResponse> {
   }
 }
 
-// Toggle star status (star if unstarred, unstar if starred)
+// Get user's starred trainds
+export async function getStarredTrainds(params?: {
+  limit?: number;
+  cursor?: string;
+}): Promise<StarListResponse> {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params?.limit) queryParams.append("limit", params.limit.toString());
+    if (params?.cursor) queryParams.append("cursor", params.cursor);
+
+    const endpoint = `/star/list${
+      queryParams.toString() ? `?${queryParams.toString()}` : ""
+    }`;
+
+    const response = await httpClient.get(endpoint);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error?.response?.data?.error ||
+        error?.response?.data?.message ||
+        "Failed to get starred trainds"
+    );
+  }
+}
+
+// Check if a traind is starred by the current user
+export async function isTraindStarred(traindId: string): Promise<boolean> {
+  try {
+    const response = await getStarredTrainds();
+    return response.stars.some((star) => star.traindId === traindId);
+  } catch (error: any) {
+    // If we can't fetch starred trainds, assume not starred
+    return false;
+  }
+}
+
+// Toggle star status for a traind (star if unstarred, unstar if starred)
 export async function toggleTraindStar(
   traindId: string
-): Promise<StarResponse> {
+): Promise<{ isStarred: boolean; starCount?: number }> {
   try {
-    // First get current star status
-    const currentStatus = await getStarStatus(traindId);
+    // First check if the traind is currently starred
+    const isCurrentlyStarred = await isTraindStarred(traindId);
 
-    // Toggle based on current status
-    if (currentStatus.isStarred) {
-      return await unstarTraind(traindId);
+    if (isCurrentlyStarred) {
+      // Unstar the traind
+      await unstarTraind(traindId);
+      return { isStarred: false };
     } else {
-      return await starTraind(traindId);
+      // Star the traind
+      await starTraind(traindId);
+      return { isStarred: true };
     }
   } catch (error: any) {
     throw new Error(
