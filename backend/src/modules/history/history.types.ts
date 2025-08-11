@@ -1,3 +1,5 @@
+import { Traind } from "@prisma/client";
+
 export type AddHistoryInput = {
   userId: string;
   traindId: string;
@@ -13,6 +15,12 @@ export type ViewedTraind = {
   userId: string;
   traindId: string;
   viewedAt: Date;
+  traind?: Traind & {
+    _count: {
+      stars: number;
+      comments: number;
+    };
+  };
 };
 
 export type PaginatedHistoryList = {

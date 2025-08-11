@@ -96,7 +96,18 @@ const historyService = {
       where: whereClause,
       orderBy: [{ viewedAt: "desc" }, { id: "desc" }],
       take: limit + 1,
-      include: { traind: true },
+      include: {
+        traind: {
+          include: {
+            _count: {
+              select: {
+                stars: true,
+                comments: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     const hasNextPage = histories.length > limit;
@@ -109,6 +120,7 @@ const historyService = {
       userId: history.userId,
       traindId: history.traindId,
       viewedAt: history.viewedAt,
+      traind: history.traind,
     }));
 
     const nextCursor = hasNextPage ? histories[limit].id : null;

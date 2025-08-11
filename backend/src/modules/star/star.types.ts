@@ -1,3 +1,5 @@
+import { Traind } from "@prisma/client";
+
 export type AddStarInput = {
   userId: string;
   traindId: string;
@@ -13,6 +15,12 @@ export type StarredTraind = {
   userId: string;
   traindId: string;
   createdAt: Date;
+  traind?: Traind & {
+    _count: {
+      stars: number;
+      comments: number;
+    };
+  };
 };
 
 export type PaginatedStarList = {

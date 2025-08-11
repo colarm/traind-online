@@ -96,7 +96,18 @@ const starService = {
       where: whereClause,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       take: limit + 1,
-      include: { traind: true },
+      include: {
+        traind: {
+          include: {
+            _count: {
+              select: {
+                stars: true,
+                comments: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     const hasNextPage = stars.length > limit;
@@ -107,6 +118,7 @@ const starService = {
       userId: star.userId,
       traindId: star.traindId,
       createdAt: star.createdAt,
+      traind: star.traind,
     }));
 
     const nextCursor = hasNextPage ? stars[limit].id : null;
