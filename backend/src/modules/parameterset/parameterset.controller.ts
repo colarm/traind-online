@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import { parameterSetService } from "./parameterset.service";
-import { SaveParameterSetInput, LoadParameterSetInput, CopyParameterInput } from "./parameterset.types";
+import {
+  SaveParameterSetInput,
+  LoadParameterSetInput,
+  CopyParameterInput,
+} from "./parameterset.types";
 
 const parameterSetController = {
   async save(req: Request, res: Response) {
-		try {
-			
+    try {
       const userId = (req as any).user?.id;
       const { name, config } = req.body;
 
@@ -33,18 +36,47 @@ const parameterSetController = {
   },
 
   async copyFromTraind(req: Request, res: Response) {
-		try {
-			
+    try {
       const userId = (req as any).user?.id;
       const { traindId, name } = req.body;
 
       const copied = await parameterSetService.copyFromTraind(
-        ({ traindId, name } as CopyParameterInput),
+        { traindId, name } as CopyParameterInput,
         userId
       );
       return res.status(201).json(copied);
     } catch (err: any) {
       return res.status(500).json({ error: err.message });
+    }
+  },
+
+  async getMyParameterSets(req: Request, res: Response) {
+    try {
+      // Get user ID from request (set by auth middleware)
+      const userId = (req as any).user?.id;
+
+      // Get pagination parameters from query
+      const cursor = req.query.cursor as string | undefined;
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string, 10)
+        : 10;
+
+      // Validate limit
+      if (limit > 50) {
+        return res.status(400).json({ error: "Limit cannot exceed 50" });
+      }
+
+      // Get paginated parameter sets for the user
+      const result = await parameterSetService.getMyParameterSets({
+        userId,
+        cursor,
+        limit,
+      });
+
+      return res.status(200).json(result);
+    } catch (error: any) {
+      console.error("Get my parameter sets error:", error);
+      return res.status(500).json({ error: error.message });
     }
   },
 };

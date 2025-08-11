@@ -20,3 +20,16 @@ export interface CopyParameterInput {
   traindId: string;
   name: string;
 }
+
+export interface GetMyParameterSetsInput {
+  userId: string;
+  cursor?: string;
+  limit?: number;
+}
+
+export interface PaginatedParameterSetList {
+  parameterSets: any[];
+  nextCursor?: string | null;
+  hasNextPage: boolean;
+  totalCount: number;
+}

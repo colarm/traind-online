@@ -4,14 +4,13 @@ import { authenticate } from "../../shared/middlewares/auth.middleware";
 
 const router = Router();
 
-const {
-  save,
-  load,
-  copyFromTraind,
-} = parameterSetController;
+const { save, load, copyFromTraind, getMyParameterSets } =
+  parameterSetController;
 
 // Route to save parameter set
 router.post("/save", authenticate, save);
+// Route to get all parameter sets for the current user
+router.get("/my", authenticate, getMyParameterSets);
 // Route to load parameter set by ID
 router.get("/:id", authenticate, load);
 // Route to copy parameter set from Traind

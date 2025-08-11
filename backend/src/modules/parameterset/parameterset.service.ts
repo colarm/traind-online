@@ -3,6 +3,8 @@ import {
   SaveParameterSetInput,
   LoadParameterSetInput,
   CopyParameterInput,
+  GetMyParameterSetsInput,
+  PaginatedParameterSetList,
 } from "./parameterset.types";
 
 const prisma = new PrismaClient();
@@ -41,40 +43,105 @@ export const parameterSetService = {
     });
 
     if (!traind) throw new Error("Traind not found");
-		
-		// Create a new ParameterSet based on the Traind's parameters
-		if (!traind.parameterSetId) {
-			throw new Error("Traind does not have a parameter set");
-		}
 
-		// Find the existing ParameterSet associated with the Traind
-		const existingParamSet = await prisma.parameterSet.findUnique({
-			where: { id: traind.parameterSetId },
-		});
-		if (!existingParamSet) {
-			throw new Error("ParameterSet associated with Traind not found");
-		}
+    // Create a new ParameterSet based on the Traind's parameters
+    if (!traind.parameterSetId) {
+      throw new Error("Traind does not have a parameter set");
+    }
 
-		// Create a new ParameterSet with the same parameters
-		// but with a new name and userId
-		if (!input.name) {
-			throw new Error("Name is required for copying parameter set");
-		}
+    // Find the existing ParameterSet associated with the Traind
+    const existingParamSet = await prisma.parameterSet.findUnique({
+      where: { id: traind.parameterSetId },
+    });
+    if (!existingParamSet) {
+      throw new Error("ParameterSet associated with Traind not found");
+    }
 
-		// Create the new ParameterSet
-		const copiedParameters = JSON.parse(JSON.stringify(existingParamSet.parameters));
-		if (!copiedParameters) {
-			throw new Error("No parameters found in the existing ParameterSet");
-		}
+    // Create a new ParameterSet with the same parameters
+    // but with a new name and userId
+    if (!input.name) {
+      throw new Error("Name is required for copying parameter set");
+    }
+
+    // Create the new ParameterSet
+    const copiedParameters = JSON.parse(
+      JSON.stringify(existingParamSet.parameters)
+    );
+    if (!copiedParameters) {
+      throw new Error("No parameters found in the existing ParameterSet");
+    }
 
     const copied = await prisma.parameterSet.create({
-			data: {
-				userId,
-				name: input.name,
-				parameters: copiedParameters,
-			},
-		});
+      data: {
+        userId,
+        name: input.name,
+        parameters: copiedParameters,
+      },
+    });
 
     return copied;
+  },
+
+  async getMyParameterSets(
+    input: GetMyParameterSetsInput
+  ): Promise<PaginatedParameterSetList> {
+    const { userId, cursor, limit = 10 } = input;
+
+    // Get total count for the user
+    const totalCount = await prisma.parameterSet.count({
+      where: { userId },
+    });
+
+    // Build the query with pagination
+    const whereClause: any = { userId };
+
+    if (cursor) {
+      const cursorItem = await prisma.parameterSet.findUnique({
+        where: { id: cursor },
+        select: { createdAt: true },
+      });
+
+      if (!cursorItem) {
+        throw new Error(
+          "Invalid cursor: the specified cursor item does not exist"
+        );
+      }
+
+      whereClause.OR = [
+        { createdAt: { lt: cursorItem.createdAt } },
+        {
+          createdAt: cursorItem.createdAt,
+          id: { lte: cursor },
+        },
+      ];
+    }
+
+    const parameterSets = await prisma.parameterSet.findMany({
+      where: whereClause,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: limit + 1,
+      select: {
+        id: true,
+        name: true,
+        parameters: true,
+        createdAt: true,
+        userId: true,
+        traindId: true,
+      },
+    });
+
+    const hasNextPage = parameterSets.length > limit;
+    const parameterSetsToReturn = hasNextPage
+      ? parameterSets.slice(0, limit)
+      : parameterSets;
+
+    const nextCursor = hasNextPage ? parameterSets[limit].id : null;
+
+    return {
+      parameterSets: parameterSetsToReturn,
+      nextCursor,
+      hasNextPage,
+      totalCount,
+    };
   },
 };
