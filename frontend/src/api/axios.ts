@@ -29,6 +29,13 @@ httpClient.interceptors.request.use(
 httpClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error) => {
+    // Handle common HTTP errors
+    if (error.response?.status === 401) {
+      // Handle unauthorized access
+      console.error("Unauthorized access - please log in");
+    } else if (error.response?.status === 403) {
+      console.error("Access denied");
+    }
     return Promise.reject(error);
   }
 );

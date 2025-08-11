@@ -5,6 +5,7 @@ import styles from "./TraindStream.module.css";
 const TraindStream: React.FC<TraindStreamProps> = ({
   trainds,
   loading = false,
+  hasError = false,
   onTraindClick,
   onStarToggle,
   onDelete,
@@ -84,7 +85,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     return renderPlaceholder();
   }
 
-  if (!trainds || trainds.length === 0) {
+  if (!hasError && (!trainds || trainds.length === 0)) {
     return (
       <div className={styles.empty}>
         <div className={styles.emptyIcon}>📊</div>

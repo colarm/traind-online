@@ -21,16 +21,10 @@ export interface Traind {
 export interface TraindStreamProps {
   trainds: Traind[];
   loading?: boolean;
+  hasError?: boolean;
   onTraindClick?: (traind: Traind) => void;
   onStarToggle?: (traindId: string, isStarred: boolean) => void;
   onDelete?: (traindId: string) => void;
   showActions?: boolean;
   emptyMessage?: string;
-}
-
-export interface TraindApiResponse {
-  data?: Traind[];
-  trainds?: Traind[];
-  error?: string;
-  success?: boolean;
 }
