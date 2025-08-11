@@ -71,28 +71,39 @@ const historyService = {
     // Build the query with pagination
     const whereClause: any = { userId };
 
-    // If cursor is provided, add it to the where clause for pagination
     if (cursor) {
-      whereClause.id = {
-        lt: cursor, // Use 'lt' for descending order (newer items first)
-      };
+      const cursorItem = await prisma.history.findUnique({
+        where: { id: cursor },
+        select: { viewedAt: true },
+      });
+
+      if (!cursorItem) {
+        throw new Error(
+          "Invalid cursor: the specified cursor item does not exist"
+        );
+      }
+
+      whereClause.OR = [
+        { viewedAt: { lt: cursorItem.viewedAt } },
+        {
+          viewedAt: cursorItem.viewedAt,
+          id: { lte: cursor },
+        },
+      ];
     }
 
-    // Fetch history entries for the user with pagination
     const histories = await prisma.history.findMany({
       where: whereClause,
-      orderBy: { viewedAt: "desc" },
-      take: limit + 1, // Take one extra to determine if there's a next page
+      orderBy: [{ viewedAt: "desc" }, { id: "desc" }],
+      take: limit + 1,
       include: { traind: true },
     });
 
-    // Determine if there's a next page
     const hasNextPage = histories.length > limit;
     const historiesToReturn = hasNextPage
       ? histories.slice(0, limit)
       : histories;
 
-    // Map to the expected format
     const viewedTrainds = historiesToReturn.map((history) => ({
       id: history.id,
       userId: history.userId,
@@ -100,11 +111,7 @@ const historyService = {
       viewedAt: history.viewedAt,
     }));
 
-    // Get the next cursor (ID of the last item)
-    const nextCursor =
-      hasNextPage && viewedTrainds.length > 0
-        ? viewedTrainds[viewedTrainds.length - 1].id
-        : null;
+    const nextCursor = hasNextPage ? histories[limit].id : null;
 
     return {
       histories: viewedTrainds,

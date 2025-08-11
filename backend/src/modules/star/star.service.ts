@@ -71,26 +71,37 @@ const starService = {
     // Build the query with pagination
     const whereClause: any = { userId };
 
-    // If cursor is provided, add it to the where clause for pagination
     if (cursor) {
-      whereClause.id = {
-        lt: cursor, // Use 'lt' for descending order (newer items first)
-      };
+      const cursorItem = await prisma.star.findUnique({
+        where: { id: cursor },
+        select: { createdAt: true },
+      });
+
+      if (!cursorItem) {
+        throw new Error(
+          "Invalid cursor: the specified cursor item does not exist"
+        );
+      }
+
+      whereClause.OR = [
+        { createdAt: { lt: cursorItem.createdAt } },
+        {
+          createdAt: cursorItem.createdAt,
+          id: { lte: cursor },
+        },
+      ];
     }
 
-    // Fetch starred trainds for the user with pagination
     const stars = await prisma.star.findMany({
       where: whereClause,
-      orderBy: { createdAt: "desc" },
-      take: limit + 1, // Take one extra to determine if there's a next page
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      take: limit + 1,
       include: { traind: true },
     });
 
-    // Determine if there's a next page
     const hasNextPage = stars.length > limit;
     const starsToReturn = hasNextPage ? stars.slice(0, limit) : stars;
 
-    // Map to the expected format
     const starredTrainds = starsToReturn.map((star) => ({
       id: star.id,
       userId: star.userId,
@@ -98,11 +109,7 @@ const starService = {
       createdAt: star.createdAt,
     }));
 
-    // Get the next cursor (ID of the last item)
-    const nextCursor =
-      hasNextPage && starredTrainds.length > 0
-        ? starredTrainds[starredTrainds.length - 1].id
-        : null;
+    const nextCursor = hasNextPage ? stars[limit].id : null;
 
     return {
       stars: starredTrainds,
