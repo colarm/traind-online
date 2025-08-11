@@ -5,11 +5,13 @@ import { UpdatePreferenceInput } from "./preference.types";
 const preferenceController = {
   async updatePreference(req: Request, res: Response) {
     try {
-      const userId = (req as any).user?.id;
+      const userId = (req as any).user.id;
       const { theme, language } = req.body;
 
-      if (!userId || theme === undefined || language === undefined) {
-        return res.status(400).json({ error: "Missing data" });
+      if (theme === undefined || language === undefined) {
+        return res
+          .status(400)
+          .json({ error: "Missing theme or language data" });
       }
 
       const updated = await preferenceService.update(
@@ -25,8 +27,7 @@ const preferenceController = {
 
   async getPreference(req: Request, res: Response) {
     try {
-      const userId = (req as any).user?.id;
-      if (!userId) return res.status(401).json({ error: "Unauthorized" });
+      const userId = (req as any).user.id;
 
       const pref = await preferenceService.get(userId);
       res.json(pref);

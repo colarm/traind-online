@@ -11,3 +11,23 @@ export type ExportedFile = {
   content: Buffer;
   format: "json" | "csv" | "png";
 };
+
+export type TraindWithCounts = Traind & {
+  _count: {
+    stars: number;
+    comments: number;
+  };
+};
+
+export type PaginatedTraindList = {
+  trainds: TraindWithCounts[];
+  nextCursor?: string | null;
+  hasNextPage: boolean;
+  totalCount: number;
+};
+
+export type GetMyTraindsInput = {
+  userId: string;
+  cursor?: string;
+  limit?: number;
+};

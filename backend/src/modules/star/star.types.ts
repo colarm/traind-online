@@ -18,4 +18,12 @@ export type StarredTraind = {
 export type PaginatedStarList = {
   stars: StarredTraind[];
   nextCursor?: string | null;
+  hasNextPage: boolean;
+  totalCount: number;
+};
+
+export type GetStarredTraindsInput = {
+  userId: string;
+  cursor?: string;
+  limit?: number;
 };

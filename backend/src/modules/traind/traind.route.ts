@@ -10,10 +10,13 @@ const {
   setVisibility,
   deleteTraind,
   getParameterSetId,
+  getMyTrainds,
 } = traindController;
 
 // Route to run analysis
 router.post("/run", authenticate, runAnalysis);
+// Route to get all trainds for the current user
+router.get("/my", authenticate, getMyTrainds);
 // Route to get Traind record by ID
 router.get("/:traindId", authenticate, getTraindById);
 // Route to set visibility of a Traind record

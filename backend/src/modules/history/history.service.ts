@@ -3,6 +3,7 @@ import {
   AddHistoryInput,
   RemoveHistoryInput,
   PaginatedHistoryList,
+  GetViewedTraindsInput,
 } from "./history.types";
 
 const prisma = new PrismaClient();
@@ -57,26 +58,60 @@ const historyService = {
     });
   },
 
-  async getViewedTrainds(userId: string): Promise<PaginatedHistoryList> {
-    // Fetch history entries for the user
-    const histories = await prisma.history.findMany({
+  async getViewedTrainds(
+    input: GetViewedTraindsInput
+  ): Promise<PaginatedHistoryList> {
+    const { userId, cursor, limit = 10 } = input;
+
+    // Get total count for the user
+    const totalCount = await prisma.history.count({
       where: { userId },
+    });
+
+    // Build the query with pagination
+    const whereClause: any = { userId };
+
+    // If cursor is provided, add it to the where clause for pagination
+    if (cursor) {
+      whereClause.id = {
+        lt: cursor, // Use 'lt' for descending order (newer items first)
+      };
+    }
+
+    // Fetch history entries for the user with pagination
+    const histories = await prisma.history.findMany({
+      where: whereClause,
       orderBy: { viewedAt: "desc" },
+      take: limit + 1, // Take one extra to determine if there's a next page
       include: { traind: true },
     });
 
+    // Determine if there's a next page
+    const hasNextPage = histories.length > limit;
+    const historiesToReturn = hasNextPage
+      ? histories.slice(0, limit)
+      : histories;
+
     // Map to the expected format
-    const viewedTrainds = histories.map((history) => ({
+    const viewedTrainds = historiesToReturn.map((history) => ({
       id: history.id,
       userId: history.userId,
       traindId: history.traindId,
       viewedAt: history.viewedAt,
     }));
 
+    // Get the next cursor (ID of the last item)
+    const nextCursor =
+      hasNextPage && viewedTrainds.length > 0
+        ? viewedTrainds[viewedTrainds.length - 1].id
+        : null;
+
     return {
       histories: viewedTrainds,
-      nextCursor: null, // Implement pagination later
-    } as PaginatedHistoryList;
+      nextCursor,
+      hasNextPage,
+      totalCount,
+    };
   },
 };
 

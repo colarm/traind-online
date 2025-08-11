@@ -8,41 +8,36 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-
-  // 1-N Relationships
-  trainds       Traind[]
-  stars         Star[]
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password      String
+  createdAt     DateTime        @default(now())
   comments      Comment[]
-  parameterSets ParameterSet[]
   history       History[]
+  parameterSets ParameterSet[]
+  stars         Star[]
+  trainds       Traind[]
   preference    UserPreference?
 
   @@map("users")
 }
 
 model Traind {
-  id             String   @id @default(uuid())
+  id             String         @id @default(uuid())
   postId         String
   subreddit      String
-  title          String
-  result         Json
+  createdAt      DateTime       @default(now())
+  isPublic       Boolean        @default(false)
   parameterSetId String
-  isPublic       Boolean  @default(false)
-  createdAt      DateTime @default(now())
-
-  // N-1 Relationships
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  // 1-N Relationships
-  stars         Star[]
-  comments      Comment[]
-  parameterSets ParameterSet[]
-  history       History[]
+  result         Json
+  userId         String
+  title          String
+  status         String         @default("pending")
+  comments       Comment[]
+  history        History[]
+  parameterSets  ParameterSet[]
+  stars          Star[]
+  user           User           @relation(fields: [userId], references: [id])
 
   @@map("trainds")
 }
@@ -52,9 +47,8 @@ model Star {
   userId    String
   traindId  String
   createdAt DateTime @default(now())
-
-  user   User   @relation(fields: [userId], references: [id])
-  traind Traind @relation(fields: [traindId], references: [id])
+  traind    Traind   @relation(fields: [traindId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, traindId])
   @@map("stars")
@@ -65,30 +59,24 @@ model History {
   userId   String
   traindId String
   viewedAt DateTime @default(now())
-
-  user   User   @relation(fields: [userId], references: [id])
-  traind Traind @relation(fields: [traindId], references: [id])
+  traind   Traind   @relation(fields: [traindId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, traindId])
   @@map("history")
 }
 
 model Comment {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   content   String
-  createdAt DateTime @default(now())
-
-  // N-1 Relationships
-  userId   String
-  traindId String
-
-  user   User   @relation(fields: [userId], references: [id])
-  traind Traind @relation(fields: [traindId], references: [id])
-
-  // Self-referential relationship for replies
-  parentId String?
-  parent   Comment?  @relation("CommentReply", fields: [parentId], references: [id])
-  replies  Comment[] @relation("CommentReply")
+  createdAt DateTime  @default(now())
+  userId    String
+  traindId  String
+  parentId  String?
+  parent    Comment?  @relation("CommentReply", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReply")
+  traind    Traind    @relation(fields: [traindId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
 
   @@map("comments")
 }
@@ -98,25 +86,20 @@ model ParameterSet {
   name       String
   parameters Json
   createdAt  DateTime @default(now())
-
-  // N-1 Relationships
-  userId String
-  user   User @relation(fields: [userId], references: [id])
-
-  // 1-1 Relationships
-  traindId String?
-  traind Traind? @relation(fields: [traindId], references: [id])
+  userId     String
+  traindId   String?
+  traind     Traind?  @relation(fields: [traindId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("parameter_sets")
 }
 
 model UserPreference {
-  id       String  @id @default(uuid())
-  userId   String  @unique
-  language String  @default("en")
-  theme    String  @default("light")
-
-  user User @relation(fields: [userId], references: [id])
+  id       String @id @default(uuid())
+  userId   String @unique
+  language String @default("en")
+  theme    String @default("light")
+  user     User   @relation(fields: [userId], references: [id])
 
   @@map("user_preferences")
 }

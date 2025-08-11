@@ -18,4 +18,12 @@ export type ViewedTraind = {
 export type PaginatedHistoryList = {
   histories: ViewedTraind[];
   nextCursor?: string | null;
+  hasNextPage: boolean;
+  totalCount: number;
+};
+
+export type GetViewedTraindsInput = {
+  userId: string;
+  cursor?: string;
+  limit?: number;
 };

@@ -13,12 +13,7 @@ const traindController = {
           .json({ error: "Reddit ID and Parameter Set ID are required" });
       }
 
-      // Check if user is authenticated
-      if (!(req as any).user || !(req as any).user.id) {
-        return res.status(401).json({ error: "Unauthorized" });
-      }
-
-      // Get user ID from request (assumed to be set in middleware)
+      // Get user ID from request (set by auth middleware)
       const userId = (req as any).user.id;
 
       // Run analysis
@@ -106,6 +101,36 @@ const traindController = {
       }
 
       return res.status(200).json({ parameterSetId });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  },
+
+  // Get all trainds for the current user with pagination
+  async getMyTrainds(req: Request, res: Response): Promise<Response> {
+    try {
+      // Get user ID from request (set by auth middleware)
+      const userId = (req as any).user.id;
+
+      // Get pagination parameters from query
+      const cursor = req.query.cursor as string | undefined;
+      const limit = req.query.limit
+        ? parseInt(req.query.limit as string, 10)
+        : 10;
+
+      // Validate limit
+      if (limit > 50) {
+        return res.status(400).json({ error: "Limit cannot exceed 50" });
+      }
+
+      // Get paginated trainds for the user
+      const result = await traindService.getMyTrainds({
+        userId,
+        cursor,
+        limit,
+      });
+
+      return res.status(200).json(result);
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }
