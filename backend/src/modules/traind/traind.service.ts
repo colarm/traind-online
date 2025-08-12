@@ -44,28 +44,43 @@ const traindService = {
   },
 
   async getTraindById(traindId: string): Promise<Traind | null> {
-    const traind = await analysisClient.getResult(traindId);
+    if (!traindId) throw new Error("Traind ID is required");
 
-    if (!traind) {
-      throw new Error("Traind record not found in gRPC service");
-    }
-
-    const existing = await prisma.traind.findUnique({
+    const traindItem = await prisma.traind.findUnique({
       where: { id: traindId },
-    });
-    if (!existing) {
-      throw new Error("Traind record not found in database");
-    }
-
-    const updatedTraind = await prisma.traind.update({
-      where: { id: traindId },
-      data: {
-        title: traind.title,
-        result: traind.result,
+      include: {
+        _count: {
+          select: {
+            stars: true,
+            comments: true,
+          },
+        },
       },
     });
+    if (!traindItem) {
+      throw new Error("Traind record not found");
+    }
+    if (traindItem.status !== "completed") {
+      const traind = await analysisClient.getResult(traindId);
+      if (!traind) {
+        throw new Error("Traind record not found in gRPC service");
+      }
 
-    return updatedTraind as Traind;
+      const updatedTraind = await prisma.traind.update({
+        where: { id: traindId },
+        data: {
+          title: traind.title,
+          result: traind.result,
+        },
+      });
+      if (!updatedTraind) {
+        throw new Error("Failed to update Traind record");
+      }
+
+      return updatedTraind as Traind;
+    }
+
+    return traindItem;
   },
 
   async setVisibility(

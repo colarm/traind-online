@@ -1,0 +1,169 @@
+.trendsPage {
+  width: 1280px;
+  max-width: calc(100vw - 64px);
+  margin: 0 auto auto;
+  padding: 20px;
+  background: var(--color-bg);
+  color: var(--color-text-main);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 32px 16px;
+  background: var(--color-modal);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px var(--color-overlay);
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: var(--color-text-main);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-ai));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  margin: 0 0 32px 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.refreshButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--color-modal);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px var(--color-overlay);
+}
+
+.refreshButton:hover:not(:disabled) {
+  background: var(--color-primary);
+  color: var(--color-text-button-dark);
+  opacity: 1;
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 20px var(--color-overlay);
+}
+
+.refreshButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  background: var(--color-overlay);
+  border: 1px solid var(--color-error);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.errorMessage p {
+  color: var(--color-error);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.retryButton {
+  background: var(--color-error);
+  color: var(--color-text-button-dark);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.retryButton:hover {
+  background: var(--color-primary-dark);
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  background: var(--color-bg-alt);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.footerText {
+  color: var(--color-text-secondary);
+  margin: 0;
+  font-size: 14px;
+}
+
+.footerMeta {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .trendsPage {
+    padding: 16px;
+  }
+
+  .header {
+    padding: 24px 16px;
+    margin-bottom: 24px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .refreshButton {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .refreshButton {
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+}

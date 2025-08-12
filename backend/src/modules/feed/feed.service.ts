@@ -384,6 +384,8 @@ const feedService = {
 
     scoredTrainds.sort((a, b) => b.hybridScore - a.hybridScore);
 
+    const limitedTrainds = scoredTrainds.slice(0, 50);
+
     const recommendationReasons = [
       `Based on hybrid recommendation algorithm: ${Math.round(
         collaborativeWeight * 100
@@ -395,7 +397,7 @@ const feedService = {
     ];
 
     return {
-      trainds: scoredTrainds,
+      trainds: limitedTrainds,
       total: scoredTrainds.length,
       recommendationReason: recommendationReasons,
     };
@@ -428,6 +430,9 @@ const feedService = {
           },
         },
       },
+      orderBy: {
+        createdAt: "desc",
+      },
       take: 500,
     });
 
@@ -445,8 +450,10 @@ const feedService = {
 
     scoredTrainds.sort((a, b) => b.finalScore - a.finalScore);
 
+    const limitedTrainds = scoredTrainds.slice(0, 50);
+
     return {
-      trainds: scoredTrainds,
+      trainds: limitedTrainds,
       total: scoredTrainds.length,
     };
   },
@@ -479,6 +486,7 @@ const feedService = {
       orderBy: {
         createdAt: "desc",
       },
+      take: 50,
     });
 
     const total = trainds.length;
@@ -561,8 +569,10 @@ const feedService = {
 
       scoredTrainds.sort((a, b) => b.finalScore - a.finalScore);
 
+      const limitedTrainds = scoredTrainds.slice(0, 50);
+
       return {
-        trainds: scoredTrainds,
+        trainds: limitedTrainds,
         total: scoredTrainds.length,
       };
     } else {
@@ -583,8 +593,10 @@ const feedService = {
 
       scoredTrainds.sort((a, b) => b.finalScore - a.finalScore);
 
+      const limitedTrainds = scoredTrainds.slice(0, 50);
+
       return {
-        trainds: scoredTrainds,
+        trainds: limitedTrainds,
         total: scoredTrainds.length,
       };
     }

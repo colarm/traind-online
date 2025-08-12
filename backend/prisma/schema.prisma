@@ -27,7 +27,7 @@ model Traind {
   postId         String
   subreddit      String
   createdAt      DateTime       @default(now())
-  isPublic       Boolean        @default(false)
+  isPublic       Boolean        @default(true)
   parameterSetId String
   result         Json
   userId         String
