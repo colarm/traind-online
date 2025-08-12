@@ -1,0 +1,106 @@
+.detailWrapper {
+  width: 1280px;
+  max-width: calc(100vw - 64px);
+  margin: 0 auto auto;
+  padding: 20px;
+  background: var(--color-bg);
+  color: var(--color-text-main);
+}
+
+.headerCard {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 32px 16px;
+  background: var(--color-modal);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px var(--color-overlay);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: var(--color-text-main);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-ai));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.section {
+  margin-top: 32px;
+  background: var(--color-bg-alt);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px var(--color-overlay);
+}
+
+.section h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.result,
+.param {
+  background: var(--color-modal);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  font-family: "Menlo", "Monaco", "Consolas", monospace;
+  color: var(--color-text-secondary);
+}
+
+.loading {
+  text-align: center;
+  margin: 60px 0;
+  font-size: 1.3rem;
+}
+
+.error {
+  color: var(--color-error);
+  text-align: center;
+  margin: 60px 0;
+  font-size: 1.2rem;
+}
+
+.actions {
+  margin-top: 16px;
+  display: flex;
+  gap: 16px;
+}
+
+.actions button {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-text-button-dark);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 600;
+}
+.actions button:disabled {
+  background: var(--color-secondary);
+  cursor: not-allowed;
+}

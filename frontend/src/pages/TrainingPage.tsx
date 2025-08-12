@@ -25,10 +25,8 @@ const TrainingPage: React.FC = () => {
         name: "Temp Parameter Set",
         config: params,
       });
-      if (saveRes.error || !saveRes.id) {
-        setResult(
-          "Failed to save parameter set: " + (saveRes.error || "Unknown error")
-        );
+      if (!saveRes || !saveRes.id) {
+        setResult("Failed to save parameter set: Unknown error");
         setLoading(false);
         return;
       }
@@ -39,8 +37,8 @@ const TrainingPage: React.FC = () => {
       } else {
         setResult(`Task created!`);
       }
-    } catch (e: any) {
-      setResult("Request error: " + (e?.message || e));
+    } catch (err: any) {
+      setResult("Request error: " + (err?.message || err));
     }
     setLoading(false);
   };

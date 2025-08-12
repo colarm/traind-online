@@ -25,15 +25,6 @@ export default {
         message: "Analysis started successfully",
       });
     });
-    return new Promise((resolve, reject) => {
-      client.RunAnalysis(
-        { traindId, redditId, parameterSetId, userId },
-        (err: any, res: any) => {
-          if (err) reject(err);
-          else resolve(res);
-        }
-      );
-    });
   },
 
   getResult(traindId: string): Promise<{ title: any; result: any }> {
@@ -42,12 +33,6 @@ export default {
       resolve({
         title: "Mock Title",
         result: { analysis: "Mock Result" },
-      });
-    });
-    return new Promise((resolve, reject) => {
-      client.GetResult({ traindId }, (err: any, res: any) => {
-        if (err) reject(err);
-        else resolve(res);
       });
     });
   },

@@ -9,10 +9,12 @@ import {
   setTraindVisibility,
 } from "../api/traind";
 import { toggleTraindStar } from "../api/star";
+import { useNavigate } from "react-router-dom";
 import styles from "./MyTraindsPage.module.css";
 
 const MyTraindsPage: React.FC = () => {
   useRequireAuth();
+  const navigate = useNavigate();
   const [trainds, setTrainds] = useState<Traind[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -41,25 +43,18 @@ const MyTraindsPage: React.FC = () => {
         cursor: isLoadMore ? cursor : undefined,
       });
       const traindsList = response.trainds || [];
+      console.log("Loaded trainds:", traindsList);
 
       // Adapt backend response to frontend format
       const adaptedTrainds = traindsList.map(adaptTraindResponse);
-
       if (isLoadMore) {
         setTrainds((prev) => [...prev, ...adaptedTrainds]);
       } else {
         setTrainds(adaptedTrainds);
       }
-
-      setHasNextPage(response.hasNextPage || false);
-      setTotalCount(response.totalCount || traindsList.length);
-
-      // Use the nextCursor from backend response
-      if (response.nextCursor) {
-        setCursor(response.nextCursor);
-      } else {
-        setCursor(undefined);
-      }
+      setHasNextPage(!!response.hasNextPage);
+      setTotalCount(response.totalCount ?? traindsList.length);
+      setCursor(response.nextCursor ?? undefined);
     } catch (err: any) {
       setError(err.message || "Failed to load your trainds");
       if (!isLoadMore) {
@@ -72,28 +67,13 @@ const MyTraindsPage: React.FC = () => {
   };
 
   const handleTraindClick = (traind: Traind) => {
-    console.log("Navigate to traind:", traind.id);
-    // TODO: Implement navigation to traind detail page
-    alert(`Would navigate to traind: ${traind.title}`);
+    navigate(`/traind/${traind.id}`);
   };
 
   const handleStarToggle = async (traindId: string, isStarred: boolean) => {
     try {
-      const result = await toggleTraindStar(traindId);
-      // Update local state with the actual response
-      setTrainds((prevTrainds) =>
-        prevTrainds.map((traind) =>
-          traind.id === traindId
-            ? {
-                ...traind,
-                _count: {
-                  stars: result.starCount || traind._count?.stars || 0,
-                  comments: traind._count?.comments || 0,
-                },
-              }
-            : traind
-        )
-      );
+      await toggleTraindStar(traindId);
+      loadTrainds();
     } catch (err: any) {
       console.error("Failed to toggle star:", err);
       // Show error to user
@@ -112,10 +92,7 @@ const MyTraindsPage: React.FC = () => {
 
     try {
       await deleteTraind(traindId);
-      setTrainds((prevTrainds) =>
-        prevTrainds.filter((traind) => traind.id !== traindId)
-      );
-      setTotalCount((prev) => prev - 1);
+      loadTrainds();
     } catch (err: any) {
       alert("Failed to delete traind: " + err.message);
     }
@@ -127,13 +104,7 @@ const MyTraindsPage: React.FC = () => {
   ) => {
     try {
       await setTraindVisibility(traindId, !currentVisibility);
-      setTrainds((prevTrainds) =>
-        prevTrainds.map((traind) =>
-          traind.id === traindId
-            ? { ...traind, isPublic: !currentVisibility }
-            : traind
-        )
-      );
+      loadTrainds();
     } catch (err: any) {
       alert("Failed to update visibility: " + err.message);
     }
