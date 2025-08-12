@@ -22,6 +22,12 @@ const preferenceService = {
     const preference = await prisma.userPreference.findUnique({
       where: { userId },
     });
+    if (!preference) {
+      const newPreference = await prisma.userPreference.create({
+        data: { userId, theme: "light", language: "en" },
+      });
+      return newPreference as UserPreference;
+    }
     return preference as UserPreference;
   },
 };
