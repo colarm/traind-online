@@ -4,7 +4,13 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-export default {
+function getToken(userId: string) {
+  return jwt.sign({ userId }, process.env.JWT_SECRET!, {
+    expiresIn: "7d",
+  });
+}
+
+const authService = {
   async register(email: string, password: string) {
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) throw new Error("User already exists");
@@ -14,7 +20,9 @@ export default {
       data: { email, password: hashed },
     });
 
-    return { id: user.id, email: user.email };
+    const token = getToken(user.id);
+
+    return { token, user: { id: user.id, email: user.email } };
   },
 
   async login(email: string, password: string) {
@@ -24,9 +32,7 @@ export default {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Password is incorrect");
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: "7d",
-    });
+    const token = getToken(user.id);
 
     return { token, user: { id: user.id, email: user.email } };
   },
@@ -39,3 +45,5 @@ export default {
     return user;
   },
 };
+
+export default authService;

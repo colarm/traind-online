@@ -7,8 +7,16 @@ const SECRET_KEY = process.env.JWT_SECRET as string;
 export const register = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    const user = await authService.register(email, password);
-    res.status(201).json(user);
+    const result = await authService.register(email, password);
+    res
+      .cookie("token", result.token, {
+        httpOnly: true,
+        secure: process.env.COOKIE_SECURE === "true",
+        sameSite: "lax",
+        maxAge: 3600000 * 24 * 7,
+      })
+      .status(201)
+      .json({ message: "Registration successful", user: result.user.id });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -25,7 +33,8 @@ export const login = async (req: Request, res: Response) => {
         sameSite: "lax",
         maxAge: 3600000 * 24 * 7,
       })
-      .json({ message: "Login success" });
+      .status(200)
+      .json({ message: "Login successful", user: result.user.id });
   } catch (err: any) {
     res.status(401).json({ message: err.message });
   }

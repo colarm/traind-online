@@ -112,7 +112,6 @@ const WelcomePage = () => {
         setSubmitting(false);
         return;
       }
-      console.log("Logged in user:", user);
       window.location.reload();
       close();
     } else {
@@ -126,7 +125,7 @@ const WelcomePage = () => {
         setSubmitting(false);
         return;
       }
-      console.log("Registered user:", newUser);
+      window.location.reload();
       close();
     }
     setSubmitting(false);
