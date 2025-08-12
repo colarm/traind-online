@@ -1,10 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./ThemeSelect.module.css";
-import { themes, getCurrentTheme, changeTheme } from "../utils/themeManager";
+import {
+  themes,
+  getCurrentThemeLocal,
+  changeTheme,
+} from "../utils/themeManager";
 
 const ThemeSelect = () => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(() => getCurrentTheme());
+  const [selected, setSelected] = useState(() => getCurrentThemeLocal());
   const ref = useRef<HTMLDivElement>(null);
 
   // Apply theme when selected changes
@@ -12,6 +16,7 @@ const ThemeSelect = () => {
     changeTheme(selected);
   }, [selected]);
 
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {

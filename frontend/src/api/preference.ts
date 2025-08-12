@@ -19,7 +19,7 @@ export interface PreferenceResponse {
 export async function getPreferences(): Promise<PreferenceResponse> {
   try {
     const response = await httpClient.get("/preference");
-    return response.data;
+    return { success: true, preferences: response.data };
   } catch (error: any) {
     throw new Error(
       error?.response?.data?.error ||

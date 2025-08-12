@@ -60,11 +60,12 @@
   padding: 0.75rem 0.5rem;
   background: none;
   border: none;
+  border-radius: 0;
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-secondary);
-  border-bottom: 3px solid transparent;
+  border-bottom: 4px solid transparent;
   transition: all 0.2s ease;
   text-align: center;
   min-height: 60px;
