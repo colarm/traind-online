@@ -72,8 +72,23 @@ const MyTraindsPage: React.FC = () => {
 
   const handleStarToggle = async (traindId: string, isStarred: boolean) => {
     try {
-      await toggleTraindStar(traindId);
-      loadTrainds();
+      const result = await toggleTraindStar(traindId);
+
+      // Update the specific traind in the list instead of reloading everything
+      setTrainds((prevTrainds) =>
+        prevTrainds.map((traind) =>
+          traind.id === traindId
+            ? {
+                ...traind,
+                _count: {
+                  stars:
+                    (traind._count?.stars || 0) + (result.isStarred ? 1 : -1),
+                  comments: traind._count?.comments || 0,
+                },
+              }
+            : traind
+        )
+      );
     } catch (err: any) {
       console.error("Failed to toggle star:", err);
       // Show error to user

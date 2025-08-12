@@ -31,9 +31,10 @@ export async function starTraind(traindId: string): Promise<StarItem> {
 }
 
 // Remove star from a traind
-export async function unstarTraind(traindId: string): Promise<void> {
+export async function unstarTraind(traindId: string): Promise<boolean> {
   try {
-    await httpClient.post("/star/remove", { traindId });
+    const result = await httpClient.post("/star/remove", { traindId });
+    return result.status === 204;
   } catch (error: any) {
     throw new Error(
       error?.response?.data?.error ||
@@ -89,12 +90,12 @@ export async function toggleTraindStar(
 
     if (isCurrentlyStarred) {
       // Unstar the traind
-      await unstarTraind(traindId);
-      return { isStarred: false };
+      const result = await unstarTraind(traindId);
+      return { isStarred: !result };
     } else {
       // Star the traind
-      await starTraind(traindId);
-      return { isStarred: true };
+      const result = await starTraind(traindId);
+      return { isStarred: !!result };
     }
   } catch (error: any) {
     throw new Error(
