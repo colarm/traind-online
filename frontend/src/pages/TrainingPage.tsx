@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import useRequireAuth from "../utils/useRequireAuth";
 import styles from "./TrainingPage.module.css";
 import { saveParameterSet } from "../api/parameterSet";
 import { runAnalysis } from "../api/traind";
 
 const TrainingPage: React.FC = () => {
+  useRequireAuth();
   const [target, setTarget] = useState("");
   const [params, setParams] = useState({
     min_cluster_size: 5,
@@ -35,9 +37,7 @@ const TrainingPage: React.FC = () => {
       if (runRes.error) {
         setResult("Analysis failed: " + runRes.error);
       } else {
-        setResult(
-          `Task created!`
-        );
+        setResult(`Task created!`);
       }
     } catch (e: any) {
       setResult("Request error: " + (e?.message || e));

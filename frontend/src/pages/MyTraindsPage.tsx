@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import useRequireAuth from "../utils/useRequireAuth";
 import TraindStream from "../components/TraindStream";
 import { Traind } from "../types/traind";
 import {
@@ -11,6 +12,7 @@ import { toggleTraindStar } from "../api/star";
 import styles from "./MyTraindsPage.module.css";
 
 const MyTraindsPage: React.FC = () => {
+  useRequireAuth();
   const [trainds, setTrainds] = useState<Traind[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

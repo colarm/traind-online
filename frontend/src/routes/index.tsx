@@ -10,7 +10,6 @@ const routes = [
   <Route path="/" element={<WelcomePage />} key="welcome" />,
   <Route path="/training" element={<TrainingPage />} key="training" />,
   <Route path="/my-trainds" element={<MyTraindsPage />} key="my-trainds" />,
-  <Route path="/trainds" element={<MyTraindsPage />} key="trainds-redirect" />, // Redirect old route
   <Route path="/me" element={<MePage />} key="me" />,
   <Route path="*" element={<NotFound />} key="notfound" />,
 ];

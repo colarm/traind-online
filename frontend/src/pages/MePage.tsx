@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Traind } from "../types/traind";
+import useRequireAuth from "../utils/useRequireAuth";
+import { useNavigate } from "react-router-dom";
 import { HistoryItem, getHistory, removeFromHistory } from "../api/history";
 import { StarItem, getStarredTrainds, toggleTraindStar } from "../api/star";
 import { getParameterSets, ParameterSet } from "../api/parameterSet";
@@ -15,6 +15,7 @@ import ThemeSelect from "../components/ThemeSelect";
 import styles from "./MePage.module.css";
 
 const MePage: React.FC = () => {
+  useRequireAuth();
   const [activeTab, setActiveTab] = useState<
     "overview" | "history" | "starred" | "parameters" | "preferences"
   >("overview");
@@ -35,6 +36,8 @@ const MePage: React.FC = () => {
     totalStars: 0,
     totalHistory: 0,
   });
+
+  const navigate = useNavigate();
 
   // States for TraindStream usage
   const [historyTrainds, setHistoryTrainds] = useState<TraindWithPagination[]>(
@@ -428,7 +431,7 @@ const MePage: React.FC = () => {
             </div>
           </div>
           <ActionButton
-            onClick={() => window.open("/trainds", "_blank")}
+            onClick={() => navigate("/my-trainds")}
             variant="secondary"
           >
             Manage My Trainds
