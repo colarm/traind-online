@@ -7,6 +7,7 @@ import historyRoutes from "./modules/history/history.route";
 import commentRoutes from "./modules/comment/comment.route";
 import preferenceRoutes from "./modules/preference/preference.route";
 import helpRoutes from "./modules/help/help.route";
+import feedRoutes from "./modules/feed/feed.route";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/history", historyRoutes);
 router.use("/comment", commentRoutes);
 router.use("/preference", preferenceRoutes);
 router.use("/help", helpRoutes);
+router.use("/feed", feedRoutes);
 
 export default router;
