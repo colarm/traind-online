@@ -82,12 +82,14 @@ const Navbar = () => {
             </Link>
           </li>
         ))}
+        <li>
+          <span className={styles.userEmail}>{userEmail}</span>
+        </li>
       </ul>
 
       <div className={styles.userActions}>
         {isLoggedIn ? (
           <>
-            <span className={styles.userEmail}>{userEmail}</span>
             <button
               type="button"
               className={styles.actionButton}
