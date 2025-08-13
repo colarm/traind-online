@@ -140,6 +140,25 @@
   color: var(--color-warning);
 }
 
+.actionButton.unstarred {
+  color: var(--color-text-secondary);
+}
+
+.actionButton.unstarred:hover {
+  color: var(--color-warning);
+  background: var(--color-bg-alt);
+}
+
+.actionButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.actionButton:disabled:hover {
+  background: none;
+  color: var(--color-text-secondary);
+}
+
 .actionButton.delete {
   color: var(--color-error);
 }
@@ -301,7 +320,7 @@
     margin: 0;
     max-width: calc(100vw - 32px);
   }
-	
+
   .placeholderCard {
     padding: 16px;
     margin: 0;

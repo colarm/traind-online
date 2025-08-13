@@ -16,6 +16,7 @@ export interface Traind {
     stars: number;
     comments: number;
   };
+  isStarred?: boolean; // Whether the current user has starred this traind
 }
 
 export interface TraindStreamProps {
@@ -23,7 +24,6 @@ export interface TraindStreamProps {
   loading?: boolean;
   hasError?: boolean;
   onTraindClick?: (traind: Traind) => void;
-  onStarToggle?: (traindId: string, isStarred: boolean) => void;
   onDelete?: (traindId: string) => void;
   showActions?: boolean;
   emptyMessage?: string;

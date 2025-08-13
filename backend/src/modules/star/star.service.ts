@@ -9,55 +9,6 @@ import {
 const prisma = new PrismaClient();
 
 const starService = {
-  // Adds a star to a traind
-  // Returns true if the star was added, false if it already exists
-  async addStar(input: AddStarInput): Promise<Star> {
-    const { userId, traindId } = input;
-
-    // Check if the star already exists
-    const existing = await prisma.star.findUnique({
-      where: { userId_traindId: { userId, traindId } },
-    });
-    if (existing) {
-      throw new Error("Star already exists");
-    }
-
-    // Check if the traind exists
-    const traindExists = await prisma.traind.findUnique({
-      where: { id: traindId },
-    });
-    if (!traindExists) {
-      throw new Error("Traind does not exist");
-    }
-
-    // Create the star
-    const star = await prisma.star.create({
-      data: { userId, traindId },
-    });
-    if (!star) {
-      throw new Error("Failed to create star");
-    }
-
-    return star;
-  },
-
-  async removeStar(input: RemoveStarInput): Promise<Star> {
-    const { userId, traindId } = input;
-
-    // Check if the star exists
-    const existingStar = await prisma.star.findUnique({
-      where: { userId_traindId: { userId, traindId } },
-    });
-    if (!existingStar) {
-      throw new Error("Star does not exist");
-    }
-
-    // Delete the star
-    return await prisma.star.delete({
-      where: { userId_traindId: { userId, traindId } },
-    });
-  },
-
   async getStarredTrainds(
     input: GetStarredTraindsInput
   ): Promise<PaginatedStarList> {
@@ -105,6 +56,10 @@ const starService = {
                 comments: true,
               },
             },
+            stars: {
+              where: { userId },
+              select: { id: true },
+            },
           },
         },
       },
@@ -118,7 +73,11 @@ const starService = {
       userId: star.userId,
       traindId: star.traindId,
       createdAt: star.createdAt,
-      traind: star.traind,
+      traind: {
+        ...star.traind,
+        isStarred: true,
+        stars: undefined
+      },
     }));
 
     const nextCursor = hasNextPage ? stars[limit].id : null;
@@ -128,6 +87,49 @@ const starService = {
       nextCursor,
       hasNextPage,
       totalCount,
+    };
+  },
+
+  // Toggle star status for a traind (add if not exist, remove if exists)
+  async toggleStar(input: {
+    userId: string;
+    traindId: string;
+  }): Promise<{ isStarred: boolean; starCount: number }> {
+    const { userId, traindId } = input;
+
+    // Check if the traind exists
+    const traindExists = await prisma.traind.findUnique({
+      where: { id: traindId },
+    });
+    if (!traindExists) {
+      throw new Error("Traind does not exist");
+    }
+
+    // Check if the star already exists
+    const existingStar = await prisma.star.findUnique({
+      where: { userId_traindId: { userId, traindId } },
+    });
+
+    if (existingStar) {
+      // Remove the star
+      await prisma.star.delete({
+        where: { userId_traindId: { userId, traindId } },
+      });
+    } else {
+      // Add the star
+      await prisma.star.create({
+        data: { userId, traindId },
+      });
+    }
+
+    // Get updated star count
+    const starCount = await prisma.star.count({
+      where: { traindId },
+    });
+
+    return {
+      isStarred: !existingStar, // true if star was added, false if removed
+      starCount,
     };
   },
 };

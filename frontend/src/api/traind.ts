@@ -31,6 +31,7 @@ export function adaptTraindResponse(backendTraind: any): TraindWithPagination {
     createdAt: backendTraind.createdAt,
     userId: backendTraind.userId,
     user: backendTraind.user,
+    isStarred: backendTraind.isStarred || false,
     _count: {
       stars: backendTraind.starCount || backendTraind._count?.stars || 0,
       comments:

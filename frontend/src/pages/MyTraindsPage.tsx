@@ -8,7 +8,6 @@ import {
   deleteTraind,
   setTraindVisibility,
 } from "../api/traind";
-import { toggleTraindStar } from "../api/star";
 import { useNavigate } from "react-router-dom";
 import styles from "./MyTraindsPage.module.css";
 
@@ -43,7 +42,6 @@ const MyTraindsPage: React.FC = () => {
         cursor: isLoadMore ? cursor : undefined,
       });
       const traindsList = response.trainds || [];
-      console.log("Loaded trainds:", traindsList);
 
       // Adapt backend response to frontend format
       const adaptedTrainds = traindsList.map(adaptTraindResponse);
@@ -68,32 +66,6 @@ const MyTraindsPage: React.FC = () => {
 
   const handleTraindClick = (traind: Traind) => {
     navigate(`/traind/${traind.id}`);
-  };
-
-  const handleStarToggle = async (traindId: string, isStarred: boolean) => {
-    try {
-      const result = await toggleTraindStar(traindId);
-
-      // Update the specific traind in the list instead of reloading everything
-      setTrainds((prevTrainds) =>
-        prevTrainds.map((traind) =>
-          traind.id === traindId
-            ? {
-                ...traind,
-                _count: {
-                  stars:
-                    (traind._count?.stars || 0) + (result.isStarred ? 1 : -1),
-                  comments: traind._count?.comments || 0,
-                },
-              }
-            : traind
-        )
-      );
-    } catch (err: any) {
-      console.error("Failed to toggle star:", err);
-      // Show error to user
-      alert("Failed to toggle star: " + err.message);
-    }
   };
 
   const handleDelete = async (traindId: string) => {
@@ -192,7 +164,6 @@ const MyTraindsPage: React.FC = () => {
         loading={loading}
         hasError={!!error}
         onTraindClick={handleTraindClick}
-        onStarToggle={handleStarToggle}
         onDelete={handleDelete}
         showActions={true}
         emptyMessage={getEmptyMessage()}

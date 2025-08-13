@@ -16,34 +16,6 @@ export interface StarListResponse {
   nextCursor?: string | null;
 }
 
-// Add star to a traind
-export async function starTraind(traindId: string): Promise<StarItem> {
-  try {
-    const response = await httpClient.post("/star/add", { traindId });
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        "Failed to star traind"
-    );
-  }
-}
-
-// Remove star from a traind
-export async function unstarTraind(traindId: string): Promise<boolean> {
-  try {
-    const result = await httpClient.post("/star/remove", { traindId });
-    return result.status === 204;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        "Failed to unstar traind"
-    );
-  }
-}
-
 // Get user's starred trainds
 export async function getStarredTrainds(params?: {
   limit?: number;
@@ -69,34 +41,13 @@ export async function getStarredTrainds(params?: {
   }
 }
 
-// Check if a traind is starred by the current user
-export async function isTraindStarred(traindId: string): Promise<boolean> {
-  try {
-    const response = await getStarredTrainds();
-    return response.stars.some((star) => star.traindId === traindId);
-  } catch (error: any) {
-    // If we can't fetch starred trainds, assume not starred
-    return false;
-  }
-}
-
-// Toggle star status for a traind (star if unstarred, unstar if starred)
+// Toggle star status for a traind using the star module API
 export async function toggleTraindStar(
   traindId: string
-): Promise<{ isStarred: boolean; starCount?: number }> {
+): Promise<{ isStarred: boolean; starCount: number }> {
   try {
-    // First check if the traind is currently starred
-    const isCurrentlyStarred = await isTraindStarred(traindId);
-
-    if (isCurrentlyStarred) {
-      // Unstar the traind
-      const result = await unstarTraind(traindId);
-      return { isStarred: !result };
-    } else {
-      // Star the traind
-      const result = await starTraind(traindId);
-      return { isStarred: !!result };
-    }
+    const response = await httpClient.post(`/star/toggle/${traindId}`);
+    return response.data;
   } catch (error: any) {
     throw new Error(
       error?.response?.data?.error ||

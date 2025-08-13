@@ -24,9 +24,17 @@ const feedController = {
 
       // For authenticated users
       const collaborativeWeight =
-        parseInt(req.query.collaborative as string) || 40;
-      const contentWeight = parseInt(req.query.content as string) || 40;
-      const trendingWeight = parseInt(req.query.trending as string) || 20;
+        req.query.collaborative !== undefined
+          ? parseInt(req.query.collaborative as string)
+          : 40;
+      const contentWeight =
+        req.query.content !== undefined
+          ? parseInt(req.query.content as string)
+          : 40;
+      const trendingWeight =
+        req.query.trending !== undefined
+          ? parseInt(req.query.trending as string)
+          : 20;
 
       const totalWeight = collaborativeWeight + contentWeight + trendingWeight;
       if (totalWeight !== 100) {
@@ -86,6 +94,7 @@ const feedController = {
   async getSubredditFeed(req: Request, res: Response) {
     try {
       const { subreddit } = req.params;
+      const userId = (req as any).user?.id;
 
       if (
         !subreddit ||
@@ -98,13 +107,15 @@ const feedController = {
         });
       }
 
-      const feed = await feedService.getSubredditFeed(subreddit.trim());
+      const feed = await feedService.getSubredditFeed(subreddit.trim(), userId);
 
       res.json({
         success: true,
         data: feed,
         meta: {
           subreddit: subreddit.trim(),
+          isAuthenticated: !!userId,
+          userId: userId || null,
           generatedAt: new Date().toISOString(),
         },
       });

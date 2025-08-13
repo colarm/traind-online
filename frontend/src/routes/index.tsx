@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import WelcomePage from "../pages/WelcomePage";
 import TrainingPage from "../pages/TrainingPage";
 import MyTraindsPage from "../pages/MyTraindsPage";
-import TrendsPage from "../pages/TrendsPage";
+import TrendsPage from "../pages/TraindsPage";
 import MePage from "../pages/MePage";
 import NotFound from "../pages/NotFoundPage";
 import TraindDetailPage from "../pages/TraindDetailPage";

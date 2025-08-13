@@ -1,27 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import { logout, checkStatus } from "../api/auth";
+import { logout } from "../api/auth";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState("");
-
-  useEffect(() => {
-    const fetchStatus = async () => {
-      const result = await checkStatus();
-      if (result && !result.error) {
-        setIsLoggedIn(result.valid);
-        setUserEmail(result.email || "");
-      } else {
-        console.error("Failed to fetch status", result.error);
-      }
-    };
-    fetchStatus();
-  }, []);
+  const { isLoggedIn, userEmail, setIsLoggedIn, refreshAuth } = useAuth();
 
   const navItems = [
     { path: "/trainds", label: "Trainds" },
@@ -35,6 +22,8 @@ const Navbar = () => {
     try {
       await logout();
       setIsLoggedIn(false);
+      // 刷新认证状态以确保一致性
+      await refreshAuth();
       window.location.href = "/";
     } catch (error) {
       console.error("Logout failed", error);

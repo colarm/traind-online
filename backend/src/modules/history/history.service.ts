@@ -105,6 +105,10 @@ const historyService = {
                 comments: true,
               },
             },
+            stars: {
+              where: { userId },
+              select: { id: true },
+            },
           },
         },
       },
@@ -120,7 +124,11 @@ const historyService = {
       userId: history.userId,
       traindId: history.traindId,
       viewedAt: history.viewedAt,
-      traind: history.traind,
+      traind: {
+        ...history.traind,
+        isStarred: (history.traind as any).stars?.length > 0,
+        stars: undefined,
+      },
     }));
 
     const nextCursor = hasNextPage ? histories[limit].id : null;

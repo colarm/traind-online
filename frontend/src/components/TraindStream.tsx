@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Traind, TraindStreamProps } from "../types/traind";
+import { useAuth } from "../contexts/AuthContext";
+import { toggleTraindStar } from "../api/star";
 import styles from "./TraindStream.module.css";
 
 const TraindStream: React.FC<TraindStreamProps> = ({
@@ -7,11 +9,34 @@ const TraindStream: React.FC<TraindStreamProps> = ({
   loading = false,
   hasError = false,
   onTraindClick,
-  onStarToggle,
   onDelete,
   showActions = true,
   emptyMessage = "No trainds found",
 }) => {
+  const { isLoggedIn } = useAuth();
+  const [starringTrainds, setStarringTrainds] = useState<Set<string>>(
+    new Set()
+  );
+  const [localStarStates, setLocalStarStates] = useState<Map<string, boolean>>(
+    new Map()
+  );
+
+  useEffect(() => {
+    const initialStarStates = new Map<string, boolean>();
+    trainds.forEach((traind) => {
+      initialStarStates.set(traind.id, traind.isStarred || false);
+    });
+    setLocalStarStates(initialStarStates);
+  }, [trainds]);
+
+  const getTraindStarStatus = (traind: Traind): boolean => {
+    const localState = localStarStates.get(traind.id);
+    const finalState =
+      localState !== undefined ? localState : traind.isStarred || false;
+
+    return finalState;
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -46,14 +71,35 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     }
   };
 
-  const handleStarClick = (
-    e: React.MouseEvent,
-    traindId: string,
-    isStarred: boolean
-  ) => {
+  const handleStarClick = async (e: React.MouseEvent, traind: Traind) => {
     e.stopPropagation();
-    if (onStarToggle) {
-      onStarToggle(traindId, !isStarred);
+
+    if (!isLoggedIn) return;
+
+    if (starringTrainds.has(traind.id)) return;
+
+    try {
+      setStarringTrainds((prev) => new Set(prev).add(traind.id));
+
+      const result = await toggleTraindStar(traind.id);
+
+      setLocalStarStates((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(traind.id, result.isStarred);
+        return newMap;
+      });
+
+      if (traind._count) {
+        traind._count.stars = result.starCount;
+      }
+    } catch (error) {
+      console.error("Failed to toggle star:", error);
+    } finally {
+      setStarringTrainds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(traind.id);
+        return newSet;
+      });
     }
   };
 
@@ -137,11 +183,29 @@ const TraindStream: React.FC<TraindStreamProps> = ({
               <div className={styles.traindActions}>
                 <div className={styles.actionGroup}>
                   <button
-                    className={`${styles.actionButton} ${styles.starred}`}
-                    onClick={(e) => handleStarClick(e, traind.id, false)}
-                    title="Star this traind"
+                    className={`${styles.actionButton} ${
+                      isLoggedIn && getTraindStarStatus(traind)
+                        ? styles.starred
+                        : styles.unstarred
+                    }`}
+                    onClick={(e) => handleStarClick(e, traind)}
+                    title={
+                      !isLoggedIn
+                        ? "Login to star this traind"
+                        : starringTrainds.has(traind.id)
+                        ? "Processing..."
+                        : getTraindStarStatus(traind)
+                        ? "Unstar this traind"
+                        : "Star this traind"
+                    }
+                    disabled={!isLoggedIn || starringTrainds.has(traind.id)}
                   >
-                    ⭐ {traind._count?.stars || 0}
+                    {starringTrainds.has(traind.id)
+                      ? "⏳"
+                      : isLoggedIn && getTraindStarStatus(traind)
+                      ? "⭐"
+                      : "☆"}{" "}
+                    {traind._count?.stars || 0}
                   </button>
                   <button className={styles.actionButton} title="Comments">
                     💬 {traind._count?.comments || 0}

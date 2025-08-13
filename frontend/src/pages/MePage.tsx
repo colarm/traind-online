@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import useRequireAuth from "../utils/useRequireAuth";
 import { useNavigate } from "react-router-dom";
 import { HistoryItem, getHistory, removeFromHistory } from "../api/history";
-import { StarItem, getStarredTrainds, toggleTraindStar } from "../api/star";
+import { StarItem, getStarredTrainds } from "../api/star";
 import { getParameterSets, ParameterSet } from "../api/parameterSet";
 import {
   getPreferences,
@@ -235,18 +235,6 @@ const MePage: React.FC = () => {
     }
   };
 
-  const handleStarToggle = async (traindId: string) => {
-    try {
-      const result = await toggleTraindStar(traindId);
-      // Reload starred trainds for both overview and tab views
-      if (activeTab === "starred") {
-        loadStarredTrainds();
-      }
-    } catch (err: any) {
-      alert("Failed to toggle star: " + err.message);
-    }
-  };
-
   const handlePreferenceUpdate = async (
     updatedPreferences: UserPreferences
   ) => {
@@ -449,7 +437,6 @@ const MePage: React.FC = () => {
         loading={loading}
         hasError={!!error}
         onTraindClick={handleTraindClick}
-        onStarToggle={(traindId, isStarred) => handleStarToggle(traindId)}
         showActions={true}
         emptyMessage="No history found"
       />
@@ -464,7 +451,6 @@ const MePage: React.FC = () => {
         loading={loading}
         hasError={!!error}
         onTraindClick={handleTraindClick}
-        onStarToggle={(traindId, isStarred) => handleStarToggle(traindId)}
         showActions={true}
         emptyMessage="No starred trainds found"
       />

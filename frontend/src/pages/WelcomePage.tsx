@@ -1,22 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import { login, register, checkStatus } from "../api/auth";
+import { login, register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import styles from "./WelcomePage.module.css";
 
 type AuthMode = "login" | "register";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
+  const { refreshAuth, isLoggedIn, authChecked } = useAuth();
 
-  // Check if user is already logged in
+  // Check if user is already logged in using AuthContext
   useEffect(() => {
-    (async () => {
-      const res = await checkStatus();
-      if (res && res.valid) {
-        navigate("/trainds");
-      }
-    })();
-  }, [navigate]);
+    if (authChecked && isLoggedIn) {
+      navigate("/trainds");
+    }
+  }, [isLoggedIn, authChecked, navigate]);
+
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [mode, setMode] = useState<AuthMode>("login");
@@ -112,8 +112,9 @@ const WelcomePage = () => {
         setSubmitting(false);
         return;
       }
-      window.location.reload();
+      await refreshAuth();
       close();
+      navigate("/trainds");
     } else {
       const newUser = await register({
         email,
@@ -125,8 +126,9 @@ const WelcomePage = () => {
         setSubmitting(false);
         return;
       }
-      window.location.reload();
+      await refreshAuth();
       close();
+      navigate("/trainds");
     }
     setSubmitting(false);
   };

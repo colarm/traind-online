@@ -196,6 +196,10 @@ const getCandidateTrainds = async (userId: string): Promise<any[]> => {
           history: true,
         },
       },
+      stars: {
+        where: { userId },
+        select: { id: true },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -378,6 +382,8 @@ const feedService = {
           trendingScore,
           hybridScore,
           isPersonalized: true,
+          isStarred: (traind as any).stars?.length > 0,
+          stars: undefined, // Remove stars array from response
         };
       })
     );
@@ -404,7 +410,7 @@ const feedService = {
   },
 
   // Get trending feed (public access)
-  async getTrendingFeed(): Promise<FeedResult> {
+  async getTrendingFeed(userId?: string): Promise<FeedResult> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -429,6 +435,12 @@ const feedService = {
             history: true,
           },
         },
+        ...(userId && {
+          stars: {
+            where: { userId },
+            select: { id: true },
+          },
+        }),
       },
       orderBy: {
         createdAt: "desc",
@@ -445,6 +457,10 @@ const feedService = {
         finalScore: trendingScore,
         isPersonalized: false,
         recommendationSource: "trending",
+        ...(userId && {
+          isStarred: (traind as any).stars?.length > 0,
+        }),
+        stars: undefined, // Remove stars array from response
       };
     });
 
@@ -459,7 +475,10 @@ const feedService = {
   },
 
   // Get specific subreddit content
-  async getSubredditFeed(subreddit: string): Promise<FeedResult> {
+  async getSubredditFeed(
+    subreddit: string,
+    userId?: string
+  ): Promise<FeedResult> {
     const trainds = await prisma.traind.findMany({
       where: {
         isPublic: true,
@@ -482,6 +501,12 @@ const feedService = {
             history: true,
           },
         },
+        ...(userId && {
+          stars: {
+            where: { userId },
+            select: { id: true },
+          },
+        }),
       },
       orderBy: {
         createdAt: "desc",
@@ -489,9 +514,18 @@ const feedService = {
       take: 50,
     });
 
-    const total = trainds.length;
+    // Add isStarred field if user is provided
+    const traindsWithStarStatus = trainds.map((traind) => ({
+      ...traind,
+      ...(userId && {
+        isStarred: (traind as any).stars?.length > 0,
+      }),
+      stars: undefined, // Remove stars array from response
+    }));
 
-    return { trainds, total };
+    const total = traindsWithStarStatus.length;
+
+    return { trainds: traindsWithStarStatus, total };
   },
 
   // Get personalized search results
@@ -531,6 +565,12 @@ const feedService = {
             history: true,
           },
         },
+        ...(userId && {
+          stars: {
+            where: { userId },
+            select: { id: true },
+          },
+        }),
       },
     });
 
@@ -563,6 +603,8 @@ const feedService = {
             trendingScore,
             finalScore,
             isPersonalized: true,
+            isStarred: (traind as any).stars?.length > 0,
+            stars: undefined, // Remove stars array from response
           };
         })
       );
@@ -588,6 +630,7 @@ const feedService = {
           trendingScore,
           finalScore,
           isPersonalized: false,
+          stars: undefined, // Remove stars array from response
         };
       });
 

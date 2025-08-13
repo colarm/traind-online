@@ -43,7 +43,11 @@ const traindService = {
     return traind.id;
   },
 
-  async getTraindById(traindId: string): Promise<Traind | null> {
+  // Enhanced getTraindById with star status for specific user
+  async getTraindById(
+    traindId: string,
+    userId?: string
+  ): Promise<(Traind & { isStarred?: boolean }) | null> {
     if (!traindId) throw new Error("Traind ID is required");
 
     const traindItem = await prisma.traind.findUnique({
@@ -55,11 +59,19 @@ const traindService = {
             comments: true,
           },
         },
+        ...(userId && {
+          stars: {
+            where: { userId },
+            select: { id: true },
+          },
+        }),
       },
     });
+
     if (!traindItem) {
       throw new Error("Traind record not found");
     }
+
     if (traindItem.status !== "completed") {
       const traind = await analysisClient.getResult(traindId);
       if (!traind) {
@@ -80,7 +92,18 @@ const traindService = {
       return updatedTraind as Traind;
     }
 
-    return traindItem;
+    // Add isStarred field if user is provided
+    const result = {
+      ...traindItem,
+      ...(userId && {
+        isStarred: (traindItem as any).stars?.length > 0,
+      }),
+    };
+
+    // Remove the stars array from response
+    delete (result as any).stars;
+
+    return result;
   },
 
   async setVisibility(
@@ -96,8 +119,6 @@ const traindService = {
       where: { id: traindId },
       data: { isPublic },
     });
-
-    console.log(`Traind record ${traindId} visibility updated to ${isPublic}`);
 
     return updatedTraind;
   },
@@ -167,16 +188,27 @@ const traindService = {
             comments: true,
           },
         },
+        stars: {
+          where: { userId },
+          select: { id: true },
+        },
       },
     });
 
     const hasNextPage = trainds.length > limit;
     const traindsToReturn = hasNextPage ? trainds.slice(0, limit) : trainds;
 
+    // Add isStarred field and remove stars array
+    const traindsWithStarStatus = traindsToReturn.map((traind) => ({
+      ...traind,
+      isStarred: (traind as any).stars.length > 0,
+      stars: undefined, // Remove the stars array from response
+    }));
+
     const nextCursor = hasNextPage ? trainds[limit].id : null;
 
     return {
-      trainds: traindsToReturn,
+      trainds: traindsWithStarStatus,
       nextCursor,
       hasNextPage,
       totalCount,

@@ -34,3 +34,31 @@ export const authenticate = (
     return res.status(401).json({ error: "Invalid token" });
   }
 };
+
+// Optional authentication - doesn't require login, but extracts user info if available
+export const optionalAuthenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      next();
+      return;
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+    if (decoded?.userId) {
+      (req as any).user = {
+        id: decoded.userId,
+      };
+    }
+
+    next();
+  } catch (err: any) {
+    console.error("Optional authentication error:", err);
+    next();
+  }
+};

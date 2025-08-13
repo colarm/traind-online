@@ -33,9 +33,10 @@ const traindController = {
   async getTraindById(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
+      const userId = (req as any).user?.id; // Optional user context for star status
 
       // Get Traind record by ID
-      const traind = await traindService.getTraindById(traindId);
+      const traind = await traindService.getTraindById(traindId, userId);
 
       if (!traind) {
         return res.status(404).json({ error: "Traind record not found" });
