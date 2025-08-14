@@ -22,9 +22,8 @@ const Navbar = () => {
     try {
       await logout();
       setIsLoggedIn(false);
-      // 刷新认证状态以确保一致性
       await refreshAuth();
-      window.location.href = "/";
+      navigate("/");
     } catch (error) {
       console.error("Logout failed", error);
     }
