@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getTraindById, exportResult, getParameterSetId } from "../api/traind";
 import { loadParameterSet } from "../api/parameterSet";
+import { addToHistory } from "../api/history";
+import { useAuth } from "../contexts/AuthContext";
 import CommentArea from "../components/CommentArea";
 import styles from "./TraindDetailPage.module.css";
 
 const TraindDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { isLoggedIn } = useAuth();
   const [traind, setTraind] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,28 +18,55 @@ const TraindDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
-    (async () => {
+
+    const loadTraindDetail = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        const data = await getTraindById(id);
-        if (data.error) {
-          setError(data.error);
-          setLoading(false);
+        // Load traind data
+        const traindData = await getTraindById(id);
+        if (traindData.error) {
+          setError(traindData.error);
           return;
         }
-        setTraind(data);
-        const ps = await getParameterSetId(id);
-        if (!ps.error && ps.parameterSetId) {
-          const paramSet = await loadParameterSet(ps.parameterSetId);
-          if (paramSet) setParameterSet(paramSet);
+        setTraind(traindData);
+
+        // Add to history only if user is logged in
+        if (isLoggedIn) {
+          try {
+            await addToHistory(id);
+          } catch (historyError) {
+            console.warn("Failed to add to history:", historyError);
+          }
         }
-        setLoading(false);
+
+        // Load parameter set data
+        try {
+          const parameterSetResponse = await getParameterSetId(id);
+          if (
+            !parameterSetResponse.error &&
+            parameterSetResponse.parameterSetId
+          ) {
+            const paramSet = await loadParameterSet(
+              parameterSetResponse.parameterSetId
+            );
+            if (paramSet) {
+              setParameterSet(paramSet);
+            }
+          }
+        } catch (paramError) {
+          console.warn("Failed to load parameter set:", paramError);
+        }
       } catch (err: any) {
-        setError(err?.message || "Failed to load detail");
+        setError(err?.message || "Failed to load traind detail");
+      } finally {
         setLoading(false);
       }
-    })();
-  }, [id]);
+    };
+
+    loadTraindDetail();
+  }, [id, isLoggedIn]);
 
   const handleExport = async (format: string) => {
     if (!id) return;

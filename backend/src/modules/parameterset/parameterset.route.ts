@@ -1,6 +1,6 @@
 import { Router } from "express";
 import parameterSetController from "./parameterset.controller";
-import { authenticate } from "../../shared/middlewares/auth.middleware";
+import { authenticate, optionalAuthenticate } from "../../shared/middlewares/auth.middleware";
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.post("/save", authenticate, save);
 // Route to get all parameter sets for the current user
 router.get("/my", authenticate, getMyParameterSets);
 // Route to load parameter set by ID
-router.get("/:id", authenticate, load);
+router.get("/:id", optionalAuthenticate, load);
 // Route to copy parameter set from Traind
 router.post("/copy", authenticate, copyFromTraind);
 

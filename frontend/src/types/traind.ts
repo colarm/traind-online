@@ -23,7 +23,6 @@ export interface TraindStreamProps {
   trainds: Traind[];
   loading?: boolean;
   hasError?: boolean;
-  onTraindClick?: (traind: Traind) => void;
   onDelete?: (traindId: string) => void;
   showActions?: boolean;
   emptyMessage?: string;

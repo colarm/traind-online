@@ -111,4 +111,5 @@ body {
   line-height: 1.6;
   background-color: var(--color-bg);
   color: var(--color-text-main);
+  touch-action: manipulation;
 }

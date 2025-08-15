@@ -19,7 +19,11 @@ const historyService = {
       where: { userId_traindId: { userId, traindId } },
     });
     if (existing) {
-      throw new Error("History entry already exists");
+      // Update the viewedAt timestamp for existing history
+      return await prisma.history.update({
+        where: { userId_traindId: { userId, traindId } },
+        data: { viewedAt: new Date() },
+      });
     }
 
     // Check if the traind exists

@@ -6,6 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { checkStatus } from "../api/auth";
+import { initializeTheme } from "../utils/themeManager";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -54,6 +55,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuthChecked(true);
     }
   };
+
+  useEffect(() => {
+    const checkTheme = async () => {
+      if (isLoggedIn) {
+        await initializeTheme();
+      }
+    };
+    checkTheme();
+  }, [isLoggedIn]);
 
   useEffect(() => {
     refreshAuth();

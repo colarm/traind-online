@@ -8,12 +8,10 @@ import {
   deleteTraind,
   setTraindVisibility,
 } from "../api/traind";
-import { useNavigate } from "react-router-dom";
 import styles from "./MyTraindsPage.module.css";
 
 const MyTraindsPage: React.FC = () => {
   useRequireAuth();
-  const navigate = useNavigate();
   const [trainds, setTrainds] = useState<Traind[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,10 +60,6 @@ const MyTraindsPage: React.FC = () => {
       setLoading(false);
       setLoadingMore(false);
     }
-  };
-
-  const handleTraindClick = (traind: Traind) => {
-    navigate(`/traind/${traind.id}`);
   };
 
   const handleDelete = async (traindId: string) => {
@@ -163,7 +157,6 @@ const MyTraindsPage: React.FC = () => {
         trainds={trainds}
         loading={loading}
         hasError={!!error}
-        onTraindClick={handleTraindClick}
         onDelete={handleDelete}
         showActions={true}
         emptyMessage={getEmptyMessage()}

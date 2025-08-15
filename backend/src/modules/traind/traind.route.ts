@@ -1,6 +1,9 @@
 import { Router } from "express";
 import traindController from "./traind.controller";
-import { authenticate } from "../../shared/middlewares/auth.middleware";
+import {
+  authenticate,
+  optionalAuthenticate,
+} from "../../shared/middlewares/auth.middleware";
 
 const router = Router();
 
@@ -18,12 +21,12 @@ router.post("/run", authenticate, runAnalysis);
 // Route to get all trainds for the current user
 router.get("/my", authenticate, getMyTrainds);
 // Route to get Traind record by ID
-router.get("/:traindId", authenticate, getTraindById);
+router.get("/:traindId", optionalAuthenticate, getTraindById);
 // Route to set visibility of a Traind record
 router.patch("/:traindId/visibility", authenticate, setVisibility);
 // Route to delete a Traind record
 router.delete("/:traindId", authenticate, deleteTraind);
 // Route to get parameter set ID by Traind ID
-router.get("/:traindId/parameter-set", authenticate, getParameterSetId);
+router.get("/:traindId/parameter-set", optionalAuthenticate, getParameterSetId);
 
 export default router;

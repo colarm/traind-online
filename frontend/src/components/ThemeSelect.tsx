@@ -8,13 +8,13 @@ import {
 
 const ThemeSelect = () => {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState(() => getCurrentThemeLocal());
+  const [selected, setSelected] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Apply theme when selected changes
   useEffect(() => {
-    changeTheme(selected);
-  }, [selected]);
+    const currentTheme = getCurrentThemeLocal();
+    setSelected(currentTheme);
+  }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -23,9 +23,35 @@ const ThemeSelect = () => {
         setOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleThemeSelect = (themeValue: string) => {
+    setSelected(themeValue);
+    changeTheme(themeValue);
+    setOpen(false);
+  };
+
+  const getCurrentThemeDisplay = () => {
+    if (!selected) {
+      return { icon: "🌫️", label: "Loading..." };
+    }
+
+    const currentTheme = themes.find((t) => t.value === selected);
+    if (!currentTheme) {
+      return { icon: "🌫️", label: "Unknown" };
+    }
+
+    const [icon, ...labelParts] = currentTheme.label.split(" ");
+    return {
+      icon,
+      label: labelParts.join(" "),
+    };
+  };
+
+  const { icon, label } = getCurrentThemeDisplay();
 
   return (
     <div className={styles.wrapper} ref={ref}>
@@ -33,34 +59,24 @@ const ThemeSelect = () => {
         type="button"
         className={styles.button}
         onClick={() => setOpen(!open)}
+        disabled={!selected}
       >
-        <span className={styles.icon}>
-          {themes.find((t) => t.value === selected)?.label.split(" ")[0]}
-        </span>
-        <span className={styles.label}>
-          {themes
-            .find((t) => t.value === selected)
-            ?.label.split(" ")
-            .slice(1)
-            .join(" ")}
-        </span>
+        <span className={styles.icon}>{icon}</span>
+        <span className={styles.label}>{label}</span>
         <span className={styles.arrow}>▾</span>
       </button>
 
-      {open && (
+      {open && selected && (
         <ul className={styles.menu}>
-          {themes.map((t) => (
+          {themes.map((theme) => (
             <li
-              key={t.value}
+              key={theme.value}
               className={`${styles.item} ${
-                t.value === selected ? styles.active : ""
+                theme.value === selected ? styles.active : ""
               }`}
-              onClick={() => {
-                setSelected(t.value);
-                setOpen(false);
-              }}
+              onClick={() => handleThemeSelect(theme.value)}
             >
-              {t.label}
+              {theme.label}
             </li>
           ))}
         </ul>

@@ -255,12 +255,6 @@ const MePage: React.FC = () => {
     setActiveTab("starred");
   };
 
-  const handleTraindClick = (traind: TraindWithPagination) => {
-    console.log("Navigate to traind:", traind.id);
-    // TODO: Implement navigation to traind detail page
-    alert(`Would navigate to traind: ${traind.title}`);
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -436,7 +430,6 @@ const MePage: React.FC = () => {
         trainds={historyTrainds}
         loading={loading}
         hasError={!!error}
-        onTraindClick={handleTraindClick}
         showActions={true}
         emptyMessage="No history found"
       />
@@ -450,7 +443,6 @@ const MePage: React.FC = () => {
         trainds={starredTrainds}
         loading={loading}
         hasError={!!error}
-        onTraindClick={handleTraindClick}
         showActions={true}
         emptyMessage="No starred trainds found"
       />

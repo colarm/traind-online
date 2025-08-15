@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Traind, TraindStreamProps } from "../types/traind";
 import { useAuth } from "../contexts/AuthContext";
 import { toggleTraindStar } from "../api/star";
@@ -8,12 +9,12 @@ const TraindStream: React.FC<TraindStreamProps> = ({
   trainds,
   loading = false,
   hasError = false,
-  onTraindClick,
   onDelete,
   showActions = true,
   emptyMessage = "No trainds found",
 }) => {
   const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
   const [starringTrainds, setStarringTrainds] = useState<Set<string>>(
     new Set()
   );
@@ -66,9 +67,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
   };
 
   const handleCardClick = (traind: Traind) => {
-    if (onTraindClick) {
-      onTraindClick(traind);
-    }
+    navigate(`/traind/${traind.id}`);
   };
 
   const handleStarClick = async (e: React.MouseEvent, traind: Traind) => {

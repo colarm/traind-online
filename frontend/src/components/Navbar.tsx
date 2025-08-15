@@ -51,29 +51,33 @@ const Navbar = () => {
         <Link to="/">Traind.online</Link>
       </div>
 
-      <div className={styles.menuToggle} onClick={toggleMenu}>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
+      {isLoggedIn && (
+        <div className={styles.menuToggle} onClick={toggleMenu}>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      )}
 
-      <ul className={`${styles.navList} ${isOpen ? styles.open : ""}`}>
-        {navItems.map((item) => (
-          <li
-            key={item.path}
-            className={`${styles.navItem} ${
-              location.pathname === item.path ? styles.active : ""
-            }`}
-          >
-            <Link to={item.path} onClick={() => setIsOpen(false)}>
-              {item.label}
-            </Link>
+      {isLoggedIn && (
+        <ul className={`${styles.navList} ${isOpen ? styles.open : ""}`}>
+          {navItems.map((item) => (
+            <li
+              key={item.path}
+              className={`${styles.navItem} ${
+                location.pathname === item.path ? styles.active : ""
+              }`}
+            >
+              <Link to={item.path} onClick={() => setIsOpen(false)}>
+                {item.label}
+              </Link>
+            </li>
+          ))}
+          <li>
+            <span className={styles.userEmail}>{userEmail}</span>
           </li>
-        ))}
-        <li>
-          <span className={styles.userEmail}>{userEmail}</span>
-        </li>
-      </ul>
+        </ul>
+      )}
 
       <div className={styles.userActions}>
         {isLoggedIn ? (

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Traind } from "../types/traind";
 import { getFeed, adaptFeedResponse, FeedResponse } from "../api/feed";
 import TraindStream from "../components/TraindStream";
 import styles from "./TraindsPage.module.css";
 
 const TraindsPage: React.FC = () => {
-  const navigate = useNavigate();
   const [trainds, setTrainds] = useState<Traind[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,10 +42,6 @@ const TraindsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleTraindClick = (traind: Traind) => {
-    navigate(`/traind/${traind.id}`);
   };
 
   const getEmptyMessage = () => {
@@ -95,7 +89,6 @@ const TraindsPage: React.FC = () => {
         trainds={trainds}
         loading={loading}
         hasError={!!error}
-        onTraindClick={handleTraindClick}
         showActions={true}
         emptyMessage={getEmptyMessage()}
       />
