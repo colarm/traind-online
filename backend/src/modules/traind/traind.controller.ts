@@ -77,12 +77,14 @@ const traindController = {
   async deleteTraind(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
+      const userId = (req as any).user.id;
 
-      // Delete Traind record
-      await traindService.deleteTraind(traindId);
+      // Delete Traind record (with user authorization check)
+      await traindService.deleteTraind(traindId, userId);
 
       return res.status(204).send();
     } catch (error: any) {
+      console.error("Error deleting Traind:", error);
       return res.status(500).json({ error: error.message });
     }
   },

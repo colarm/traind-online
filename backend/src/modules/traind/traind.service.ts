@@ -123,7 +123,7 @@ const traindService = {
     return updatedTraind;
   },
 
-  async deleteTraind(traindId: string): Promise<void> {
+  async deleteTraind(traindId: string, userId: string): Promise<void> {
     const existing = await prisma.traind.findUnique({
       where: { id: traindId },
     });
@@ -131,7 +131,33 @@ const traindService = {
       throw new Error("Traind record not found");
     }
 
-    await prisma.traind.delete({ where: { id: traindId } });
+    // Check if the user is the owner of the traind
+    if (existing.userId !== userId) {
+      throw new Error("Unauthorized: You can only delete your own trainds");
+    }
+
+    // Delete all related records first to avoid foreign key constraint errors
+    await prisma.$transaction(async (tx) => {
+      // Delete all stars for this traind
+      await tx.star.deleteMany({
+        where: { traindId },
+      });
+
+      // Delete all comments for this traind
+      await tx.comment.deleteMany({
+        where: { traindId },
+      });
+
+      // Delete all history records for this traind
+      await tx.history.deleteMany({
+        where: { traindId },
+      });
+
+      // Finally delete the traind itself
+      await tx.traind.delete({
+        where: { id: traindId },
+      });
+    });
   },
 
   async getParameterSetId(traindId: string): Promise<string | null> {

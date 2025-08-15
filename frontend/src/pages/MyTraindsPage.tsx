@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useRequireAuth from "../utils/useRequireAuth";
 import TraindStream from "../components/TraindStream";
+import { showSuccess, showError, showConfirm } from "../components/Toast";
 import { Traind } from "../types/traind";
 import {
   getMyTrainds,
@@ -63,20 +64,31 @@ const MyTraindsPage: React.FC = () => {
   };
 
   const handleDelete = async (traindId: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this traind? This action cannot be undone."
-      )
-    ) {
-      return;
-    }
+    showConfirm({
+      title: "Delete Traind",
+      message:
+        "Are you sure you want to delete this traind? This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      onConfirm: async () => {
+        try {
+          const result = await deleteTraind(traindId);
+          if (result.error) {
+            showError(`Failed to delete traind: ${result.error}`);
+            return;
+          }
 
-    try {
-      await deleteTraind(traindId);
-      loadTrainds();
-    } catch (err: any) {
-      alert("Failed to delete traind: " + err.message);
-    }
+          showSuccess("Traind deleted successfully!");
+          // Refresh the list to reflect the deletion
+          await loadTrainds();
+        } catch (err: any) {
+          console.error("Delete traind error:", err);
+          showError(
+            `Failed to delete traind: ${err.message || "Unknown error"}`
+          );
+        }
+      },
+    });
   };
 
   const handleVisibilityToggle = async (
@@ -85,9 +97,13 @@ const MyTraindsPage: React.FC = () => {
   ) => {
     try {
       await setTraindVisibility(traindId, !currentVisibility);
+      const newVisibility = !currentVisibility ? "public" : "private";
+      showSuccess(`Traind visibility updated to ${newVisibility}!`);
       loadTrainds();
     } catch (err: any) {
-      alert("Failed to update visibility: " + err.message);
+      showError(
+        `Failed to update visibility: ${err.message || "Unknown error"}`
+      );
     }
   };
 

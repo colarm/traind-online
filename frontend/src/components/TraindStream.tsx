@@ -104,10 +104,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
 
   const handleDeleteClick = (e: React.MouseEvent, traindId: string) => {
     e.stopPropagation();
-    if (
-      onDelete &&
-      window.confirm("Are you sure you want to delete this traind?")
-    ) {
+    if (onDelete) {
       onDelete(traindId);
     }
   };
