@@ -71,7 +71,7 @@ This platform is tailored for three main personas:
 
 ## 📈 Live Demo
 
-🔗 [https://traind.online](https://traind.online) *(if deployed)*
+🔗 [https://traind.online](https://traind.online)
 
 ---
 

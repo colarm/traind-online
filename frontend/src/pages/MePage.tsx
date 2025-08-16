@@ -12,6 +12,7 @@ import {
 import { getMyTrainds, TraindWithPagination } from "../api/traind";
 import TraindStream from "../components/TraindStream";
 import ThemeSelect from "../components/ThemeSelect";
+import { showError } from "../components/Toast";
 import styles from "./MePage.module.css";
 
 const MePage: React.FC = () => {
@@ -224,17 +225,6 @@ const MePage: React.FC = () => {
     }
   };
 
-  const handleRemoveFromHistory = async (traindId: string) => {
-    try {
-      await removeFromHistory(traindId);
-      setRecentHistory((prev) =>
-        prev.filter((item) => item.traindId !== traindId)
-      );
-    } catch (err: any) {
-      alert("Failed to remove from history: " + err.message);
-    }
-  };
-
   const handlePreferenceUpdate = async (
     updatedPreferences: UserPreferences
   ) => {
@@ -242,7 +232,7 @@ const MePage: React.FC = () => {
       await updatePreferences(updatedPreferences);
       setPreferences(updatedPreferences);
     } catch (err: any) {
-      alert("Failed to update preferences: " + err.message);
+      showError("Failed to update preferences: " + err.message);
     }
   };
 
