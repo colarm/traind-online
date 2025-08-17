@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package ml_service;
+
+// Task Service
+service TaskService {
+  // Add task to processing queue
+  rpc AddTask(AddTaskRequest) returns (AddTaskResponse);
+  
+  // Get task status and results
+  rpc GetTaskStatus(GetTaskStatusRequest) returns (GetTaskStatusResponse);
+  
+  // Cancel task (optional)
+  rpc CancelTask(CancelTaskRequest) returns (CancelTaskResponse);
+  
+  // List tasks (optional)
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+}
+
+// Add Task Request
+message AddTaskRequest {
+  string task_type = 1;           // Task type: "reddit_analysis", "data_clustering", etc.
+  string reddit_post_id = 2;      // Reddit post ID for reddit_analysis tasks
+  string parameters_json = 3;     // JSON string with all task parameters
+}
+
+// Add Task Response
+message AddTaskResponse {
+  bool success = 1;
+  string task_id = 2;
+  string message = 3;
+}
+
+// Get Task Status Request
+message GetTaskStatusRequest {
+  string task_id = 1;
+}
+
+// Get Task Status Response
+message GetTaskStatusResponse {
+  bool success = 1;
+  string task_id = 2;
+  string status = 3;              // "pending", "processing", "completed", "failed", "cancelled"
+  string message = 4;
+  string result_json = 5;         // JSON string with complete results
+  string error_json = 6;          // JSON string with error details if failed
+  string created_at = 7;          // ISO timestamp
+  string updated_at = 8;          // ISO timestamp
+  int64 processing_time_ms = 9;   // Processing time in milliseconds
+}
+
+// Cancel Task Request
+message CancelTaskRequest {
+  string task_id = 1;
+}
+
+// Cancel Task Response
+message CancelTaskResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// List Tasks Request
+message ListTasksRequest {
+  string status_filter = 1;       // Optional: filter by status
+  string client_id = 2;           // Optional: filter by client
+  int32 limit = 3;                // Optional: max results
+  int32 offset = 4;               // Optional: pagination offset
+}
+
+// List Tasks Response
+message ListTasksResponse {
+  bool success = 1;
+  repeated TaskSummary tasks = 2;
+  int32 total_count = 3;
+  string message = 4;
+}
+
+// Task Summary
+message TaskSummary {
+  string task_id = 1;
+  string task_type = 2;
+  string status = 3;
+  string created_at = 4;
+  string updated_at = 5;
+  string client_id = 6;
+}

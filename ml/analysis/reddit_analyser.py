@@ -43,8 +43,60 @@ class RedditAnalyser:
         except Exception as e:
             self.reddit = None
 
-    def analyse_reddit_post(self, reddit_post_id):
+    def _apply_custom_parameters(self, parameters):
+        """Apply custom parameters by temporarily updating global config"""
+        # Store original configs for restoration later
+        if not hasattr(self, "_original_configs"):
+            self._original_configs = {}
+
+        # Update global configs with custom parameters
+        if "hdbscan_params" in parameters:
+            import config
+
+            self._original_configs["HDBSCAN_PARAMS"] = config.HDBSCAN_PARAMS.copy()
+            config.HDBSCAN_PARAMS.update(parameters["hdbscan_params"])
+
+        if "preprocessing_params" in parameters:
+            import config
+
+            self._original_configs["PREPROCESSING_PARAMS"] = (
+                config.PREPROCESSING_PARAMS.copy()
+            )
+            config.PREPROCESSING_PARAMS.update(parameters["preprocessing_params"])
+
+        if "model_params" in parameters:
+            import config
+
+            self._original_configs["MODEL_PARAMS"] = config.MODEL_PARAMS.copy()
+            config.MODEL_PARAMS.update(parameters["model_params"])
+
+        if "summary_params" in parameters:
+            import config
+
+            self._original_configs["SUMMARY_PARAMS"] = config.SUMMARY_PARAMS.copy()
+            config.SUMMARY_PARAMS.update(parameters["summary_params"])
+
+        if "reddit_fetch_params" in parameters:
+            import config
+
+            self._original_configs["REDDIT_FETCH_PARAMS"] = (
+                config.REDDIT_FETCH_PARAMS.copy()
+            )
+            config.REDDIT_FETCH_PARAMS.update(parameters["reddit_fetch_params"])
+
+    def analyse_reddit_post(self, reddit_post_id, parameters=None):
+        """
+        Analyze a Reddit post with optional custom parameters
+
+        Args:
+            reddit_post_id: Reddit post ID to analyze
+            parameters: Optional dict of custom parameters to override defaults
+        """
         try:
+            # Apply custom parameters if provided
+            if parameters:
+                self._apply_custom_parameters(parameters)
+
             # 1. Request Reddit data
             post_data = self._fetch_reddit_data(reddit_post_id)
 
@@ -73,7 +125,7 @@ class RedditAnalyser:
             # 4. Perform clustering
             labels, clusters = self._perform_clustering(embeddings, filtered_comments)
 
-            # 5. Analyze results
+            # 5. Analyse results
             num_clusters = len(clusters)
             noise_ratio = sum(1 for label in labels if label == -1) / len(labels)
 
@@ -212,7 +264,8 @@ class RedditAnalyser:
         clusters = defaultdict(list)
         for idx, label in enumerate(labels):
             if label != -1:
-                clusters[label].append(comments[idx])
+                # Convert numpy.int64 to Python int for JSON serialization
+                clusters[int(label)].append(comments[idx])
 
         return labels, dict(clusters)
 
@@ -230,7 +283,7 @@ class RedditAnalyser:
             summaries.append(
                 {
                     "rank": rank,
-                    "cluster_id": cluster_id,
+                    "cluster_id": int(cluster_id),  # Convert numpy.int64 to Python int
                     "size": len(comments),
                     "summary": summary,
                     "keywords": self._extract_keywords(

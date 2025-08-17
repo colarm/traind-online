@@ -1,0 +1,171 @@
+{
+  "result_templates": {
+    "reddit_analysis": {
+      "metadata": {
+        "title": "Reddit Comment Clustering Analysis Report - Optimized",
+        "generated_at": "{timestamp}",
+        "reddit_post_id": "{post_id}",
+        "analysis_method": "HDBSCAN + SentenceTransformers",
+        "analysis_time_seconds": "{processing_time}",
+        "optimization_version": "1.0"
+      },
+      "executive_summary": {
+        "analysis_success": "{success_status}",
+        "total_comments_processed": "{total_comments}",
+        "clusters_discovered": "{num_clusters}",
+        "noise_ratio": "{noise_percentage}%",
+        "successfully_categorized": "{categorized_percentage}%",
+        "processing_efficiency": "{comments_per_second} comments/second"
+      },
+      "post_info": {
+        "id": "{post_id}",
+        "title": "{post_title}",
+        "author": "{post_author}",
+        "score": "{post_score}",
+        "upvote_ratio": "{upvote_ratio}",
+        "num_comments": "{total_post_comments}",
+        "created_utc": "{post_created_utc}",
+        "subreddit": "{subreddit}",
+        "url": "{post_url}",
+        "selftext": "{post_selftext}"
+      },
+      "cluster_statistics": {
+        "total_clusters": "{num_clusters}",
+        "avg_cluster_size": "{avg_cluster_size}",
+        "largest_cluster_size": "{max_cluster_size}",
+        "smallest_cluster_size": "{min_cluster_size}",
+        "median_cluster_size": "{median_cluster_size}",
+        "cluster_size_distribution": {
+          "small_clusters": "{small_clusters_count}",
+          "medium_clusters": "{medium_clusters_count}",
+          "large_clusters": "{large_clusters_count}"
+        }
+      },
+      "top_clusters": [
+        {
+          "cluster_id": "{cluster_id}",
+          "rank": "{rank}",
+          "size": "{cluster_size}",
+          "summary": "{cluster_summary}",
+          "keywords": "{cluster_keywords}",
+          "keyword_count": "{keyword_count}",
+          "sample_comments": "{sample_comments}",
+          "avg_comment_length": "{avg_comment_length}",
+          "relative_size": "{relative_size}%"
+        }
+      ],
+      "optimization_insights": [
+        "High number of small clusters - consider increasing min_cluster_size",
+        "Successfully identified {num_clusters} distinct discussion topics",
+        "Analysis covers {total_comments} comments",
+        "Dynamic topic identification adapts to Reddit dataset",
+        "Sentiment analysis reveals community opinion patterns"
+      ],
+      "methodology": {
+        "preprocessing": [
+          "Remove URLs and normalize whitespace",
+          "Filter comments with minimum {min_comment_length} characters and {min_word_count} words",
+          "Exclude low-quality comments starting with common phrases: {filter_prefixes}",
+          "Skip deleted comments: {filter_deleted}",
+          "Skip removed comments: {filter_removed}"
+        ],
+        "embedding": "SentenceTransformers {sentence_transformer_model} model",
+        "clustering": {
+          "algorithm": "HDBSCAN",
+          "parameters": {
+            "min_cluster_size": "{min_cluster_size}",
+            "min_samples": "{min_samples}",
+            "metric": "{metric}",
+            "cluster_selection_epsilon": "{cluster_selection_epsilon}",
+            "alpha": "{alpha}"
+          },
+          "optimization": "Tuned for reduced noise and better small cluster detection"
+        },
+        "summarization": [
+          "Dynamic keyword extraction (up to {keywords_per_cluster} per cluster)",
+          "Enhanced keyword analysis ({enhanced_keywords} keywords)",
+          "Sentiment analysis (positive/negative/neutral)",
+          "Topic categorization using 8 universal categories",
+          "Natural language summary generation with context awareness",
+          "Display top {top_clusters_display} clusters",
+          "Show {sample_comments_per_cluster} sample comments per cluster"
+        ]
+      }
+    }
+  },
+  "result_formatting": {
+    "timestamp_format": "%Y%m%d_%H%M%S",
+    "file_naming": "{task_type}_{post_id}_{timestamp}.json",
+    "cluster_size_thresholds": {
+      "small": { "min": 2, "max": 5 },
+      "medium": { "min": 6, "max": 15 },
+      "large": { "min": 16, "max": 999 }
+    },
+    "summary_categories": [
+      "Technical",
+      "Social",
+      "Q&A",
+      "Critical feedback",
+      "Some users supportive about",
+      "Some users discussing about"
+    ],
+    "sentiment_categories": ["positive", "negative", "neutral", "mixed"],
+    "topic_categories": [
+      "discussion",
+      "experience",
+      "question",
+      "positive",
+      "negative",
+      "humor",
+      "technical",
+      "social"
+    ]
+  },
+  "output_settings": {
+    "max_clusters_display": 25,
+    "max_sample_comments": 5,
+    "max_keywords_per_cluster": 6,
+    "enhanced_keywords_count": 10,
+    "precision_decimals": 1,
+    "percentage_format": "0.0%",
+    "include_noise_analysis": true,
+    "include_optimization_insights": true,
+    "include_methodology_details": true
+  },
+  "validation_rules": {
+    "required_fields": [
+      "metadata.title",
+      "metadata.generated_at",
+      "metadata.reddit_post_id",
+      "executive_summary.analysis_success",
+      "executive_summary.total_comments_processed",
+      "cluster_statistics.total_clusters"
+    ],
+    "data_types": {
+      "analysis_time_seconds": "float",
+      "total_comments_processed": "integer",
+      "clusters_discovered": "integer",
+      "cluster_size": "integer",
+      "avg_comment_length": "float"
+    },
+    "value_ranges": {
+      "noise_ratio": { "min": 0, "max": 100 },
+      "upvote_ratio": { "min": 0, "max": 1 },
+      "relative_size": { "min": 0, "max": 100 }
+    }
+  },
+  "error_handling": {
+    "missing_data_defaults": {
+      "post_title": "Unknown Title",
+      "post_author": "Unknown Author",
+      "post_score": 0,
+      "upvote_ratio": 0.5,
+      "post_selftext": ""
+    },
+    "fallback_summaries": {
+      "empty_cluster": "No meaningful content identified",
+      "processing_error": "Analysis incomplete due to processing error",
+      "insufficient_data": "Insufficient data for reliable clustering"
+    }
+  }
+}
