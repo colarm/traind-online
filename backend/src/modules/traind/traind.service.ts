@@ -72,7 +72,7 @@ const traindService = {
     }
   },
 
-  // Enhanced getTraindById with star status for specific user
+  // Get a Traind record by ID with optional user ID for starred status
   async getTraindById(
     traindId: string,
     userId?: string
