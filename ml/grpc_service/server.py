@@ -11,39 +11,23 @@ try:
     import grpc
     from concurrent import futures
 
-    # Try different import paths
+    # Import from proto directory consistently
     try:
         from grpc_service.proto import clustering_pb2_grpc, clustering_pb2
-        from grpc_service.handler import (
-            TaskServiceHandler,
-            TaskRequest,
-            TaskStatusRequest,
-            TaskCancelRequest,
-        )
     except ImportError:
-        try:
-            from proto import clustering_pb2_grpc, clustering_pb2
-            from handler import (
-                TaskServiceHandler,
-                TaskRequest,
-                TaskStatusRequest,
-                TaskCancelRequest,
-            )
-        except ImportError:
-            # Add proto directory to path and try again
-            import sys
-            import os
-
-            proto_dir = os.path.join(os.path.dirname(__file__), "proto")
+        # Fallback: add proto directory to path and import directly
+        proto_dir = os.path.join(os.path.dirname(__file__), "proto")
+        if proto_dir not in sys.path:
             sys.path.insert(0, proto_dir)
-            sys.path.insert(0, os.path.dirname(__file__))
-            import clustering_pb2_grpc, clustering_pb2  # type: ignore
-            from handler import (
-                TaskServiceHandler,
-                TaskRequest,
-                TaskStatusRequest,
-                TaskCancelRequest,
-            )
+        from grpc_service.proto import clustering_pb2_grpc, clustering_pb2
+
+    # Import handler from current directory
+    from grpc_service.handler import (
+        TaskServiceHandler,
+        TaskRequest,
+        TaskStatusRequest,
+        ListTasksRequest,
+    )
 
     GRPC_AVAILABLE = True
 except ImportError as e:
@@ -96,19 +80,46 @@ class TaskServiceGRPCAdapter(clustering_pb2_grpc.TaskServiceServicer):
 
         return grpc_response
 
-    def CancelTask(self, request, context):
-        # Convert gRPC request to Python object
-        cancel_request = TaskCancelRequest(task_id=request.task_id)
+    def ListTasks(self, request, context):
+        """List tasks with filtering support"""
+        try:
+            # Convert gRPC request to Python object
+            list_request = ListTasksRequest(
+                status_filter=request.status_filter,
+                client_id=request.client_id,
+                limit=request.limit if request.limit > 0 else 10,
+                offset=request.offset if request.offset >= 0 else 0,
+            )
 
-        # Call pure business logic handler
-        response_obj = self.handler.cancel_task(cancel_request)
+            # Call pure business logic handler
+            response_obj = self.handler.list_tasks(list_request)
 
-        # Convert Python object back to gRPC response
-        grpc_response = clustering_pb2.CancelTaskResponse()
-        grpc_response.success = response_obj.success
-        grpc_response.message = response_obj.message
+            # Convert Python object back to gRPC response
+            grpc_response = clustering_pb2.ListTasksResponse()
+            grpc_response.success = response_obj.success
+            grpc_response.total_count = response_obj.total_count
+            grpc_response.message = response_obj.message
 
-        return grpc_response
+            # Convert task summaries
+            for task_summary in response_obj.tasks:
+                task_proto = grpc_response.tasks.add()
+                task_proto.task_id = task_summary.task_id
+                task_proto.task_type = task_summary.task_type
+                task_proto.status = task_summary.status
+                task_proto.created_at = task_summary.created_at
+                task_proto.updated_at = task_summary.updated_at
+                task_proto.client_id = task_summary.client_id
+
+            return grpc_response
+
+        except Exception as e:
+            # Return error response
+            grpc_response = clustering_pb2.ListTasksResponse()
+            grpc_response.success = False
+            grpc_response.total_count = 0
+            grpc_response.message = f"Error in ListTasks: {str(e)}"
+
+            return grpc_response
 
 
 class GRPCServer:

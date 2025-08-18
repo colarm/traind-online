@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10\x63lustering.proto\x12\nml_service\"T\n\x0e\x41\x64\x64TaskRequest\x12\x11\n\ttask_type\x18\x01 \x01(\t\x12\x16\n\x0ereddit_post_id\x18\x02 \x01(\t\x12\x17\n\x0fparameters_json\x18\x03 \x01(\t\"D\n\x0f\x41\x64\x64TaskResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"\'\n\x14GetTaskStatusRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\t\"\xc7\x01\n\x15GetTaskStatusResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0e\n\x06status\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x13\n\x0bresult_json\x18\x05 \x01(\t\x12\x12\n\nerror_json\x18\x06 \x01(\t\x12\x12\n\ncreated_at\x18\x07 \x01(\t\x12\x12\n\nupdated_at\x18\x08 \x01(\t\x12\x1a\n\x12processing_time_ms\x18\t \x01(\x03\"$\n\x11\x43\x61ncelTaskRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\t\"6\n\x12\x43\x61ncelTaskResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"[\n\x10ListTasksRequest\x12\x15\n\rstatus_filter\x18\x01 \x01(\t\x12\x11\n\tclient_id\x18\x02 \x01(\t\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x0e\n\x06offset\x18\x04 \x01(\x05\"r\n\x11ListTasksResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12&\n\x05tasks\x18\x02 \x03(\x0b\x32\x17.ml_service.TaskSummary\x12\x13\n\x0btotal_count\x18\x03 \x01(\x05\x12\x0f\n\x07message\x18\x04 \x01(\t\"|\n\x0bTaskSummary\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x11\n\ttask_type\x18\x02 \x01(\t\x12\x0e\n\x06status\x18\x03 \x01(\t\x12\x12\n\ncreated_at\x18\x04 \x01(\t\x12\x12\n\nupdated_at\x18\x05 \x01(\t\x12\x11\n\tclient_id\x18\x06 \x01(\t2\xbe\x02\n\x0bTaskService\x12\x42\n\x07\x41\x64\x64Task\x12\x1a.ml_service.AddTaskRequest\x1a\x1b.ml_service.AddTaskResponse\x12T\n\rGetTaskStatus\x12 .ml_service.GetTaskStatusRequest\x1a!.ml_service.GetTaskStatusResponse\x12K\n\nCancelTask\x12\x1d.ml_service.CancelTaskRequest\x1a\x1e.ml_service.CancelTaskResponse\x12H\n\tListTasks\x12\x1c.ml_service.ListTasksRequest\x1a\x1d.ml_service.ListTasksResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10\x63lustering.proto\x12\nml_service\"T\n\x0e\x41\x64\x64TaskRequest\x12\x11\n\ttask_type\x18\x01 \x01(\t\x12\x16\n\x0ereddit_post_id\x18\x02 \x01(\t\x12\x17\n\x0fparameters_json\x18\x03 \x01(\t\"D\n\x0f\x41\x64\x64TaskResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\"\'\n\x14GetTaskStatusRequest\x12\x0f\n\x07task_id\x18\x01 \x01(\t\"\xe4\x01\n\x15GetTaskStatusResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07task_id\x18\x02 \x01(\t\x12\x0e\n\x06status\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12\x15\n\rerror_message\x18\x05 \x01(\t\x12\x12\n\ncreated_at\x18\x06 \x01(\t\x12\x12\n\nupdated_at\x18\x07 \x01(\t\x12\x1a\n\x12processing_time_ms\x18\x08 \x01(\x03\x12\x16\n\x0equeue_position\x18\t \x01(\x05\x12\x15\n\rtotal_pending\x18\n \x01(\x05\"[\n\x10ListTasksRequest\x12\x15\n\rstatus_filter\x18\x01 \x01(\t\x12\x11\n\tclient_id\x18\x02 \x01(\t\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x0e\n\x06offset\x18\x04 \x01(\x05\"r\n\x11ListTasksResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12&\n\x05tasks\x18\x02 \x03(\x0b\x32\x17.ml_service.TaskSummary\x12\x13\n\x0btotal_count\x18\x03 \x01(\x05\x12\x0f\n\x07message\x18\x04 \x01(\t\"|\n\x0bTaskSummary\x12\x0f\n\x07task_id\x18\x01 \x01(\t\x12\x11\n\ttask_type\x18\x02 \x01(\t\x12\x0e\n\x06status\x18\x03 \x01(\t\x12\x12\n\ncreated_at\x18\x04 \x01(\t\x12\x12\n\nupdated_at\x18\x05 \x01(\t\x12\x11\n\tclient_id\x18\x06 \x01(\t2\xf1\x01\n\x0bTaskService\x12\x42\n\x07\x41\x64\x64Task\x12\x1a.ml_service.AddTaskRequest\x1a\x1b.ml_service.AddTaskResponse\x12T\n\rGetTaskStatus\x12 .ml_service.GetTaskStatusRequest\x1a!.ml_service.GetTaskStatusResponse\x12H\n\tListTasks\x12\x1c.ml_service.ListTasksRequest\x1a\x1d.ml_service.ListTasksResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -38,17 +38,13 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETTASKSTATUSREQUEST']._serialized_start=188
   _globals['_GETTASKSTATUSREQUEST']._serialized_end=227
   _globals['_GETTASKSTATUSRESPONSE']._serialized_start=230
-  _globals['_GETTASKSTATUSRESPONSE']._serialized_end=429
-  _globals['_CANCELTASKREQUEST']._serialized_start=431
-  _globals['_CANCELTASKREQUEST']._serialized_end=467
-  _globals['_CANCELTASKRESPONSE']._serialized_start=469
-  _globals['_CANCELTASKRESPONSE']._serialized_end=523
-  _globals['_LISTTASKSREQUEST']._serialized_start=525
-  _globals['_LISTTASKSREQUEST']._serialized_end=616
-  _globals['_LISTTASKSRESPONSE']._serialized_start=618
-  _globals['_LISTTASKSRESPONSE']._serialized_end=732
-  _globals['_TASKSUMMARY']._serialized_start=734
-  _globals['_TASKSUMMARY']._serialized_end=858
-  _globals['_TASKSERVICE']._serialized_start=861
-  _globals['_TASKSERVICE']._serialized_end=1179
+  _globals['_GETTASKSTATUSRESPONSE']._serialized_end=458
+  _globals['_LISTTASKSREQUEST']._serialized_start=460
+  _globals['_LISTTASKSREQUEST']._serialized_end=551
+  _globals['_LISTTASKSRESPONSE']._serialized_start=553
+  _globals['_LISTTASKSRESPONSE']._serialized_end=667
+  _globals['_TASKSUMMARY']._serialized_start=669
+  _globals['_TASKSUMMARY']._serialized_end=793
+  _globals['_TASKSERVICE']._serialized_start=796
+  _globals['_TASKSERVICE']._serialized_end=1037
 # @@protoc_insertion_point(module_scope)

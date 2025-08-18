@@ -4,7 +4,7 @@
 echo "Generating gRPC code from proto files..."
 
 # 进入proto目录
-cd grpc/proto
+cd grpc_service/proto
 
 # 生成Python gRPC代码
 python -m grpc_tools.protoc \

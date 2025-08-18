@@ -31,3 +31,8 @@ export type GetMyTraindsInput = {
   cursor?: string;
   limit?: number;
 };
+
+export type GetPendingTraindsInput = {
+  userId: string;
+  limit?: number;
+};

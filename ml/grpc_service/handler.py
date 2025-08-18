@@ -61,9 +61,44 @@ class TaskStatusRequest:
         self.task_id = task_id
 
 
-class TaskCancelRequest:
-    def __init__(self, task_id: str):
+class ListTasksRequest:
+    def __init__(
+        self,
+        status_filter: str = "",
+        client_id: str = "",
+        limit: int = 10,
+        offset: int = 0,
+    ):
+        self.status_filter = status_filter
+        self.client_id = client_id
+        self.limit = limit
+        self.offset = offset
+
+
+class TaskSummary:
+    def __init__(
+        self,
+        task_id: str = "",
+        task_type: str = "",
+        status: str = "",
+        created_at: str = "",
+        updated_at: str = "",
+        client_id: str = "",
+    ):
         self.task_id = task_id
+        self.task_type = task_type
+        self.status = status
+        self.created_at = created_at
+        self.updated_at = updated_at
+        self.client_id = client_id
+
+
+class ListTasksResponse:
+    def __init__(self):
+        self.success = False
+        self.tasks = []
+        self.total_count = 0
+        self.message = ""
 
 
 class TaskResponse:
@@ -71,12 +106,13 @@ class TaskResponse:
         self.success = False
         self.task_id = ""
         self.message = ""
-        self.result_json = ""
-        self.error_json = ""
+        self.error_message = ""
         self.status = ""
         self.created_at = ""
         self.updated_at = ""
         self.processing_time_ms = 0
+        self.queue_position = 0
+        self.total_pending = 0
 
 
 class TaskServiceHandler:
@@ -267,6 +303,8 @@ class TaskServiceHandler:
                 response.success = False
                 response.status = "not_found"
                 response.message = "Task not found"
+                response.error_message = "Task not found"
+                response.queue_position = 0
                 return response
 
             # Basic information
@@ -275,63 +313,119 @@ class TaskServiceHandler:
             response.created_at = task.created_at.isoformat() if task.created_at else ""
             response.updated_at = datetime.now().isoformat()
 
+            # Get queue position for pending tasks
+            if task.status.value == "pending":
+                position, total_pending = self.task_queue.get_queue_position(
+                    request.task_id
+                )
+                response.queue_position = position
+                response.total_pending = total_pending
+                response.message = (
+                    f"Task is pending in queue (position {position}/{total_pending})"
+                )
+            else:
+                response.queue_position = 0
+                response.total_pending = 0
+
+            # Calculate processing time if applicable
+            if task.created_at:
+                now = datetime.now()
+                processing_time_ms = int((now - task.created_at).total_seconds() * 1000)
+                response.processing_time_ms = processing_time_ms
+            else:
+                response.processing_time_ms = 0
+
             # Handle different statuses
             if task.status.value == "completed":
-                if task.result:
-                    # Real result - use custom encoder for numpy types
-                    response.result_json = json.dumps(
-                        task.result,
-                        ensure_ascii=False,
-                        indent=2,
-                        default=numpy_json_encoder,
-                    )
-                    response.message = "Task completed successfully"
-                else:
-                    # No result available
-                    response.message = "Task completed but no result available"
+                response.message = "Task completed successfully"
+                response.error_message = ""
 
             elif task.status.value == "failed":
                 # Parse error details from task result if available
                 error_detail = self._parse_error_details(task.error, task.result)
-                error_info = {
-                    "error_type": error_detail["error_type"],
-                    "error_message": error_detail["error_message"],
-                    "error_category": error_detail["error_category"],
-                    "timestamp": datetime.now().isoformat(),
-                    "suggestions": error_detail.get("suggestions", []),
-                }
-
-                # Add additional error context if available
-                if error_detail.get("error_context"):
-                    error_info["error_context"] = error_detail["error_context"]
-
-                response.error_json = json.dumps(
-                    error_info, ensure_ascii=False, indent=2, default=numpy_json_encoder
-                )
-                response.message = f"Task failed: {error_detail['error_message']}"
+                response.message = "Task failed"
+                response.error_message = error_detail["error_message"]
 
             elif task.status.value == "processing":
-                response.message = "Task is being processed"
+                response.message = "Task is currently being processed"
+                response.error_message = ""
 
-            else:  # pending
-                response.message = "Task is pending in queue"
-
-            return response
+            print(f"Handler: GetTaskStatus completed - status: {response.status}")
 
         except Exception as e:
+            print(f"Handler: GetTaskStatus failed - {str(e)}")
             response.success = False
             response.status = "error"
-            response.message = f"Error retrieving task status: {str(e)}"
-            print(f"Handler Error: Error retrieving task status: {str(e)}")
-            return response
+            response.message = f"Failed to get task status: {str(e)}"
+            response.error_message = str(e)
+            response.queue_position = 0
 
-    def cancel_task(self, request: TaskCancelRequest) -> TaskResponse:
-        """Cancel a task"""
-        print(f"Handler: CancelTask - task_id: {request.task_id}")
+        return response
 
-        response = TaskResponse()
-        response.task_id = request.task_id
-        response.success = False
-        response.message = "Task cancellation not yet implemented"
+    def list_tasks(self, request: ListTasksRequest) -> ListTasksResponse:
+        """List tasks with optional filtering"""
+        print(
+            f"Handler: ListTasks - status_filter: {request.status_filter}, limit: {request.limit}"
+        )
+
+        response = ListTasksResponse()
+
+        try:
+            # Get all tasks from task queue
+            all_tasks = self.task_queue.get_all_tasks()
+
+            # Apply filters
+            filtered_tasks = []
+            for task_id, task_data in all_tasks.items():
+                # Filter by status if provided
+                if (
+                    request.status_filter
+                    and task_data.get("status", "") != request.status_filter
+                ):
+                    continue
+
+                # Filter by client_id if provided
+                if (
+                    request.client_id
+                    and task_data.get("client_id", "") != request.client_id
+                ):
+                    continue
+
+                # Create task summary
+                task_summary = TaskSummary(
+                    task_id=task_id,
+                    task_type=task_data.get("task_type", ""),
+                    status=task_data.get("status", ""),
+                    created_at=task_data.get("created_at", ""),
+                    updated_at=task_data.get("updated_at", ""),
+                    client_id=task_data.get("client_id", "ml_service"),
+                )
+
+                filtered_tasks.append(task_summary)
+
+            # Sort by created_at (newest first)
+            filtered_tasks.sort(key=lambda x: x.created_at, reverse=True)
+
+            # Apply pagination
+            start_idx = request.offset
+            end_idx = start_idx + request.limit
+            paginated_tasks = filtered_tasks[start_idx:end_idx]
+
+            # Build response
+            response.success = True
+            response.tasks = paginated_tasks
+            response.total_count = len(filtered_tasks)
+            response.message = (
+                f"Found {len(filtered_tasks)} tasks, returning {len(paginated_tasks)}"
+            )
+
+            print(f"Handler: ListTasks completed - found {len(filtered_tasks)} tasks")
+
+        except Exception as e:
+            print(f"Handler: ListTasks failed - {str(e)}")
+            response.success = False
+            response.tasks = []
+            response.total_count = 0
+            response.message = f"Failed to list tasks: {str(e)}"
 
         return response

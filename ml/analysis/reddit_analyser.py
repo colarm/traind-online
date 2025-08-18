@@ -231,12 +231,17 @@ class RedditAnalyser:
             cleaned = re.sub(r"\s+", " ", cleaned).strip()  # Clean whitespace
 
             # Quality filtering - use config parameters
+            filter_prefixes = PREPROCESSING_PARAMS["filter_prefixes"]
+            # Ensure filter_prefixes is a tuple for startswith()
+            if isinstance(filter_prefixes, list):
+                filter_prefixes = tuple(filter_prefixes)
+            elif isinstance(filter_prefixes, str):
+                filter_prefixes = (filter_prefixes,)
+
             if (
                 len(cleaned) >= PREPROCESSING_PARAMS["min_comment_length"]
                 and len(cleaned.split()) >= PREPROCESSING_PARAMS["min_word_count"]
-                and not cleaned.lower().startswith(
-                    PREPROCESSING_PARAMS["filter_prefixes"]
-                )
+                and not cleaned.lower().startswith(filter_prefixes)
                 and "/" not in cleaned[:10]
             ):
                 filtered_comments.append(cleaned)

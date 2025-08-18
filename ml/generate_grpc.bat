@@ -1,7 +1,7 @@
 @echo off
 echo Generating gRPC code from proto files...
 
-cd grpc\proto
+cd grpc_service\proto
 
 python -m grpc_tools.protoc --python_out=. --grpc_python_out=. --proto_path=. clustering.proto
 

@@ -45,11 +45,6 @@ class TaskServiceStub(object):
                 request_serializer=clustering__pb2.GetTaskStatusRequest.SerializeToString,
                 response_deserializer=clustering__pb2.GetTaskStatusResponse.FromString,
                 _registered_method=True)
-        self.CancelTask = channel.unary_unary(
-                '/ml_service.TaskService/CancelTask',
-                request_serializer=clustering__pb2.CancelTaskRequest.SerializeToString,
-                response_deserializer=clustering__pb2.CancelTaskResponse.FromString,
-                _registered_method=True)
         self.ListTasks = channel.unary_unary(
                 '/ml_service.TaskService/ListTasks',
                 request_serializer=clustering__pb2.ListTasksRequest.SerializeToString,
@@ -75,13 +70,6 @@ class TaskServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def CancelTask(self, request, context):
-        """Cancel task (optional)
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def ListTasks(self, request, context):
         """List tasks (optional)
         """
@@ -101,11 +89,6 @@ def add_TaskServiceServicer_to_server(servicer, server):
                     servicer.GetTaskStatus,
                     request_deserializer=clustering__pb2.GetTaskStatusRequest.FromString,
                     response_serializer=clustering__pb2.GetTaskStatusResponse.SerializeToString,
-            ),
-            'CancelTask': grpc.unary_unary_rpc_method_handler(
-                    servicer.CancelTask,
-                    request_deserializer=clustering__pb2.CancelTaskRequest.FromString,
-                    response_serializer=clustering__pb2.CancelTaskResponse.SerializeToString,
             ),
             'ListTasks': grpc.unary_unary_rpc_method_handler(
                     servicer.ListTasks,
@@ -168,33 +151,6 @@ class TaskService(object):
             '/ml_service.TaskService/GetTaskStatus',
             clustering__pb2.GetTaskStatusRequest.SerializeToString,
             clustering__pb2.GetTaskStatusResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def CancelTask(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/ml_service.TaskService/CancelTask',
-            clustering__pb2.CancelTaskRequest.SerializeToString,
-            clustering__pb2.CancelTaskResponse.FromString,
             options,
             channel_credentials,
             insecure,
