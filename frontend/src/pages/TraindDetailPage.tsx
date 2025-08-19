@@ -5,6 +5,7 @@ import { loadParameterSet } from "../api/parameterSet";
 import { addToHistory } from "../api/history";
 import { useAuth } from "../contexts/AuthContext";
 import CommentArea from "../components/CommentArea";
+import ResultDisplay from "../components/ResultDisplay";
 import styles from "./TraindDetailPage.module.css";
 
 const TraindDetailPage: React.FC = () => {
@@ -108,10 +109,7 @@ const TraindDetailPage: React.FC = () => {
       </div>
 
       <div className={styles.section}>
-        <h2>Analysis Result</h2>
-        <pre className={styles.result}>
-          {JSON.stringify(traind.result, null, 2)}
-        </pre>
+        <ResultDisplay result={traind.result} />
       </div>
 
       <div className={styles.section}>
@@ -131,13 +129,13 @@ const TraindDetailPage: React.FC = () => {
       </div>
 
       <div className={styles.section + " " + styles.actions}>
-        <button onClick={() => handleExport("json")} disabled={exporting}>
+        <button className={styles.exportButton} onClick={() => handleExport("json")} disabled={exporting}>
           Export JSON
         </button>
-        <button onClick={() => handleExport("csv")} disabled={exporting}>
+        <button className={styles.exportButton} onClick={() => handleExport("csv")} disabled={exporting}>
           Export CSV
         </button>
-        <button onClick={() => handleExport("png")} disabled={exporting}>
+        <button className={styles.exportButton} onClick={() => handleExport("png")} disabled={exporting}>
           Export PNG
         </button>
       </div>

@@ -44,18 +44,9 @@
   margin-top: 32px;
   background: var(--color-bg-alt);
   border-radius: 12px;
-  padding: 16px;
+  padding: 0 16px;
   border: 1px solid var(--color-border);
   box-shadow: 0 2px 8px var(--color-overlay);
-}
-
-.section h2 {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 .result,
@@ -103,4 +94,8 @@
 .actions button:disabled {
   background: var(--color-secondary);
   cursor: not-allowed;
+}
+
+.exportButton {
+  margin: 16px 0
 }
