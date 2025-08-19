@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc && npm run copy-proto",
-    "copy-proto": "copyfiles -u 1 \"src/**/*.proto\" dist/",
+    "copy-proto": "cd src && find . -name \"*.proto\" -exec cp --parents {} ../dist/ \\;",
     "start": "node dist/server.js",
     "db:up": "docker-compose -f docker-compose.db.yml --env-file .env up -d",
     "db:down": "docker-compose -f docker-compose.db.yml --env-file .env down",

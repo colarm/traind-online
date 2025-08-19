@@ -1,33 +1,21 @@
-version: '3.8'
-
 services:
   ml-service:
     build: 
-      context: ..  # 从ml目录构建
+      context: ..
       dockerfile: docker/Dockerfile
     container_name: traind-ml-service
-    ports:
-      - "50051:50051"  # 将容器的50051端口映射到主机的50051端口
+    network_mode: "host"
+    extra_hosts:
+      - "backend-host:${DOCKER_GATEWAY_HOST:-172.17.0.1}"
     environment:
       - GRPC_PORT=50051
       - PYTHONPATH=/app
-      - BACKEND_HOST=host.docker.internal
-      - BACKEND_PORT=4000
-      - BACKEND_URL=http://host.docker.internal:4000
+      - BACKEND_URL=${BACKEND_URL:-http://backend-host:4000}
+      - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      - REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+      - REDDIT_USER_AGENT=${REDDIT_USER_AGENT}
+      - DATABASE_URL=${DATABASE_URL}
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY}
     volumes:
-      - ..:/app  # 挂载ml目录到容器的/app
+      - ..:/app
     restart: unless-stopped
-    networks:
-      - traind-network
-
-  # 如果有其他服务，可以在这里添加
-  # backend:
-  #   build: ./backend
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - traind-network
-
-networks:
-  traind-network:
-    driver: bridge
