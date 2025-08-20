@@ -1,6 +1,6 @@
 .detailWrapper {
-  width: 1280px;
-  max-width: calc(100vw - 64px);
+  width: 100%;
+  max-width: min(1280px, calc(100vw - 64px));
   margin: 0 auto auto;
   padding: 20px;
   background: var(--color-bg);
@@ -20,7 +20,7 @@
 }
 
 .title {
-  font-size: 48px;
+  font-size: 2rem;
   font-weight: 700;
   margin: 0 0 16px;
   color: var(--color-text-main);
@@ -38,6 +38,7 @@
   font-size: 1rem;
   justify-content: center;
   margin-bottom: 18px;
+  align-items: center;
 }
 
 .section {
@@ -78,6 +79,8 @@
   margin-top: 16px;
   display: flex;
   gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .actions button {
@@ -90,6 +93,10 @@
   cursor: pointer;
   transition: background 0.2s;
   font-weight: 600;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .actions button:disabled {
   background: var(--color-secondary);
@@ -97,5 +104,68 @@
 }
 
 .exportButton {
-  margin: 16px 0
+  margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  .detailWrapper {
+    max-width: calc(100vw - 16px);
+    padding: 8px;
+  }
+
+  .headerCard {
+    padding: 16px 8px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+
+  .title {
+    font-size: 1.6rem;
+    margin-bottom: 16px;
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .section {
+    margin-top: 16px;
+    padding: 0 8px;
+    border-radius: 8px;
+  }
+
+  .result,
+  .param {
+    padding: 8px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .loading {
+    margin: 48px 0;
+    font-size: 1.1rem;
+  }
+
+  .error {
+    margin: 48px 0;
+    font-size: 1rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .actions button {
+    padding: 16px;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  .exportButton {
+    margin: 8px 0;
+  }
 }

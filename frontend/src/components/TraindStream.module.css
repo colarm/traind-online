@@ -109,6 +109,7 @@
   align-items: center;
   padding-top: 12px;
   border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
 }
 
 .actionGroup {
@@ -129,6 +130,8 @@
   padding: 6px 12px;
   border-radius: 6px;
   transition: all 0.2s ease;
+  min-height: 32px; /* 确保触摸友好 */
+  justify-content: center;
 }
 
 .actionButton:hover {
@@ -316,47 +319,155 @@
 }
 
 @media (max-width: 768px) {
-  .traindCard {
-    margin: 0;
-    max-width: calc(100vw - 32px);
+  .traindStream {
+    gap: 8px;
   }
 
-  .placeholderCard {
-    padding: 16px;
+  .traindCard {
     margin: 0;
-    max-width: calc(100vw - 32px);
+    padding: 8px;
+    max-width: calc(100vw - 16px);
+    border-radius: 8px;
+  }
+
+  .cardContent {
+    padding: 0;
   }
 
   .traindTitle {
-    font-size: 16px;
+    font-size: 1rem;
+    margin-right: 8px;
+    line-height: 1.3;
   }
 
   .traindHeader {
     flex-direction: column;
-    gap: 12px;
-  }
-
-  .placeholderHeader {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .traindMeta,
-  .placeholderMeta {
-    align-items: center;
-    flex-direction: row;
     gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .traindMeta {
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
     min-width: auto;
   }
 
-  .traindActions,
-  .placeholderActions {
-    flex-direction: column;
-    gap: 12px;
+  .subreddit {
+    padding: 3px 6px;
+    font-size: 11px;
+    border-radius: 12px;
   }
 
-  .actionGroup,
-  .placeholderActionGroup {
+  .timestamp {
+    font-size: 11px;
+  }
+
+  .traindContent {
+    margin-bottom: 12px;
+  }
+
+  .postId {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .resultPreview {
+    padding: 8px;
+    font-size: 12px;
+    max-height: 64px;
+    border-radius: 6px;
+  }
+
+  .traindActions {
+    padding-top: 8px;
+  }
+
+  .actionGroup {
     justify-content: center;
+    gap: 8px;
+  }
+
+  .actionButton {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    gap: 4px;
+  }
+
+  .stats {
+    gap: 12px;
+    font-size: 12px;
+    justify-content: center;
+  }
+
+  .loading {
+    padding: 24px;
+    min-height: 200px;
+  }
+
+  .loadingPlaceholder {
+    gap: 8px;
+  }
+
+  .placeholderCard {
+    max-width: calc(100vw - 16px);
+    border-radius: 12px;
+  }
+
+  .placeholderCardContent {
+    padding: 12px;
+  }
+
+  .placeholderTitle {
+    height: 20px;
+    margin-bottom: 12px;
+    width: 80%;
+  }
+
+  .placeholderContent {
+    height: 100px;
+    margin-bottom: 12px;
+  }
+
+  .placeholderContent::before {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    height: 14px;
+  }
+
+  .placeholderContent::after {
+    top: 32px;
+    left: 12px;
+    right: 30%;
+    height: 14px;
+  }
+
+  .placeholderActions {
+    height: 32px;
+  }
+
+  .empty {
+    padding: 40px 12px;
+  }
+
+  .emptyIcon {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .emptyMessage {
+    font-size: 14px;
+  }
+
+  .visibility {
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  .visibilityIcon {
+    width: 12px;
+    height: 12px;
   }
 }

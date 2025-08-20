@@ -53,7 +53,7 @@ const TraindsPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.trendsPage}>
+    <div className={styles.traindsPage}>
       <div className={styles.header}>
         <h1 className={styles.title}>Trainds</h1>
         <p className={styles.subtitle}>
