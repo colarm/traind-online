@@ -2,7 +2,7 @@
   width: 1280px;
   max-width: calc(100vw - 64px);
   margin: 0 auto auto;
-  padding: 20px;
+  padding: 16px;
   background: var(--color-bg);
   color: var(--color-text-main);
   -webkit-user-select: none;

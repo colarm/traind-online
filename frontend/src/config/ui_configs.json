@@ -1,0 +1,88 @@
+{
+  "ui_configs": {
+    "reddit_analysis": {
+      "metric_options": [
+        { "value": "euclidean", "label": "Euclidean" },
+        { "value": "manhattan", "label": "Manhattan" },
+        { "value": "cosine", "label": "Cosine" },
+        { "value": "minkowski", "label": "Minkowski" },
+        { "value": "chebyshev", "label": "Chebyshev" }
+      ],
+      "normalization_options": [
+        { "value": "l2", "label": "L2" },
+        { "value": "l1", "label": "L1" },
+        { "value": "none", "label": "None" },
+        { "value": "max", "label": "Max" }
+      ],
+      "sentence_transformer_model_options": [
+        { "value": "all-MiniLM-L6-v2", "label": "all-MiniLM-L6-v2" }
+      ],
+      "step_values": {
+        "cluster_selection_epsilon": 0.01,
+        "alpha": 0.1
+      },
+      "text_fields": {
+        "target_placeholder": "Enter Reddit link or ID",
+        "filter_prefixes_placeholder": "e.g., this, i think",
+        "positive_words_placeholder": "Enter positive sentiment words, separated by commas",
+        "negative_words_placeholder": "Enter negative sentiment words, separated by commas",
+        "stop_words_placeholder": "Enter stop words, separated by commas"
+      },
+      "section_labels": {
+        "basic_settings": "Basic Settings",
+        "clustering_parameters": "Clustering Parameters",
+        "model_settings": "Model Settings",
+        "preprocessing_settings": "Preprocessing Settings",
+        "summary_settings": "Summary Settings",
+        "sentiment_analysis": "Sentiment Analysis",
+        "topic_keywords": "Topic Keywords",
+        "stop_words": "Stop Words"
+      },
+      "field_labels": {
+        "max_comments": "Max Comments",
+        "min_score": "Min Score",
+        "skip_removed": "Skip Removed Comments",
+        "skip_deleted": "Skip Deleted Comments",
+        "min_cluster_size": "Min Cluster Size",
+        "min_samples": "Min Samples",
+        "metric": "Metric",
+        "cluster_selection_epsilon": "Cluster Selection Epsilon",
+        "alpha": "Alpha",
+        "sentence_transformer_model": "Sentence Transformer Model",
+        "batch_size": "Batch Size",
+        "normalization": "Normalization",
+        "min_comment_length": "Min Comment Length",
+        "min_word_count": "Min Word Count",
+        "filter_prefixes": "Filter Prefixes (comma-separated)",
+        "filter_deleted": "Filter Deleted Comments",
+        "filter_removed": "Filter Removed Comments",
+        "top_clusters_display": "Top Clusters Display",
+        "keywords_per_cluster": "Keywords Per Cluster",
+        "enhanced_keywords": "Enhanced Keywords",
+        "sample_comments_per_cluster": "Sample Comments Per Cluster",
+        "positive_words": "Positive Words (comma-separated)",
+        "negative_words": "Negative Words (comma-separated)",
+        "discussion_keywords": "Discussion Keywords (comma-separated)",
+        "experience_keywords": "Experience Keywords (comma-separated)",
+        "question_keywords": "Question Keywords (comma-separated)",
+        "humor_keywords": "Humor Keywords (comma-separated)",
+        "technical_keywords": "Technical Keywords (comma-separated)",
+        "social_keywords": "Social Keywords (comma-separated)",
+        "stop_words": "Stop Words (comma-separated)"
+      },
+      "button_labels": {
+        "reset_to_defaults": "Reset to Defaults",
+        "start_analysis": "Start Analysis Task",
+        "creating": "Creating...",
+        "use_custom_params": "Use Custom Parameters"
+      },
+      "panel_titles": {
+        "task_configuration": "Task Configuration",
+        "parameter_configuration": "Parameter Configuration"
+      },
+      "input_labels": {
+        "reddit_target": "Reddit Link or ID:"
+      }
+    }
+  }
+}

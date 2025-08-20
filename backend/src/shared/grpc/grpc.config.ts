@@ -23,9 +23,6 @@ export function loadGrpcService(protoFile: string, packageName: string) {
     return loaded;
   } catch (error) {
     console.error("Error loading gRPC service:", error);
-    console.log(
-      "Please install @grpc/proto-loader: npm install @grpc/proto-loader"
-    );
     throw error;
   }
 }

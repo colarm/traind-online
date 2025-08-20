@@ -390,7 +390,6 @@ const traindService = {
         },
       });
 
-      console.log(`Successfully updated traind record for task ${taskId}`);
       return true;
     } catch (error) {
       console.error(
@@ -442,9 +441,6 @@ const traindService = {
         },
       });
 
-      console.log(
-        `Successfully updated traind record to failed for task ${taskId}`
-      );
       return true;
     } catch (error) {
       console.error(

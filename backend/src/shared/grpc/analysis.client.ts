@@ -11,7 +11,7 @@ try {
     require("@grpc/grpc-js").credentials.createInsecure()
   );
   isGrpcAvailable = true;
-  console.log("gRPC client initialized successfully");
+  console.log("✅ gRPC client initialized successfully");
 } catch (error) {
   console.warn(
     "gRPC client initialization failed, using mock implementation:",
