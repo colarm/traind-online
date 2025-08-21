@@ -21,7 +21,6 @@ try {
 }
 
 export default {
-  // Add a new analysis task to the ML service queue
   addTask({
     redditPostId,
     parameters,
@@ -42,6 +41,8 @@ export default {
         reddit_post_id: redditPostId,
         parameters_json: parameters ? JSON.stringify(parameters) : "{}",
       };
+
+      console.log("Adding task with request:", request);
 
       client.AddTask(request, (error: any, response: any) => {
         if (error) {

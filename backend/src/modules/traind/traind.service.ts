@@ -37,12 +37,7 @@ const traindService = {
         where: { id: parameterSetId },
       });
 
-      const parameters = {
-        traind_id: traind.id,
-        parameter_set_id: parameterSetId,
-        user_id: userId,
-        parameters: parameterSet?.parameters || {},
-      };
+      const parameters = parameterSet?.parameters || {};
 
       // Submit task to ML service
       const taskResponse = await analysisClient.addTask({

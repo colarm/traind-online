@@ -54,7 +54,15 @@ class RedditAnalyser:
             import config
 
             self._original_configs["HDBSCAN_PARAMS"] = config.HDBSCAN_PARAMS.copy()
-            config.HDBSCAN_PARAMS.update(parameters["hdbscan_params"])
+
+            # Create a copy of hdbscan_params and ensure proper types
+            hdbscan_params = parameters["hdbscan_params"].copy()
+
+            # Convert alpha to float if present - HDBSCAN requires float during clustering
+            if "alpha" in hdbscan_params:
+                hdbscan_params["alpha"] = float(hdbscan_params["alpha"])
+
+            config.HDBSCAN_PARAMS.update(hdbscan_params)
 
         if "preprocessing_params" in parameters:
             import config
