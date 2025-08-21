@@ -11,18 +11,26 @@ function getToken(userId: string) {
 }
 
 const authService = {
-  async register(email: string, password: string) {
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) throw new Error("User already exists");
+  async register(email: string, username: string, password: string) {
+    const existingEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingEmail) throw new Error("Email already exists");
+
+    const existingUsername = await prisma.user.findUnique({
+      where: { username },
+    });
+    if (existingUsername) throw new Error("Username already exists");
 
     const hashed = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-      data: { email, password: hashed },
+      data: { email, username, password: hashed },
     });
 
     const token = getToken(user.id);
 
-    return { token, user: { id: user.id, email: user.email } };
+    return {
+      token,
+      user: { id: user.id, email: user.email, username: user.username },
+    };
   },
 
   async login(email: string, password: string) {
@@ -34,7 +42,10 @@ const authService = {
 
     const token = getToken(user.id);
 
-    return { token, user: { id: user.id, email: user.email } };
+    return {
+      token,
+      user: { id: user.id, email: user.email, username: user.username },
+    };
   },
 
   async getUserById(userId: string) {

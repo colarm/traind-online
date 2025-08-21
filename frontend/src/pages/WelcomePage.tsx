@@ -95,6 +95,7 @@ const WelcomePage = () => {
     }
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") || "");
+    const username = String(form.get("username") || "");
     const password = String(form.get("password") || "");
     const confirm = String(form.get("confirmPassword") || "");
 
@@ -118,6 +119,7 @@ const WelcomePage = () => {
     } else {
       const newUser = await register({
         email,
+        username,
         password,
         confirmPassword: confirm,
       });
@@ -256,6 +258,23 @@ const WelcomePage = () => {
                   autoComplete="email"
                 />
               </div>
+
+              {mode === "register" && (
+                <div className={styles.formRow}>
+                  <label className={styles.label} htmlFor="username">
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    className={styles.input}
+                    placeholder="your_username"
+                    autoComplete="username"
+                  />
+                </div>
+              )}
 
               <div className={styles.formRow}>
                 <label className={styles.label} htmlFor="password">

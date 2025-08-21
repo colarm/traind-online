@@ -6,8 +6,8 @@ const SECRET_KEY = process.env.JWT_SECRET as string;
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-    const result = await authService.register(email, password);
+    const { email, username, password } = req.body;
+    const result = await authService.register(email, username, password);
     res
       .cookie("token", result.token, {
         httpOnly: true,
@@ -75,7 +75,14 @@ export const status = async (req: Request, res: Response) => {
         .json({ valid: false, message: "Invalid token payload" });
     }
     const user = await authService.getUserById(userId);
-    res.status(200).json({ valid: true, userId: user.id, email: user.email });
+    res
+      .status(200)
+      .json({
+        valid: true,
+        userId: user.id,
+        email: user.email,
+        username: user.username,
+      });
   } catch (err: any) {
     res
       .status(401)

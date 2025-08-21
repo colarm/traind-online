@@ -1,5 +1,5 @@
 .commentArea {
-  margin-top: 0;
+  margin: 0 auto 8px;
 }
 
 .commentBox {
@@ -216,4 +216,28 @@ button:disabled {
   color: var(--color-text-secondary);
   text-align: center;
   margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  .commentItem {
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user {
+    font-size: 0.95rem;
+  }
+
+  .time {
+    font-size: 0.85rem;
+  }
+
+  .repliesBtn {
+    font-size: 0.8rem;
+  }
 }

@@ -1,6 +1,7 @@
 -- CreateTable
 CREATE TABLE "public"."users" (
     "id" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -12,11 +13,14 @@ CREATE TABLE "public"."users" (
 CREATE TABLE "public"."trainds" (
     "id" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
     "subreddit" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "isPublic" BOOLEAN NOT NULL DEFAULT false,
-    "authorId" TEXT NOT NULL,
+    "isPublic" BOOLEAN NOT NULL DEFAULT true,
+    "parameterSetId" TEXT NOT NULL,
+    "result" JSONB NOT NULL,
+    "userId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'pending',
 
     CONSTRAINT "trainds_pkey" PRIMARY KEY ("id")
 );
@@ -71,10 +75,22 @@ CREATE TABLE "public"."user_preferences" (
     "userId" TEXT NOT NULL,
     "language" TEXT NOT NULL DEFAULT 'en',
     "theme" TEXT NOT NULL DEFAULT 'light',
-    "autoLink" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "user_preferences_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "public"."helps" (
+    "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "helps_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_username_key" ON "public"."users"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
@@ -83,37 +99,40 @@ CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
 CREATE UNIQUE INDEX "stars_userId_traindId_key" ON "public"."stars"("userId", "traindId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "history_userId_traindId_key" ON "public"."history"("userId", "traindId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "user_preferences_userId_key" ON "public"."user_preferences"("userId");
 
 -- AddForeignKey
-ALTER TABLE "public"."trainds" ADD CONSTRAINT "trainds_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."stars" ADD CONSTRAINT "stars_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."trainds" ADD CONSTRAINT "trainds_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."stars" ADD CONSTRAINT "stars_traindId_fkey" FOREIGN KEY ("traindId") REFERENCES "public"."trainds"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."history" ADD CONSTRAINT "history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."stars" ADD CONSTRAINT "stars_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."history" ADD CONSTRAINT "history_traindId_fkey" FOREIGN KEY ("traindId") REFERENCES "public"."trainds"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_traindId_fkey" FOREIGN KEY ("traindId") REFERENCES "public"."trainds"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."history" ADD CONSTRAINT "history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "public"."comments"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."parameter_sets" ADD CONSTRAINT "parameter_sets_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_traindId_fkey" FOREIGN KEY ("traindId") REFERENCES "public"."trainds"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."comments" ADD CONSTRAINT "comments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."parameter_sets" ADD CONSTRAINT "parameter_sets_traindId_fkey" FOREIGN KEY ("traindId") REFERENCES "public"."trainds"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."parameter_sets" ADD CONSTRAINT "parameter_sets_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."user_preferences" ADD CONSTRAINT "user_preferences_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -11,6 +11,7 @@ import { initializeTheme } from "../utils/themeManager";
 interface AuthContextType {
   isLoggedIn: boolean;
   userEmail: string;
+  username: string;
   authChecked: boolean;
   refreshAuth: () => Promise<void>;
   setIsLoggedIn: (value: boolean) => void;
@@ -33,6 +34,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [authChecked, setAuthChecked] = useState<boolean>(false);
 
   const refreshAuth = async () => {
@@ -42,15 +44,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (result && !result.error) {
         setIsLoggedIn(result.valid);
         setUserEmail(result.email || "");
+        setUsername(result.username || "");
       } else {
         console.error("Auth check failed:", result.error);
         setIsLoggedIn(false);
         setUserEmail("");
+        setUsername("");
       }
     } catch (error) {
       console.error("Auth check error:", error);
       setIsLoggedIn(false);
       setUserEmail("");
+      setUsername("");
     } finally {
       setAuthChecked(true);
     }
@@ -72,6 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     isLoggedIn,
     userEmail,
+    username,
     authChecked,
     refreshAuth,
     setIsLoggedIn,

@@ -8,7 +8,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoggedIn, userEmail, setIsLoggedIn, refreshAuth } = useAuth();
+  const { isLoggedIn, username, setIsLoggedIn, refreshAuth } = useAuth();
 
   const navItems = [
     { path: "/trainds", label: "Trainds" },
@@ -74,7 +74,7 @@ const Navbar = () => {
             </li>
           ))}
           <li>
-            <span className={styles.userEmail}>{userEmail}</span>
+            <span className={styles.userEmail}>@{username}</span>
           </li>
         </ul>
       )}

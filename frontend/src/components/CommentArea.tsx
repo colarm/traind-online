@@ -84,7 +84,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     >
       <div className={styles.header}>
         <span className={styles.user}>
-          {commentNode.comment.user?.email || commentNode.comment.userId}
+          {commentNode.comment.user?.username || "Anonymous"}
         </span>
         <span className={styles.time}>
           {new Date(commentNode.comment.createdAt).toLocaleString()}

@@ -11,6 +11,7 @@ export async function login(credentials: { email: string; password: string }) {
 
 export async function register(userDetails: {
   email: string;
+  username: string;
   password: string;
   confirmPassword: string;
 }) {

@@ -6,7 +6,7 @@ export interface Comment {
   userId: string;
   content: string;
   createdAt: string;
-  user?: { id: string; email: string };
+  user?: { id: string; email: string; username: string };
   parentId?: string;
 }
 

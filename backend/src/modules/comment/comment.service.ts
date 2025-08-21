@@ -10,32 +10,31 @@ import {
 const prisma = new PrismaClient();
 
 const commentService = {
-	async add(input: AddCommentInput): Promise<Comment> {
-		
-		// Check if traind exists
-		const traindExists = await prisma.traind.findUnique({
-			where: { id: input.traindId },
-		});
-		if (!traindExists) {
-			throw new Error("Traind not found");
-		}
+  async add(input: AddCommentInput): Promise<Comment> {
+    // Check if traind exists
+    const traindExists = await prisma.traind.findUnique({
+      where: { id: input.traindId },
+    });
+    if (!traindExists) {
+      throw new Error("Traind not found");
+    }
 
-		// create the comment
+    // create the comment
     const comment = prisma.comment.create({
       data: {
         userId: input.userId,
         traindId: input.traindId,
         content: input.text,
       },
-		});
-		if (!comment) {
-			throw new Error("Failed to add comment");
-		}
+    });
+    if (!comment) {
+      throw new Error("Failed to add comment");
+    }
 
-		return comment;
+    return comment;
   },
 
-	async reply(input: ReplyInput) {
+  async reply(input: ReplyInput) {
     // Check if traind exists
     const traindExists = await prisma.traind.findUnique({
       where: { id: input.traindId },
@@ -51,8 +50,8 @@ const commentService = {
     if (!parentCommentExists) {
       throw new Error("Parent comment not found");
     }
-		
-		// Create the reply comment
+
+    // Create the reply comment
     const comment = prisma.comment.create({
       data: {
         userId: input.userId,
@@ -75,6 +74,15 @@ const commentService = {
       where: { traindId, parentId },
       orderBy: { createdAt: "asc" },
       take: limit + 1,
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+          },
+        },
+      },
       ...(cursorId && {
         cursor: { id: cursorId },
         skip: 1,
