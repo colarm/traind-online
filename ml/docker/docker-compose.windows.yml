@@ -1,0 +1,22 @@
+services:
+  ml-service:
+    build: 
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: traind-ml-service
+    ports:
+      - "50051:50051"
+    extra_hosts:
+      - "backend-host:${DOCKER_GATEWAY_HOST:-172.17.0.1}"
+    environment:
+      - GRPC_PORT=50051
+      - PYTHONPATH=/app
+      - BACKEND_URL=${BACKEND_URL:-http://backend-host:4000}
+      - REDDIT_CLIENT_ID=${REDDIT_CLIENT_ID}
+      - REDDIT_CLIENT_SECRET=${REDDIT_CLIENT_SECRET}
+      - REDDIT_USER_AGENT=${REDDIT_USER_AGENT}
+      - DATABASE_URL=${DATABASE_URL}
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY}
+    volumes:
+      - ..:/app
+    restart: unless-stopped

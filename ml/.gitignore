@@ -57,3 +57,6 @@ models/
 # Ignore temporary files
 *.tmp
 *.temp
+
+# Ignore platform-specific docker-compose file
+docker/docker-compose.yml
