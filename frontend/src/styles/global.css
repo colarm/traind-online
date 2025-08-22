@@ -113,3 +113,9 @@ body {
   color: var(--color-text-main);
   touch-action: manipulation;
 }
+
+input,
+textarea,
+select {
+  font-size: 16px !important;
+}
