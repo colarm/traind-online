@@ -42,8 +42,6 @@ export default {
         parameters_json: parameters ? JSON.stringify(parameters) : "{}",
       };
 
-      console.log("Adding task with request:", request);
-
       client.AddTask(request, (error: any, response: any) => {
         if (error) {
           console.error("gRPC AddTask error:", error);
