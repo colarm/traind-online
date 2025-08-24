@@ -132,7 +132,6 @@
 @media (max-width: 768px) {
   .traindsPage {
     max-width: calc(100vw - 16px);
-    margin: 0;
     padding: 8px;
   }
 

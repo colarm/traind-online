@@ -17,6 +17,7 @@
   box-shadow: 0 4px 16px var(--color-overlay);
   -webkit-user-select: none;
   user-select: none;
+  position: relative;
 }
 
 .title {
@@ -39,6 +40,62 @@
   justify-content: center;
   margin-bottom: 18px;
   align-items: center;
+}
+
+.ownerActions {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.visibilityButton {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  min-height: 32px;
+  min-width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.visibilityButton:hover:not(:disabled) {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.visibilityButton.public {
+  background: var(--color-success);
+  color: var(--color-text-button-dark);
+}
+
+.visibilityButton.public:hover:not(:disabled) {
+  background: var(--color-success-dark, var(--color-success));
+}
+
+.visibilityButton.private {
+  background: var(--color-warning);
+  color: var(--color-text-button-dark);
+}
+
+.visibilityButton.private:hover:not(:disabled) {
+  background: var(--color-warning-dark, var(--color-warning));
+}
+
+.visibilityButton:disabled {
+  background: var(--color-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .section {
@@ -129,6 +186,18 @@
     gap: 8px;
     font-size: 0.9rem;
     margin-bottom: 16px;
+  }
+
+  .ownerActions {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .visibilityButton {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+    min-height: 36px;
+    min-width: 36px;
   }
 
   .section {

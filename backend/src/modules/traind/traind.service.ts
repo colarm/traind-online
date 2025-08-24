@@ -87,6 +87,12 @@ const traindService = {
     const traindItem = await prisma.traind.findUnique({
       where: { id: traindId },
       include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+          },
+        },
         _count: {
           select: {
             stars: true,
