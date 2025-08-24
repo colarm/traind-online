@@ -16,6 +16,7 @@ import { showError } from "../components/Toast";
 import styles from "./MePage.module.css";
 
 const MePage: React.FC = () => {
+  const [myTrainds, setMyTrainds] = useState<TraindWithPagination[]>([]);
   useRequireAuth();
   const [activeTab, setActiveTab] = useState<
     "overview" | "history" | "starred" | "parameters" | "preferences"
@@ -82,12 +83,10 @@ const MePage: React.FC = () => {
     },
   ];
 
-  // Load data on component mount
   useEffect(() => {
     loadOverviewData();
   }, []);
 
-  // Load data based on active tab
   useEffect(() => {
     switch (activeTab) {
       case "history":
@@ -109,20 +108,18 @@ const MePage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Load recent data for overview with smaller limits
       const [historyRes, starredRes, myTraindsRes, paramSetsRes] =
         await Promise.all([
           getHistory({ limit: 3 }),
           getStarredTrainds({ limit: 3 }),
-          getMyTrainds({ limit: 50 }), // Reduced limit to avoid "Limit cannot exceed 50" error
-          getParameterSets().catch(() => ({ parameterSets: [] })), // Handle if not available
+          getMyTrainds({ limit: 4 }),
+          getParameterSets().catch(() => ({ parameterSets: [] })),
         ]);
 
       setRecentHistory(historyRes.histories || []);
       setStarredItems(starredRes.stars || []);
       setParameterSets(paramSetsRes.parameterSets || []);
 
-      // Extract trainds directly from API responses for overview display
       const recentHistoryTrainds = (historyRes.histories || [])
         .filter((item) => item.traind)
         .map((item) => item.traind!)
@@ -136,8 +133,8 @@ const MePage: React.FC = () => {
       setHistoryTrainds(recentHistoryTrainds);
       setStarredTrainds(recentStarredTrainds);
 
-      // Calculate user stats
       const trainds = myTraindsRes.trainds || [];
+      setMyTrainds(trainds);
       setUserStats({
         totalTrainds: myTraindsRes.totalCount || trainds.length,
         publicTrainds: trainds.filter((t) => t.isPublic).length,
@@ -157,13 +154,11 @@ const MePage: React.FC = () => {
       const response = await getHistory({ limit: 20 });
       setRecentHistory(response.histories || []);
 
-      // Extract trainds directly from the history response
       const trainds: TraindWithPagination[] = [];
       const historyItems = response.histories || [];
 
       for (const item of historyItems) {
         if (item.traind) {
-          // Traind is already included in the response with complete data
           trainds.push(item.traind);
         }
       }
@@ -182,13 +177,11 @@ const MePage: React.FC = () => {
       const response = await getStarredTrainds({ limit: 20 });
       setStarredItems(response.stars || []);
 
-      // Extract trainds directly from the starred response
       const trainds: TraindWithPagination[] = [];
       const starredItems = response.stars || [];
 
       for (const item of starredItems) {
         if (item.traind) {
-          // Traind is already included in the response with complete data
           trainds.push(item.traind);
         }
       }
@@ -236,15 +229,6 @@ const MePage: React.FC = () => {
     }
   };
 
-  // Handle clicking on history/starred items to show corresponding tab
-  const handleShowHistoryTab = () => {
-    setActiveTab("history");
-  };
-
-  const handleShowStarredTab = () => {
-    setActiveTab("starred");
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -277,13 +261,6 @@ const MePage: React.FC = () => {
     </div>
   );
 
-  const SectionCard = ({ title, children, className = "" }: any) => (
-    <div className={`${styles.sectionCard} ${className}`}>
-      <h3 className={styles.sectionTitle}>{title}</h3>
-      {children}
-    </div>
-  );
-
   const ActionButton = ({
     children,
     onClick,
@@ -300,121 +277,41 @@ const MePage: React.FC = () => {
   );
 
   const renderOverview = () => (
-    <div className={styles.overview}>
+    <div>
       <div className={styles.statsGrid}>
         {statCards.map((card, index) => (
           <StatCard key={index} {...card} />
         ))}
       </div>
-
-      <div className={styles.recentSections}>
-        <SectionCard title="Recent History">
-          {historyTrainds.length > 0 ? (
-            <>
-              <div className={styles.recentItems}>
-                {historyTrainds.slice(0, 3).map((traind) => (
-                  <div
-                    key={traind.id}
-                    className={styles.recentItem}
-                    onClick={handleShowHistoryTab}
-                  >
-                    <span className={styles.itemTitle}>{traind.title}</span>
-                    <span className={styles.itemDate}>
-                      r/{traind.subreddit} • {formatDate(traind.createdAt)}
-                    </span>
-                  </div>
-                ))}
+      <h3 className={styles.sectionTitle}>My Published Trainds</h3>
+      <div
+        className={styles.sectionCard}
+        onClick={() => navigate("/my-trainds")}
+      >
+        <div className={styles.sectionCardContent}>
+          {Array.isArray(myTrainds) &&
+            myTrainds.slice(0, 3).map((traind) => (
+              <div key={traind.id} className={styles.recentItem}>
+                <span className={styles.itemTitle}>{traind.title}</span>
+                <span className={styles.itemMeta}>
+                  r/{traind.subreddit} • {formatDate(traind.createdAt)}
+                </span>
               </div>
-              <ActionButton onClick={handleShowHistoryTab} variant="secondary">
-                See All History
-              </ActionButton>
-            </>
-          ) : (
-            <EmptyState message="No recent history" icon="📭" />
-          )}
-        </SectionCard>
+            ))}
 
-        <SectionCard title="Starred Trainds">
-          {starredTrainds.length > 0 ? (
-            <>
-              <div className={styles.recentItems}>
-                {starredTrainds.slice(0, 3).map((traind) => (
-                  <div
-                    key={traind.id}
-                    className={styles.recentItem}
-                    onClick={handleShowStarredTab}
-                  >
-                    <span className={styles.itemTitle}>{traind.title}</span>
-                    <span className={styles.itemMeta}>
-                      {traind._count?.stars || 0} ⭐ • r/{traind.subreddit}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <ActionButton onClick={handleShowStarredTab} variant="secondary">
-                See All Starred
-              </ActionButton>
-            </>
-          ) : (
-            <EmptyState message="No starred trainds" icon="⭐" />
+          {(!Array.isArray(myTrainds) || myTrainds.length === 0) && (
+            <EmptyState message="No published trainds" icon="📊" />
           )}
-        </SectionCard>
-
-        <SectionCard title="My Parameter Sets">
-          {parameterSets.length > 0 ? (
-            <>
-              <div className={styles.recentItems}>
-                {parameterSets.slice(0, 3).map((paramSet) => (
-                  <div
-                    key={paramSet.id}
-                    className={styles.recentItem}
-                    onClick={() => setActiveTab("parameters")}
-                  >
-                    <span className={styles.itemTitle}>{paramSet.name}</span>
-                    <span className={styles.itemMeta}>
-                      Created: {formatDate(paramSet.createdAt)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <ActionButton
-                onClick={() => setActiveTab("parameters")}
-                variant="secondary"
-              >
-                Manage Parameters
-              </ActionButton>
-            </>
-          ) : (
-            <EmptyState message="No parameter sets saved" icon="⚙️" />
-          )}
-        </SectionCard>
-
-        <SectionCard title="My Published Trainds">
-          <div className={styles.recentItems}>
-            <div
-              className={styles.recentItem}
-              onClick={() => window.open("/trainds", "_blank")}
-            >
-              <span className={styles.itemTitle}>📊 View My Trainds</span>
-              <span className={styles.itemMeta}>
-                {userStats.totalTrainds} total • {userStats.publicTrainds}{" "}
-                public
-              </span>
-            </div>
-          </div>
-          <ActionButton
-            onClick={() => navigate("/my-trainds")}
-            variant="secondary"
-          >
-            Manage My Trainds
-          </ActionButton>
-        </SectionCard>
+        </div>
+        {userStats.totalTrainds > 3 && (
+          <span className={styles.moreIndicator}>...</span>
+        )}
       </div>
     </div>
   );
 
   const renderHistory = () => (
-    <div className={styles.historySection}>
+    <>
       <h2 className={styles.sectionTitle}>Browse History</h2>
       <TraindStream
         trainds={historyTrainds}
@@ -423,11 +320,11 @@ const MePage: React.FC = () => {
         showActions={true}
         emptyMessage="No history found"
       />
-    </div>
+    </>
   );
 
   const renderStarred = () => (
-    <div className={styles.starredSection}>
+    <>
       <h2 className={styles.sectionTitle}>Starred Trainds</h2>
       <TraindStream
         trainds={starredTrainds}
@@ -436,11 +333,12 @@ const MePage: React.FC = () => {
         showActions={true}
         emptyMessage="No starred trainds found"
       />
-    </div>
+    </>
   );
 
   const renderParameters = () => (
-    <SectionCard title="My Parameter Sets" className={styles.parametersSection}>
+    <>
+      <h3 className={styles.sectionTitle}>My Parameter Sets</h3>
       {parameterSets.length > 0 ? (
         <div className={styles.itemsList}>
           {parameterSets.map((paramSet) => (
@@ -460,11 +358,12 @@ const MePage: React.FC = () => {
       ) : (
         <EmptyState message="No parameter sets saved" icon="⚙️" />
       )}
-    </SectionCard>
+    </>
   );
 
   const renderPreferences = () => (
-    <SectionCard title="Preferences" className={styles.preferencesSection}>
+    <>
+      <h3 className={styles.sectionTitle}>Preferences</h3>
       <div className={styles.preferencesForm}>
         <div className={styles.preferenceGroup}>
           <label htmlFor="themeSelector">Theme:</label>
@@ -556,7 +455,7 @@ const MePage: React.FC = () => {
           💾 Save Preferences
         </ActionButton>
       </div>
-    </SectionCard>
+    </>
   );
 
   return (
