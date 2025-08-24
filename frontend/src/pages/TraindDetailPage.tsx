@@ -7,6 +7,7 @@ import { useAuth } from "../contexts/AuthContext";
 import CommentArea from "../components/CommentArea";
 import ResultDisplay from "../components/ResultDisplay";
 import styles from "./TraindDetailPage.module.css";
+import JsonTreeView from "../components/JsonTreeView";
 
 const TraindDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -115,9 +116,7 @@ const TraindDetailPage: React.FC = () => {
       <div className={styles.section}>
         <h2>Parameter Set</h2>
         {parameterSet ? (
-          <pre className={styles.param}>
-            {JSON.stringify(parameterSet, null, 2)}
-          </pre>
+          <JsonTreeView data={parameterSet} />
         ) : (
           <span>Loading...</span>
         )}
@@ -129,13 +128,25 @@ const TraindDetailPage: React.FC = () => {
       </div>
 
       <div className={styles.section + " " + styles.actions}>
-        <button className={styles.exportButton} onClick={() => handleExport("json")} disabled={exporting}>
+        <button
+          className={styles.exportButton}
+          onClick={() => handleExport("json")}
+          disabled={exporting}
+        >
           Export JSON
         </button>
-        <button className={styles.exportButton} onClick={() => handleExport("csv")} disabled={exporting}>
+        <button
+          className={styles.exportButton}
+          onClick={() => handleExport("csv")}
+          disabled={exporting}
+        >
           Export CSV
         </button>
-        <button className={styles.exportButton} onClick={() => handleExport("png")} disabled={exporting}>
+        <button
+          className={styles.exportButton}
+          onClick={() => handleExport("png")}
+          disabled={exporting}
+        >
           Export PNG
         </button>
       </div>

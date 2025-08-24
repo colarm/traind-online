@@ -53,17 +53,34 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     }
   };
 
-  const formatResult = (result: any) => {
+  const getResultSummary = (result: any) => {
     if (!result) return "No result available";
-
-    try {
-      if (typeof result === "string") {
-        return result;
-      }
-      return JSON.stringify(result, null, 2);
-    } catch {
-      return "Invalid result format";
+    if (result.error) return `Error: ${result.error}`;
+    if (result.task_id && !result.success) return "Analysis in Progress";
+    if (result.success === false) return "Analysis Failed";
+    const summary: string[] = [];
+    if (result.post_info) {
+      if (result.post_info.author)
+        summary.push(`Author: ${result.post_info.author}`);
+      if (result.post_info.score !== undefined)
+        summary.push(`Score: ${result.post_info.score}`);
+      if (result.post_info.subreddit)
+        summary.push(`Subreddit: ${result.post_info.subreddit}`);
+      if (result.post_info.num_comments !== undefined)
+        summary.push(`Comments: ${result.post_info.num_comments}`);
+      if (result.post_info.upvote_ratio !== undefined)
+        summary.push(
+          `Upvotes: ${Math.round((result.post_info.upvote_ratio || 0) * 100)}%`
+        );
     }
+    if (result.num_clusters !== undefined)
+      summary.push(`Clusters: ${result.num_clusters}`);
+    if (result.total_processed !== undefined)
+      summary.push(`Processed: ${result.total_processed}`);
+    if (result.noise_ratio !== undefined)
+      summary.push(`Noise: ${Math.round((result.noise_ratio || 0) * 100)}%`);
+    if (summary.length === 0) return "Status: Completed";
+    return summary.join(" | ");
   };
 
   const handleCardClick = (traind: Traind) => {
@@ -171,7 +188,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
             <div className={styles.traindContent}>
               <div className={styles.postId}>Post ID: {traind.postId}</div>
               <div className={styles.resultPreview}>
-                {formatResult(traind.result)}
+                {getResultSummary(traind.result)}
               </div>
             </div>
 
