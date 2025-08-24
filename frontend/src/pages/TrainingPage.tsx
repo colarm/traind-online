@@ -109,7 +109,14 @@ const TrainingPage: React.FC = () => {
         return;
       }
       const parameterSetId = saveRes.id;
-      const runRes = await runAnalysis(target, parameterSetId);
+      let redditId = target;
+      const redditUrlMatch = target.match(
+        /reddit\.com\/r\/[^\/]+\/comments\/([a-zA-Z0-9]+)\//
+      );
+      if (redditUrlMatch && redditUrlMatch[1]) {
+        redditId = redditUrlMatch[1];
+      }
+      const runRes = await runAnalysis(redditId, parameterSetId);
       if (runRes.error) {
         setResult("Analysis failed: " + runRes.error);
       } else {
