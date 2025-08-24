@@ -2,12 +2,8 @@ import httpClient from "./axios";
 
 export interface UserPreferences {
   theme?: string;
-  defaultClusterCount?: number;
-  defaultSubreddits?: string[];
+  makeTraindsPublicAsDefault?: boolean;
   emailNotifications?: boolean;
-  publicByDefault?: boolean;
-  language?: string;
-  timezone?: string;
 }
 
 export interface PreferenceResponse {

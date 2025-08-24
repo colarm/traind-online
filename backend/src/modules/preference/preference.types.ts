@@ -1,4 +1,5 @@
 export type UpdatePreferenceInput = {
   theme?: string;
-  language?: string;
+  makeTraindsPublicAsDefault?: boolean;
+  emailNotifications?: boolean;
 };

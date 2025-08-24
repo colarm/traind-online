@@ -8,12 +8,12 @@ const preferenceService = {
     input: UpdatePreferenceInput,
     userId: string
   ): Promise<UserPreference> {
-    const { theme, language } = input;
+    const { theme, makeTraindsPublicAsDefault, emailNotifications } = input;
 
     const updated = await prisma.userPreference.upsert({
       where: { userId },
-      update: { theme, language },
-      create: { userId, theme, language },
+      update: { theme, makeTraindsPublicAsDefault, emailNotifications },
+      create: { userId, theme, makeTraindsPublicAsDefault, emailNotifications },
     });
     return updated as UserPreference;
   },
@@ -24,7 +24,12 @@ const preferenceService = {
     });
     if (!preference) {
       const newPreference = await prisma.userPreference.create({
-        data: { userId, theme: "light", language: "en" },
+        data: {
+          userId,
+          theme: "theme-cool-white",
+          makeTraindsPublicAsDefault: true,
+          emailNotifications: true,
+        },
       });
       return newPreference as UserPreference;
     }

@@ -6,18 +6,25 @@ const preferenceController = {
   async updatePreference(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
-      const { theme, language } = req.body;
+      const { theme, makeTraindsPublicAsDefault, emailNotifications } =
+        req.body;
 
-      if (theme === undefined || language === undefined) {
-        return res
-          .status(400)
-          .json({ error: "Missing theme or language data" });
+      // Build update object with only provided fields
+      const updateData: UpdatePreferenceInput = {};
+      if (theme !== undefined) updateData.theme = theme;
+      if (makeTraindsPublicAsDefault !== undefined)
+        updateData.makeTraindsPublicAsDefault = makeTraindsPublicAsDefault;
+      if (emailNotifications !== undefined)
+        updateData.emailNotifications = emailNotifications;
+
+      // Check if at least one field is provided
+      if (Object.keys(updateData).length === 0) {
+        return res.status(400).json({
+          error: "At least one preference field must be provided",
+        });
       }
 
-      const updated = await preferenceService.update(
-        { theme, language } as UpdatePreferenceInput,
-        userId
-      );
+      const updated = await preferenceService.update(updateData, userId);
 
       res.status(200).json(updated);
     } catch (error: any) {

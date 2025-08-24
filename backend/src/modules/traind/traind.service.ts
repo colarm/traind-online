@@ -18,6 +18,15 @@ const traindService = {
       throw new Error("Reddit ID and Parameter Set ID are required");
     }
 
+    // Get user preferences to determine default public setting
+    const userPreference = await prisma.userPreference.findUnique({
+      where: { userId },
+    });
+
+    // Use user's preference for making trainds public by default, fallback to true
+    const isPublicByDefault =
+      userPreference?.makeTraindsPublicAsDefault ?? true;
+
     // Create traind record with pending status
     const traind = await prisma.traind.create({
       data: {
@@ -28,6 +37,7 @@ const traindService = {
         parameterSetId: parameterSetId,
         userId: userId,
         status: "pending",
+        isPublic: isPublicByDefault,
       },
     });
 

@@ -12,7 +12,7 @@ import {
 import { getMyTrainds, TraindWithPagination } from "../api/traind";
 import TraindStream from "../components/TraindStream";
 import ThemeSelect from "../components/ThemeSelect";
-import { showError } from "../components/Toast";
+import { showError, showSuccess } from "../components/Toast";
 import styles from "./MePage.module.css";
 
 const MePage: React.FC = () => {
@@ -224,6 +224,7 @@ const MePage: React.FC = () => {
     try {
       await updatePreferences(updatedPreferences);
       setPreferences(updatedPreferences);
+      showSuccess("Preferences updated successfully!");
     } catch (err: any) {
       showError("Failed to update preferences: " + err.message);
     }
@@ -373,33 +374,15 @@ const MePage: React.FC = () => {
         </div>
 
         <div className={styles.preferenceGroup}>
-          <label htmlFor="defaultClusterCount">Default Cluster Count:</label>
-          <input
-            id="defaultClusterCount"
-            type="number"
-            value={preferences.defaultClusterCount || 5}
-            onChange={(e) =>
-              setPreferences((prev) => ({
-                ...prev,
-                defaultClusterCount: parseInt(e.target.value),
-              }))
-            }
-            min="2"
-            max="20"
-            className={styles.preferenceInput}
-          />
-        </div>
-
-        <div className={styles.preferenceGroup}>
           <label htmlFor="publicByDefault" className={styles.checkboxLabel}>
             <input
               id="publicByDefault"
               type="checkbox"
-              checked={preferences.publicByDefault || false}
+              checked={preferences.makeTraindsPublicAsDefault || false}
               onChange={(e) =>
                 setPreferences((prev) => ({
                   ...prev,
-                  publicByDefault: e.target.checked,
+                  makeTraindsPublicAsDefault: e.target.checked,
                 }))
               }
               className={styles.checkbox}
@@ -424,28 +407,6 @@ const MePage: React.FC = () => {
             />
             Email notifications
           </label>
-        </div>
-
-        <div className={styles.preferenceGroup}>
-          <label htmlFor="defaultSubreddits">
-            Default Subreddits (comma-separated):
-          </label>
-          <input
-            id="defaultSubreddits"
-            type="text"
-            value={preferences.defaultSubreddits?.join(", ") || ""}
-            onChange={(e) =>
-              setPreferences((prev) => ({
-                ...prev,
-                defaultSubreddits: e.target.value
-                  .split(",")
-                  .map((s) => s.trim())
-                  .filter((s) => s),
-              }))
-            }
-            placeholder="e.g., news, worldnews, technology"
-            className={styles.preferenceInput}
-          />
         </div>
 
         <ActionButton
