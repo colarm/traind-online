@@ -12,6 +12,7 @@ import {
 import { getMyTrainds, TraindWithPagination } from "../api/traind";
 import TraindStream from "../components/TraindStream";
 import ThemeSelect from "../components/ThemeSelect";
+import JsonTreeView from "../components/JsonTreeView";
 import { showError, showSuccess } from "../components/Toast";
 import styles from "./MePage.module.css";
 
@@ -350,7 +351,7 @@ const MePage: React.FC = () => {
               </p>
               <div className={styles.parameterConfig}>
                 {paramSet.parameters && (
-                  <pre>{JSON.stringify(paramSet.parameters, null, 2)}</pre>
+                  <JsonTreeView data={paramSet.parameters} />
                 )}
               </div>
             </div>
