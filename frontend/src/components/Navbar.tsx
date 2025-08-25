@@ -13,6 +13,7 @@ const Navbar = () => {
   const navItems = [
     { path: "/trainds", label: "Trainds" },
     { path: "/training", label: "Training" },
+    { path: "/help", label: "Help" },
     { path: "/me", label: "Me" },
   ];
 
@@ -92,6 +93,9 @@ const Navbar = () => {
           </>
         ) : (
           <>
+            <Link to="/help" className={styles.actionButton}>
+              Help
+            </Link>
             <button
               type="button"
               className={styles.actionButton}

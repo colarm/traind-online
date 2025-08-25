@@ -7,6 +7,7 @@ import TrendsPage from "../pages/TraindsPage";
 import MePage from "../pages/MePage";
 import NotFound from "../pages/NotFoundPage";
 import TraindDetailPage from "../pages/TraindDetailPage";
+import HelpPage from "../pages/HelpPage";
 
 const routes = [
   <Route path="/" element={<WelcomePage />} key="welcome" />,
@@ -19,6 +20,7 @@ const routes = [
     key="traind-detail"
   />,
   <Route path="/me" element={<MePage />} key="me" />,
+  <Route path="/help" element={<HelpPage />} key="help" />,
   <Route path="*" element={<NotFound />} key="notfound" />,
 ];
 
