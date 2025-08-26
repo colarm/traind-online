@@ -1,3 +1,18 @@
+"""
+Task Queue Management System
+Manages ML analysis tasks with status tracking and queue positioning
+
+Filename: task_queue.py
+Author: Haicheng Zhao
+Date: 2025-08-18
+AI Usage Declaration:
+- This file contains code generated with the help of AI tools.
+- Tool Used: Claude
+- Date Generated: 2025-08-18
+- AI-generated sections are marked with comments: # [AI-GENERATED]
+I have reviewed, tested, and understood all AI-generated code.
+"""
+
 import threading
 import queue
 import uuid
@@ -8,6 +23,8 @@ from typing import Dict, Any, Optional, Callable
 
 
 class TaskStatus(Enum):
+    """Enumeration of possible task states"""
+
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"
@@ -16,6 +33,10 @@ class TaskStatus(Enum):
 
 @dataclass
 class Task:
+    """
+    Represents a single analysis task with metadata and status tracking
+    """
+
     id: str
     task_type: str
     payload: Dict[str, Any]
@@ -27,6 +48,7 @@ class Task:
     reddit_post_id: Optional[str] = None  # Reddit post ID for reddit_analysis tasks
 
     def __post_init__(self):
+        """Initialize timestamps if not provided"""
         if self.created_at is None:
             self.created_at = datetime.now()
         if self.updated_at is None:
@@ -34,6 +56,11 @@ class Task:
 
 
 class TaskQueue:
+    """
+    Thread-safe task queue for managing ML analysis tasks
+    Provides task creation, retrieval, status updates, and queue position tracking
+    """
+
     def __init__(self):
         self._queue = queue.Queue()
         self._tasks = {}
@@ -45,6 +72,7 @@ class TaskQueue:
         payload: Dict[str, Any],
         reddit_post_id: Optional[str] = None,
     ) -> str:
+        """Add a new task to the queue and return the task ID"""
         task_id = str(uuid.uuid4())
         task = Task(
             id=task_id,
@@ -60,6 +88,7 @@ class TaskQueue:
         return task_id
 
     def get_task(self, timeout: Optional[float] = None) -> Optional[Task]:
+        """Get the next available task from the queue"""
         try:
             task = self._queue.get(timeout=timeout)
             with self._lock:
@@ -69,6 +98,7 @@ class TaskQueue:
             return None
 
     def complete_task(self, task_id: str, result: Dict[str, Any]):
+        """Mark a task as completed with results"""
         with self._lock:
             if task_id in self._tasks:
                 self._tasks[task_id].status = TaskStatus.COMPLETED
@@ -79,6 +109,7 @@ class TaskQueue:
                 self._tasks[task_id].updated_at = datetime.now()
 
     def fail_task(self, task_id: str, error: str):
+        """Mark a task as failed with error message"""
         with self._lock:
             if task_id in self._tasks:
                 self._tasks[task_id].status = TaskStatus.FAILED
@@ -89,9 +120,11 @@ class TaskQueue:
                 self._tasks[task_id].updated_at = datetime.now()
 
     def get_task_status(self, task_id: str) -> Optional[Task]:
+        """Get the current status of a specific task"""
         with self._lock:
             return self._tasks.get(task_id)
 
+    # [AI-GENERATED: Claude, 2025-08-26]
     def get_queue_position(self, task_id: str) -> tuple[int, int]:
         """
         Get the position of a task in the queue and total pending tasks
@@ -124,6 +157,7 @@ class TaskQueue:
 
             return (position, total_pending)
 
+    # [AI-GENERATED: Claude, 2025-08-26]
     def get_all_tasks(self) -> Dict[str, Dict[str, Any]]:
         """Get all tasks as a dictionary for listing purposes"""
         with self._lock:
@@ -147,9 +181,10 @@ class TaskQueue:
             return all_tasks
 
 
-# Global instance
+# Global task queue instance
 _task_queue = TaskQueue()
 
 
 def get_task_queue() -> TaskQueue:
+    """Get the global task queue instance"""
     return _task_queue

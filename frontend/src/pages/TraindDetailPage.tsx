@@ -1,3 +1,8 @@
+/**
+ * Individual traind detail view page
+ * Displays full analysis results, parameters, and allows interaction
+ */
+
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -16,8 +21,10 @@ import styles from "./TraindDetailPage.module.css";
 import JsonTreeView from "../components/JsonTreeView";
 
 const TraindDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // Get traind ID from URL
   const { isLoggedIn, username } = useAuth();
+
+  // State management for traind data and operations
   const [traind, setTraind] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,6 +32,7 @@ const TraindDetailPage: React.FC = () => {
   const [exporting, setExporting] = useState(false);
   const [changingVisibility, setChangingVisibility] = useState(false);
 
+  // Load traind details when component mounts or ID changes
   useEffect(() => {
     if (!id) return;
 
@@ -33,7 +41,7 @@ const TraindDetailPage: React.FC = () => {
       setError(null);
 
       try {
-        // Load traind data
+        // Fetch traind data from API
         const traindData = await getTraindById(id);
         if (traindData.error) {
           setError(traindData.error);
@@ -41,7 +49,7 @@ const TraindDetailPage: React.FC = () => {
         }
         setTraind(traindData);
 
-        // Add to history only if user is logged in
+        // Track viewing history for logged-in users
         if (isLoggedIn) {
           try {
             await addToHistory(id);
@@ -142,6 +150,7 @@ const TraindDetailPage: React.FC = () => {
         {isOwner && (
           <div className={styles.ownerActions}>
             <button
+              type="button"
               className={`${styles.visibilityButton} ${
                 traind.isPublic ? styles.public : styles.private
               }`}
@@ -151,7 +160,11 @@ const TraindDetailPage: React.FC = () => {
                 traind.isPublic ? "private" : "public"
               }`}
             >
-              {changingVisibility ? "..." : traind.isPublic ? "🔒 Make Private" : "🌐 Make Public"}
+              {changingVisibility
+                ? "..."
+                : traind.isPublic
+                ? "🔒 Make Private"
+                : "🌐 Make Public"}
             </button>
           </div>
         )}
@@ -175,8 +188,11 @@ const TraindDetailPage: React.FC = () => {
         <CommentArea traindId={id!} />
       </div>
 
+      {/* Action Buttons (Block until export backend is ready) */}
+      {/* 
       <div className={styles.section + " " + styles.actions}>
         <button
+          type="button"
           className={styles.exportButton}
           onClick={() => handleExport("json")}
           disabled={exporting}
@@ -184,6 +200,7 @@ const TraindDetailPage: React.FC = () => {
           Export JSON
         </button>
         <button
+          type="button"
           className={styles.exportButton}
           onClick={() => handleExport("csv")}
           disabled={exporting}
@@ -191,6 +208,7 @@ const TraindDetailPage: React.FC = () => {
           Export CSV
         </button>
         <button
+          type="button"
           className={styles.exportButton}
           onClick={() => handleExport("png")}
           disabled={exporting}
@@ -198,6 +216,7 @@ const TraindDetailPage: React.FC = () => {
           Export PNG
         </button>
       </div>
+      */}
     </div>
   );
 };

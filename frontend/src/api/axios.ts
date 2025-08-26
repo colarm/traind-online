@@ -1,12 +1,19 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+/**
+ * HTTP client configuration using Axios
+ * Handles API communication with automatic environment switching
+ */
 
-// Create an Axios instance with default config
+import axios, { AxiosInstance } from "axios";
+
+/**
+ * Configured Axios instance with base URL and timeout settings
+ */
 const httpClient: AxiosInstance = axios.create({
   baseURL:
     process.env.NODE_ENV === "production"
-      ? "https://traind.online/api"
-      : "http://localhost:5173/api",
-  timeout: 10000,
+      ? "https://traind.online/api" // Production API
+      : "http://localhost:5173/api", // Development API
+  timeout: 10000, // 10 second timeout
   headers: {
     "Content-Type": "application/json",
   },

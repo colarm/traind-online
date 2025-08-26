@@ -1,14 +1,22 @@
-import { PrismaClient, Star } from "@prisma/client";
-import {
-  AddStarInput,
-  RemoveStarInput,
-  PaginatedStarList,
-  GetStarredTraindsInput,
-} from "./star.types";
+/**
+ * Filename: star.service.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-05
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-05
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
+import { PrismaClient } from "@prisma/client";
+import { PaginatedStarList, GetStarredTraindsInput } from "./star.types";
 
 const prisma = new PrismaClient();
 
 const starService = {
+  // [AI-GENERATED: Claude, 2025-08-05]
   async getStarredTrainds(
     input: GetStarredTraindsInput
   ): Promise<PaginatedStarList> {
@@ -76,7 +84,7 @@ const starService = {
       traind: {
         ...star.traind,
         isStarred: true,
-        stars: undefined
+        stars: undefined,
       },
     }));
 
@@ -90,6 +98,7 @@ const starService = {
     };
   },
 
+  // [STUDENT-WRITTEN]
   // Toggle star status for a traind (add if not exist, remove if exists)
   async toggleStar(input: {
     userId: string;

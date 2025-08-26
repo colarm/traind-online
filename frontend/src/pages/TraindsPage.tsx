@@ -1,3 +1,8 @@
+/**
+ * Public trainds discovery page
+ * Displays trending Reddit analysis posts shared by the community
+ */
+
 import React, { useEffect, useState } from "react";
 import { Traind } from "../types/traind";
 import { getFeed, adaptFeedResponse, FeedResponse } from "../api/feed";
@@ -5,6 +10,7 @@ import TraindStream from "../components/TraindStream";
 import styles from "./TraindsPage.module.css";
 
 const TraindsPage: React.FC = () => {
+  // State management for feed data
   const [trainds, setTrainds] = useState<Traind[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,16 +20,18 @@ const TraindsPage: React.FC = () => {
     []
   );
 
+  // Load trending feed on component mount
   useEffect(() => {
     loadTrendingFeed();
   }, []);
 
+  // Fetch trending trainds from API
   const loadTrendingFeed = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // Use 100% trending weight until other score system was implemented
+      // Use 100% trending weight (pure popularity-based ranking)
       const feedResponse = await getFeed({
         collaborative: 0,
         content: 0,
@@ -44,10 +52,12 @@ const TraindsPage: React.FC = () => {
     }
   };
 
+  // Message for empty state
   const getEmptyMessage = () => {
     return "No public trainds available. Be the first to share your analysis!";
   };
 
+  // Format timestamp for display
   const formatGeneratedTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
   };

@@ -1,7 +1,19 @@
+/**
+ * Filename: Toast.tsx
+ * Author: Haicheng Zhao
+ * Date: 2025-08-15
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-15
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import React, { useState, useEffect, useCallback } from "react";
 import styles from "./Toast.module.css";
 
-// ===== Types =====
+// [AI-GENERATED: Claude, 2025-08-15]
 export interface ToastData {
   id: string;
   message: string;
@@ -42,7 +54,6 @@ interface ToastContainerProps {
   maxToasts?: number;
 }
 
-// ===== Global Toast Manager =====
 let globalToastFunction:
   | ((toast: {
       message: string;
@@ -107,7 +118,6 @@ export const showConfirm = (options: {
   }
 };
 
-// ===== Confirm Dialog Component =====
 const ConfirmDialog: React.FC<ConfirmProps> = ({
   id,
   title,
@@ -167,7 +177,6 @@ const ConfirmDialog: React.FC<ConfirmProps> = ({
   );
 };
 
-// ===== Toast Component =====
 const Toast: React.FC<ToastProps> = ({
   id,
   message,
@@ -233,7 +242,6 @@ const Toast: React.FC<ToastProps> = ({
   );
 };
 
-// ===== Toast Container Component =====
 const ToastContainer: React.FC<ToastContainerProps> = ({ maxToasts = 5 }) => {
   const [toasts, setToasts] = useState<ToastData[]>([]);
   const [confirms, setConfirms] = useState<ConfirmData[]>([]);
@@ -270,7 +278,6 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ maxToasts = 5 }) => {
     setConfirms((prev) => prev.filter((confirm) => confirm.id !== id));
   }, []);
 
-  // Register the functions globally
   useEffect(() => {
     setToastFunction(addToast);
     setConfirmFunction(addConfirm);

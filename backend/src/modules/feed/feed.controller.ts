@@ -1,8 +1,20 @@
+/**
+ * Filename: feed.controller.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-12
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-12
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { Request, Response } from "express";
 import feedService from "./feed.service";
 
 const feedController = {
-  // Get feed
+  // [AI-GENERATED: Claude, 2025-08-12]
   async getFeed(req: Request, res: Response) {
     try {
       const userId = (req as any).user?.id;
@@ -90,7 +102,7 @@ const feedController = {
     }
   },
 
-  // Get subreddit feed
+  // [AI-GENERATED: Claude, 2025-08-12]
   async getSubredditFeed(req: Request, res: Response) {
     try {
       const { subreddit } = req.params;
@@ -129,7 +141,7 @@ const feedController = {
     }
   },
 
-  // Get personalized search results
+  // [AI-GENERATED: Claude, 2025-08-12]
   async searchWithPersonalization(req: Request, res: Response) {
     try {
       const userId = (req as any).user?.id;

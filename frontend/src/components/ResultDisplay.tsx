@@ -1,3 +1,4 @@
+// Result viewer for Reddit post analysis with clustered comments
 import React, { useState } from "react";
 import styles from "./ResultDisplay.module.css";
 
@@ -15,7 +16,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
   const [showAllSummaries, setShowAllSummaries] = useState(false);
   const [showAllClusters, setShowAllClusters] = useState(false);
 
-  // Check if this is a task in progress or error
+  // Handle task in progress or error states
   if (result?.task_id && !result?.success) {
     return (
       <div className={styles.statusContainer}>
@@ -46,7 +47,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
     );
   }
 
-  // Display successful analysis results
+  // Handle invalid result format
   if (!result?.success) {
     return (
       <div className={styles.statusContainer}>
@@ -61,6 +62,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
     );
   }
 
+  // Toggle cluster expansion
   const toggleCluster = (clusterId: number) => {
     const newExpanded = new Set(expandedClusters);
     if (newExpanded.has(clusterId)) {
@@ -71,6 +73,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ result }) => {
     setExpandedClusters(newExpanded);
   };
 
+  // Toggle summary expansion
   const toggleSummary = (clusterId: number) => {
     const newExpanded = new Set(expandedSummaries);
     if (newExpanded.has(clusterId)) {

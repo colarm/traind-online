@@ -1,3 +1,8 @@
+/**
+ * User profile and settings page
+ * Multi-tab interface for managing personal data, preferences, and activity
+ */
+
 import React, { useEffect, useState } from "react";
 import useRequireAuth from "../utils/useRequireAuth";
 import { useNavigate } from "react-router-dom";

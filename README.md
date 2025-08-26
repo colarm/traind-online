@@ -75,16 +75,6 @@ This platform is tailored for three main personas:
 
 ---
 
-## 🚧 Project Status
-
-- ✅ Fully functional microservice architecture  
-- ✅ Clustering logic integrated via gRPC  
-- ✅ Frontend interaction for clustering and visualization  
-- ✅ User authentication and session persistence  
-- 🔜 Planned: User history, result caching, export formats, CI/CD
-
----
-
 ## 📜 License
 
 This project is for academic purposes as part of the MSc IT+ individual development project at the University of Glasgow.

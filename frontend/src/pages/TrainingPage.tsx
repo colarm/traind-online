@@ -1,3 +1,18 @@
+/**
+ * Training Configuration Page
+ * Allows users to configure analysis parameters and start Reddit post analysis
+ *
+ * Filename: TrainingPage.tsx
+ * Author: Haicheng Zhao
+ * Date: 2025-08-10
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-20
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import React, { useState, useEffect } from "react";
 import useRequireAuth from "../utils/useRequireAuth";
 import styles from "./TrainingPage.module.css";
@@ -16,6 +31,10 @@ interface CustomSelectProps {
   onChange: (value: string) => void;
 }
 
+/**
+ * Custom dropdown select component for form inputs
+ */
+// [AI-GENERATED: Claude, 2025-08-20]
 const CustomSelect: React.FC<CustomSelectProps> = ({
   label,
   value,
@@ -66,10 +85,15 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   );
 };
 
+/**
+ * Main training configuration page component
+ */
 const TrainingPage: React.FC = () => {
   useRequireAuth();
   const [target, setTarget] = useState("");
   const [useCustomParams, setUseCustomParams] = useState(false);
+
+  // [AI-GENERATED: Claude, 2025-08-20]
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >({
@@ -93,12 +117,18 @@ const TrainingPage: React.FC = () => {
     Record<string, string>
   >({});
 
+  /**
+   * Handle the start training process
+   * Saves parameter set and initiates Reddit analysis
+   */
+  // [AI-GENERATED: Claude, 2025-08-10]
   const handleStartTraining = async () => {
     setLoading(true);
     setResult(null);
     try {
       const currentParams = useCustomParams ? params : getDefaultParams();
 
+      // Save parameter set to database
       const saveRes = await saveParameterSet({
         name: "Reddit Analysis Parameter Set",
         config: currentParams,
@@ -108,14 +138,19 @@ const TrainingPage: React.FC = () => {
         setLoading(false);
         return;
       }
+
       const parameterSetId = saveRes.id;
       let redditId = target;
+
+      // Extract Reddit post ID from URL if provided
       const redditUrlMatch = target.match(
         /reddit\.com\/r\/[^\/]+\/comments\/([a-zA-Z0-9]+)\//
       );
       if (redditUrlMatch && redditUrlMatch[1]) {
         redditId = redditUrlMatch[1];
       }
+
+      // Start the analysis
       const runRes = await runAnalysis(redditId, parameterSetId);
       if (runRes.error) {
         setResult("Analysis failed: " + runRes.error);
@@ -143,6 +178,10 @@ const TrainingPage: React.FC = () => {
     }));
   };
 
+  /**
+   * Get parameter constraints for validation
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const getParameterConstraints = () => {
     return {
       max_comments: { min: 1, max: 10000, step: 1 },
@@ -178,6 +217,10 @@ const TrainingPage: React.FC = () => {
     };
   };
 
+  /**
+   * Validate parameter values against constraints
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const validateParameterValue = (
     paramKey: string,
     value: any
@@ -189,6 +232,7 @@ const TrainingPage: React.FC = () => {
       return { isValid: true };
     }
 
+    // Validate numeric constraints
     if (typeof value === "number" && constraint.min !== undefined) {
       if (value < constraint.min) {
         return { isValid: false, message: `Minimum is ${constraint.min}` };
@@ -198,6 +242,7 @@ const TrainingPage: React.FC = () => {
       }
     }
 
+    // Validate string constraints
     if (typeof value === "string" && constraint.pattern) {
       if (!constraint.pattern.test(value)) {
         return { isValid: false, message: "Format is incorrect" };
@@ -216,6 +261,7 @@ const TrainingPage: React.FC = () => {
       }
     }
 
+    // Validate array constraints
     if (Array.isArray(value) && constraint.minItems !== undefined) {
       if (value.length < constraint.minItems) {
         return {
@@ -237,6 +283,10 @@ const TrainingPage: React.FC = () => {
     return { isValid: true };
   };
 
+  /**
+   * Update parameter value with validation
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const updateParam = (path: string[], value: any) => {
     const paramKey = path[path.length - 1];
     const validation = validateParameterValue(paramKey, value);
@@ -259,6 +309,7 @@ const TrainingPage: React.FC = () => {
       const newParams = { ...prev };
       let current = newParams as any;
 
+      // Navigate to the nested property
       for (let i = 0; i < path.length - 1; i++) {
         if (!current[path[i]]) {
           current[path[i]] = {};
@@ -273,6 +324,10 @@ const TrainingPage: React.FC = () => {
     });
   };
 
+  /**
+   * Update array parameter from comma-separated string
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const updateArrayParam = (path: string[], value: string) => {
     const arrayValue = value
       .split(",")
@@ -299,6 +354,10 @@ const TrainingPage: React.FC = () => {
     updateParam(path, arrayValue);
   };
 
+  /**
+   * Render a collapsible parameter section
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const renderParameterSection = (
     sectionKey: string,
     sectionConfig: any,
@@ -337,6 +396,10 @@ const TrainingPage: React.FC = () => {
     );
   };
 
+  /**
+   * Render individual parameter input fields based on type
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const renderParameterField = (
     sectionKey: string,
     paramKey: string,
@@ -543,6 +606,10 @@ const TrainingPage: React.FC = () => {
     return null;
   };
 
+  /**
+   * Get organized parameter sections for rendering
+   */
+  // [AI-GENERATED: Claude, 2025-08-20]
   const getParameterSections = (): Array<{ key: string; data: any }> => {
     const sections: Array<{ key: string; data: any }> = [];
 
@@ -564,6 +631,7 @@ const TrainingPage: React.FC = () => {
 
     const skipParams = ["comment_limit", "reddit_fetch_params"];
 
+    // Process mapped sections
     Object.entries(parameterMapping).forEach(([sectionKey, paramKeys]) => {
       const sectionData: any = {};
       let hasData = false;
@@ -592,6 +660,7 @@ const TrainingPage: React.FC = () => {
       }
     });
 
+    // Process unmapped parameters
     Object.entries(params).forEach(([key, value]) => {
       if (skipParams.includes(key)) return;
 

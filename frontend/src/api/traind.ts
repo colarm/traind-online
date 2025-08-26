@@ -1,7 +1,24 @@
+/**
+ * Traind API Client
+ * Handles API calls for Traind analysis operations and data transformation
+ *
+ * Filename: traind.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-10
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-10
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import httpClient from "./axios";
 import { Traind } from "../types/traind";
 
-// Backend actual response format for trainds
+/**
+ * Backend response format for paginated Traind listings
+ */
 export interface MyTraindsResponse {
   trainds: any[];
   nextCursor?: string | null;
@@ -9,7 +26,9 @@ export interface MyTraindsResponse {
   totalCount: number;
 }
 
-// Enhanced types for the frontend
+/**
+ * Enhanced Traind type with additional count metadata
+ */
 export interface TraindWithPagination extends Traind {
   _count?: {
     stars: number;
@@ -18,7 +37,11 @@ export interface TraindWithPagination extends Traind {
   };
 }
 
-// Adapter function to convert backend response to frontend format
+/**
+ * Adapter function to normalize backend response to frontend format
+ * Handles field name differences and provides default values
+ */
+// [AI-GENERATED: Claude, 2025-08-10]
 export function adaptTraindResponse(backendTraind: any): TraindWithPagination {
   return {
     id: backendTraind.id,
@@ -41,6 +64,9 @@ export function adaptTraindResponse(backendTraind: any): TraindWithPagination {
   };
 }
 
+/**
+ * Start a new Reddit analysis task
+ */
 export async function runAnalysis(redditId: string, parameterSetId: string) {
   try {
     const response = await httpClient.post("/traind/run", {
@@ -53,6 +79,9 @@ export async function runAnalysis(redditId: string, parameterSetId: string) {
   }
 }
 
+/**
+ * Retrieve a specific Traind by ID
+ */
 export async function getTraindById(traindId: string) {
   try {
     const response = await httpClient.get(`/traind/${traindId}`);
@@ -62,6 +91,9 @@ export async function getTraindById(traindId: string) {
   }
 }
 
+/**
+ * Update the visibility setting of a Traind
+ */
 export async function setTraindVisibility(traindId: string, isPublic: boolean) {
   try {
     const response = await httpClient.patch(`/traind/${traindId}/visibility`, {
@@ -73,6 +105,9 @@ export async function setTraindVisibility(traindId: string, isPublic: boolean) {
   }
 }
 
+/**
+ * Delete a Traind record
+ */
 export async function deleteTraind(traindId: string) {
   try {
     await httpClient.delete(`/traind/${traindId}`);
@@ -82,6 +117,9 @@ export async function deleteTraind(traindId: string) {
   }
 }
 
+/**
+ * Get the parameter set ID associated with a Traind
+ */
 export async function getParameterSetId(traindId: string) {
   try {
     const response = await httpClient.get(`/traind/${traindId}/parameter-set`);
@@ -93,7 +131,10 @@ export async function getParameterSetId(traindId: string) {
   }
 }
 
-// Get user's own trainds with pagination
+/**
+ * Get paginated list of user's Traind records
+ */
+// [AI-GENERATED: Claude, 2025-08-10]
 export async function getMyTrainds(params?: {
   limit?: number;
   cursor?: string;
@@ -123,6 +164,9 @@ export async function getMyTrainds(params?: {
   }
 }
 
+/**
+ * Export Traind analysis results in specified format
+ */
 export async function exportResult(traindId: string, format: string = "json") {
   try {
     const response = await httpClient.get(`/traind/${traindId}/export`, {

@@ -1,3 +1,4 @@
+// Comment system with nested replies for traind discussions
 import React, { useState } from "react";
 import {
   CommentNode,
@@ -18,6 +19,7 @@ interface CommentItemProps {
   onReplySuccess: (parentId: string, newReply: CommentNode) => void;
 }
 
+// Individual comment item with reply functionality and nesting support
 const CommentItem: React.FC<CommentItemProps> = ({
   traindId,
   commentNode,
@@ -31,6 +33,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [postingReply, setPostingReply] = useState(false);
 
+  // Load replies for this comment
   const loadReplies = async () => {
     if (loadingReplies) return;
     setLoadingReplies(true);
@@ -44,6 +47,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     setLoadingReplies(false);
   };
 
+  // Submit reply to this comment
   const handleReply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyContent.trim()) return;
@@ -57,13 +61,13 @@ const CommentItem: React.FC<CommentItemProps> = ({
       setReplyContent("");
       setShowReplyForm(false);
 
+      // Update local state with new reply
       const newReply: CommentNode = {
         comment: response,
         repliesCount: 0,
       };
 
       setReplies((prevReplies) => [...prevReplies, newReply]);
-
       commentNode.repliesCount += 1;
 
       if (!showReplies) {
@@ -136,6 +140,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
         </form>
       )}
 
+      {/* Nested replies with recursive rendering */}
       {showReplies && replies.length > 0 && (
         <div className={styles.replies}>
           {replies.map((reply) => (
@@ -145,6 +150,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
               commentNode={reply}
               depth={depth + 1}
               onReplySuccess={(parentId, newReply) => {
+                // Update reply counts in nested structure
                 const updateReplies = (replies: CommentNode[]): CommentNode[] =>
                   replies.map((reply) =>
                     reply.comment.id === parentId
@@ -166,6 +172,7 @@ interface CommentAreaProps {
   traindId: string;
 }
 
+// Main comment area component for traind discussion
 const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
   const [comments, setComments] = useState<CommentNode[]>([]);
   const [content, setContent] = useState("");
@@ -173,6 +180,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
   const [error, setError] = useState<string | null>(null);
   const [posting, setPosting] = useState(false);
 
+  // Load top-level comments for this traind
   const loadComments = async () => {
     setLoading(true);
     try {
@@ -189,6 +197,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
     loadComments();
   }, [traindId]);
 
+  // Submit new top-level comment
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim()) return;

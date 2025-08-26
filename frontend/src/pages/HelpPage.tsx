@@ -1,4 +1,16 @@
-import React, { useState, useEffect } from "react";
+/**
+ * Filename: HelpPage.tsx
+ * Author: Haicheng Zhao
+ * Date: 2025-08-25
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-25
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
+import { useState, useEffect } from "react";
 import {
   listHelpTitles,
   getHelpById,
@@ -8,6 +20,7 @@ import {
 import styles from "./HelpPage.module.css";
 
 const HelpPage = () => {
+  // [STUDENT-WRITTEN]
   const [helpTitles, setHelpTitles] = useState<HelpTitle[]>([]);
   const [selectedHelp, setSelectedHelp] = useState<HelpContent | null>(null);
   const [loading, setLoading] = useState(true);
@@ -15,6 +28,7 @@ const HelpPage = () => {
   const [error, setError] = useState<string>("");
 
   // Load help titles on component mount
+  // [AI-GENERATED: Claude, 2025-08-25]
   useEffect(() => {
     const loadHelpTitles = async () => {
       try {
@@ -38,6 +52,7 @@ const HelpPage = () => {
     loadHelpTitles();
   }, []);
 
+  // [AI-GENERATED: Claude, 2025-08-25]
   const loadHelpContent = async (id: string) => {
     try {
       setContentLoading(true);
@@ -52,12 +67,14 @@ const HelpPage = () => {
     }
   };
 
+  // [STUDENT-WRITTEN]
   const handleHelpItemClick = (id: string) => {
     if (selectedHelp?.id !== id) {
       loadHelpContent(id);
     }
   };
 
+  // [AI-GENERATED: Claude, 2025-08-25]
   const renderContent = (content: string) => {
     // Enhanced markdown-like rendering
     let html = content
@@ -86,6 +103,7 @@ const HelpPage = () => {
     return html;
   };
 
+  // [STUDENT-WRITTEN]
   if (loading) {
     return (
       <div className={styles.helpPage}>
@@ -97,6 +115,7 @@ const HelpPage = () => {
     );
   }
 
+  // [STUDENT-WRITTEN]
   return (
     <div className={styles.helpPage}>
       <div className={styles.header}>

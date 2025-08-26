@@ -1,15 +1,5 @@
 import { Traind } from "@prisma/client";
 
-export type AddStarInput = {
-  userId: string;
-  traindId: string;
-};
-
-export type RemoveStarInput = {
-  userId: string;
-  traindId: string;
-};
-
 export type StarredTraind = {
   id: string;
   userId: string;

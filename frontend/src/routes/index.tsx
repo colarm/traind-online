@@ -1,3 +1,8 @@
+/**
+ * Application route configuration
+ * Maps URL paths to React components
+ */
+
 import { Route } from "react-router-dom";
 
 import WelcomePage from "../pages/WelcomePage";
@@ -9,6 +14,7 @@ import NotFound from "../pages/NotFoundPage";
 import TraindDetailPage from "../pages/TraindDetailPage";
 import HelpPage from "../pages/HelpPage";
 
+// Route definitions for all application pages
 const routes = [
   <Route path="/" element={<WelcomePage />} key="welcome" />,
   <Route path="/training" element={<TrainingPage />} key="training" />,

@@ -1,11 +1,25 @@
+/**
+ * Filename: comment.controller.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-05
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-05
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { Request, Response } from "express";
 import commentService from "./comment.service";
 
 const commentController = {
+  // [AI-GENERATED: Claude, 2025-08-05]
   async addComment(req: Request, res: Response) {
     const userId = (req as any).user?.id;
     const { traindId, text } = req.body;
 
+    // Validate required parameters
     if (!traindId || !text) {
       return res.status(400).json({ error: "traindId and text are required" });
     }
@@ -20,10 +34,12 @@ const commentController = {
     }
   },
 
+  // [AI-GENERATED: Claude, 2025-08-05]
   async replyToComment(req: Request, res: Response) {
     const userId = (req as any).user?.id;
     const { traindId, parentId, text } = req.body;
 
+    // Validate required parameters for reply
     if (!traindId || !parentId || !text) {
       return res
         .status(400)
@@ -45,6 +61,7 @@ const commentController = {
     }
   },
 
+  // [AI-GENERATED: Claude, 2025-08-05]
   async getComments(req: Request, res: Response) {
     const { traindId } = req.params;
     const { parentId, cursorId, limit } = req.query;

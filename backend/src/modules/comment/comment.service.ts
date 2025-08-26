@@ -1,3 +1,15 @@
+/**
+ * Filename: comment.service.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-05
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-05
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { PrismaClient, Comment } from "@prisma/client";
 import {
   AddCommentInput,
@@ -10,6 +22,7 @@ import {
 const prisma = new PrismaClient();
 
 const commentService = {
+  // [STUDENT-WRITTEN]
   async add(input: AddCommentInput): Promise<Comment> {
     // Check if traind exists
     const traindExists = await prisma.traind.findUnique({
@@ -34,6 +47,7 @@ const commentService = {
     return comment;
   },
 
+  // [STUDENT-WRITTEN]
   async reply(input: ReplyInput) {
     // Check if traind exists
     const traindExists = await prisma.traind.findUnique({
@@ -67,6 +81,7 @@ const commentService = {
     return comment;
   },
 
+  // [AI-GENERATED: Claude, 2025-08-05]
   async getByTraind(input: GetCommentsInput): Promise<PaginatedCommentList> {
     const { traindId, parentId = null, cursorId, limit = 10 } = input;
 

@@ -1,7 +1,20 @@
+/**
+ * Filename: history.controller.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-05
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-05
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { Request, Response } from "express";
 import historyService from "./history.service";
 
 const historyController = {
+  // [AI-GENERATED: Claude, 2025-08-05]
   async add(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
@@ -14,6 +27,7 @@ const historyController = {
     }
   },
 
+  // [AI-GENERATED: Claude, 2025-08-05]
   async remove(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
@@ -28,17 +42,18 @@ const historyController = {
     }
   },
 
+  // [AI-GENERATED: Claude, 2025-08-05]
   async list(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
 
-      // Get pagination parameters from query
+      // Extract pagination parameters from query string
       const cursor = req.query.cursor as string | undefined;
       const limit = req.query.limit
         ? parseInt(req.query.limit as string, 10)
         : 10;
 
-      // Validate limit
+      // Enforce pagination limit for performance
       if (limit > 50) {
         return res.status(400).json({ error: "Limit cannot exceed 50" });
       }

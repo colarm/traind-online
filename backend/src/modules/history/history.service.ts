@@ -1,3 +1,15 @@
+/**
+ * Filename: history.service.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-05
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-05
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { PrismaClient, History } from "@prisma/client";
 import {
   AddHistoryInput,
@@ -11,6 +23,7 @@ const prisma = new PrismaClient();
 const historyService = {
   // Adds a history entry for a traind
   // Returns true if the history entry was added, false if it already exists
+  // [STUDENT-WRITTEN] Basic CRUD operation with business logic
   async addHistory(input: AddHistoryInput): Promise<History> {
     const { userId, traindId } = input;
 
@@ -45,6 +58,7 @@ const historyService = {
     return history;
   },
 
+  // [STUDENT-WRITTEN] Simple delete operation
   async removeHistory(input: RemoveHistoryInput): Promise<History> {
     const { userId, traindId } = input;
 
@@ -62,6 +76,7 @@ const historyService = {
     });
   },
 
+  // [AI-GENERATED: Claude] Complex cursor-based pagination with ordering
   async getViewedTrainds(
     input: GetViewedTraindsInput
   ): Promise<PaginatedHistoryList> {

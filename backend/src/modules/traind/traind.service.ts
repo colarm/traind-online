@@ -1,3 +1,18 @@
+/**
+ * Traind service
+ * Handles business logic for Reddit analysis tasks and data management
+ *
+ * Filename: traind.service.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-04
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-04
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { PrismaClient, Traind } from "@prisma/client";
 import {
   RunAnalysisInput,
@@ -11,6 +26,10 @@ import analysisClient from "../../shared/grpc/analysis.client";
 const prisma = new PrismaClient();
 
 const traindService = {
+  /**
+   * Start a new Reddit analysis task
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async runAnalysis(input: RunAnalysisInput): Promise<string> {
     const { userId, redditId, parameterSetId } = input;
 
@@ -18,12 +37,12 @@ const traindService = {
       throw new Error("Reddit ID and Parameter Set ID are required");
     }
 
-    // Get user preferences to determine default public setting
+    // Get user preferences for default visibility setting
     const userPreference = await prisma.userPreference.findUnique({
       where: { userId },
     });
 
-    // Use user's preference for making trainds public by default, fallback to true
+    // Use user's preference for making trainds public by default
     const isPublicByDefault =
       userPreference?.makeTraindsPublicAsDefault ?? true;
 
@@ -42,7 +61,7 @@ const traindService = {
     });
 
     try {
-      // Get parameter set details to pass to ML service
+      // Get parameter set details for ML service
       const parameterSet = await prisma.parameterSet.findUnique({
         where: { id: parameterSetId },
       });

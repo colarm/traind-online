@@ -1,3 +1,15 @@
+/**
+ * Filename: TraindStream.tsx
+ * Author: Haicheng Zhao
+ * Date: 2025-08-11
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-11
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Traind, TraindStreamProps } from "../types/traind";
@@ -5,6 +17,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { toggleTraindStar } from "../api/star";
 import styles from "./TraindStream.module.css";
 
+// # [STUDENT-WRITTEN]
 const TraindStream: React.FC<TraindStreamProps> = ({
   trainds,
   loading = false,
@@ -22,6 +35,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     new Map()
   );
 
+  // # [STUDENT-WRITTEN]
   useEffect(() => {
     const initialStarStates = new Map<string, boolean>();
     trainds.forEach((traind) => {
@@ -30,6 +44,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     setLocalStarStates(initialStarStates);
   }, [trainds]);
 
+  // # [STUDENT-WRITTEN]
   const getTraindStarStatus = (traind: Traind): boolean => {
     const localState = localStarStates.get(traind.id);
     const finalState =
@@ -38,6 +53,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     return finalState;
   };
 
+  // # [STUDENT-WRITTEN]
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -53,6 +69,7 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     }
   };
 
+  // # [AI-GENERATED: Claude, 2025-08-11]
   const getResultSummary = (result: any) => {
     if (!result) return "No result available";
     if (result.error) return `Error: ${result.error}`;
@@ -83,10 +100,12 @@ const TraindStream: React.FC<TraindStreamProps> = ({
     return summary.join(" | ");
   };
 
+  // # [STUDENT-WRITTEN]
   const handleCardClick = (traind: Traind) => {
     navigate(`/traind/${traind.id}`);
   };
 
+  // # [STUDENT-WRITTEN]
   const handleStarClick = async (e: React.MouseEvent, traind: Traind) => {
     e.stopPropagation();
 

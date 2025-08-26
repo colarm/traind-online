@@ -1,44 +1,55 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import { PrismaClient } from '@prisma/client'
-import mongoose from 'mongoose'
-import app from './app'
+/**
+ * Traind Online Backend Server
+ * Main server entry point that initializes database connections and starts the Express server
+ */
 
-dotenv.config()
+import express from "express";
+import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
+import mongoose from "mongoose";
+import app from "./app";
 
-const PORT = process.env.PORT || 4000
+// Load environment variables
+dotenv.config();
 
-// Prisma
-const prisma = new PrismaClient()
+const PORT = process.env.PORT || 4000;
 
-// MongoDB
-const MONGO_MAIN_URI = process.env.MONGO_MAIN_URI || 'mongodb://localhost:27017/traind_main'
+// Initialize Prisma client for PostgreSQL
+const prisma = new PrismaClient();
 
+// MongoDB connection URI
+const MONGO_MAIN_URI =
+  process.env.MONGO_MAIN_URI || "mongodb://localhost:27017/traind_main";
+
+/**
+ * Initialize and start the server with database connections
+ */
 async function startServer() {
   try {
-    // Connect MongoDB
-    await mongoose.connect(MONGO_MAIN_URI)
-    console.log('✅ Connected to MongoDB')
+    // Connect to MongoDB for main data storage
+    await mongoose.connect(MONGO_MAIN_URI);
+    console.log("✅ Connected to MongoDB");
 
-    // Test Prisma
-    await prisma.$connect()
-    console.log('✅ Connected to PostgreSQL via Prisma')
+    // Test PostgreSQL connection via Prisma
+    await prisma.$connect();
+    console.log("✅ Connected to PostgreSQL via Prisma");
 
-    app.use(express.json())
+    // Configure JSON parsing middleware
+    app.use(express.json());
 
-    // Example API route
-    app.get('/api/ping', (req, res) => {
-      res.json({ message: 'pong' })
-    })
+    // Health check endpoint
+    app.get("/api/ping", (req, res) => {
+      res.json({ message: "pong" });
+    });
 
-    // Start server
+    // Start the HTTP server
     app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`)
-    })
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+    });
   } catch (err) {
-    console.error('❌ Failed to start server:', err)
-    process.exit(1)
+    console.error("❌ Failed to start server:", err);
+    process.exit(1);
   }
 }
 
-startServer()
+startServer();

@@ -1,15 +1,29 @@
+/**
+ * Filename: Navbar.tsx
+ * Author: Haicheng Zhao
+ * Date: 2025-08-06
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-06
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import { logout } from "../api/auth";
 import { useAuth } from "../contexts/AuthContext";
 
+// # [STUDENT-WRITTEN]
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const { isLoggedIn, username, setIsLoggedIn, refreshAuth } = useAuth();
 
+  // # [STUDENT-WRITTEN]
   const navItems = [
     { path: "/trainds", label: "Trainds" },
     { path: "/training", label: "Training" },
@@ -17,8 +31,10 @@ const Navbar = () => {
     { path: "/me", label: "Me" },
   ];
 
+  // # [STUDENT-WRITTEN]
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
+  // # [STUDENT-WRITTEN]
   const handleLogout = async () => {
     try {
       await logout();
@@ -30,6 +46,7 @@ const Navbar = () => {
     }
   };
 
+  // # [AI-GENERATED: Claude, 2025-08-06]
   const handleLogin = () => {
     navigate("/", { state: { modal: "login" } });
     setTimeout(() => {
@@ -38,6 +55,7 @@ const Navbar = () => {
     }, 100); // Delay to ensure WelcomePage is mounted
   };
 
+  // # [AI-GENERATED: Claude, 2025-08-06]
   const handleRegister = () => {
     navigate("/", { state: { modal: "register" } });
     setTimeout(() => {

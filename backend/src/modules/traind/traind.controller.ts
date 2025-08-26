@@ -1,22 +1,41 @@
+/**
+ * Traind analysis controller
+ * Handles HTTP requests for Traind analysis operations, queue management, and result processing
+ *
+ * Filename: traind.controller.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-04
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-04
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { Request, Response } from "express";
 import traindService from "./traind.service";
 
 const traindController = {
+  /**
+   * Start a new Traind analysis
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async runAnalysis(req: Request, res: Response): Promise<Response> {
     try {
       const { redditId, parameterSetId } = req.body;
 
-      // Validate input
+      // Validate required input parameters
       if (!redditId || !parameterSetId) {
         return res
           .status(400)
           .json({ error: "Reddit ID and Parameter Set ID are required" });
       }
 
-      // Get user ID from request (set by auth middleware)
+      // Extract user ID from authenticated request
       const userId = (req as any).user.id;
 
-      // Run analysis
+      // Initiate analysis process
       const traindId = await traindService.runAnalysis({
         userId,
         redditId,
@@ -29,13 +48,14 @@ const traindController = {
     }
   },
 
-  // Get Traind record by ID
+  /**
+   * Retrieve a specific Traind record by ID
+   */
   async getTraindById(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
-      const userId = (req as any).user?.id; // Optional user context for star status
+      const userId = (req as any).user?.id; // Optional for star status
 
-      // Get Traind record by ID
       const traind = await traindService.getTraindById(traindId, userId);
 
       if (!traind) {
@@ -48,21 +68,20 @@ const traindController = {
     }
   },
 
-  // Export traind results implements after the analysis is complete
-
-  // Set visibility of a Traind record
+  /**
+   * Update visibility settings for a Traind record
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async setVisibility(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
       const { isPublic } = req.body;
 
-      // Update visibility of Traind record
       const updatedTraind = await traindService.setVisibility(
         traindId,
         isPublic
       );
 
-      // If the Traind record is not found, return null
       if (!updatedTraind) {
         return res.status(404).json({ error: "Traind record not found" });
       }
@@ -73,13 +92,14 @@ const traindController = {
     }
   },
 
-  // Delete a Traind record
+  /**
+   * Delete a Traind record (with user authorization)
+   */
   async deleteTraind(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
       const userId = (req as any).user.id;
 
-      // Delete Traind record (with user authorization check)
       await traindService.deleteTraind(traindId, userId);
 
       return res.status(204).send();
@@ -89,12 +109,13 @@ const traindController = {
     }
   },
 
-  // Get parameter set ID by Traind ID
+  /**
+   * Get parameter set ID associated with a Traind
+   */
   async getParameterSetId(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
 
-      // Get parameter set ID
       const parameterSetId = await traindService.getParameterSetId(traindId);
 
       if (!parameterSetId) {
@@ -109,24 +130,25 @@ const traindController = {
     }
   },
 
-  // Get all trainds for the current user with pagination
+  /**
+   * Get paginated list of user's Traind records
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async getMyTrainds(req: Request, res: Response): Promise<Response> {
     try {
-      // Get user ID from request (set by auth middleware)
       const userId = (req as any).user.id;
 
-      // Get pagination parameters from query
+      // Parse pagination parameters
       const cursor = req.query.cursor as string | undefined;
       const limit = req.query.limit
         ? parseInt(req.query.limit as string, 10)
         : 10;
 
-      // Validate limit
+      // Enforce pagination limits
       if (limit > 50) {
         return res.status(400).json({ error: "Limit cannot exceed 50" });
       }
 
-      // Get paginated trainds for the user
       const result = await traindService.getMyTrainds({
         userId,
         cursor,
@@ -139,23 +161,22 @@ const traindController = {
     }
   },
 
-  // Get all pending/processing trainds for the current user
+  /**
+   * Get pending/processing Traind records for user
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async getPendingTrainds(req: Request, res: Response): Promise<Response> {
     try {
-      // Get user ID from request (set by auth middleware)
       const userId = (req as any).user.id;
 
-      // Get limit parameter from query
       const limit = req.query.limit
         ? parseInt(req.query.limit as string, 10)
         : 10;
 
-      // Validate limit
       if (limit > 50) {
         return res.status(400).json({ error: "Limit cannot exceed 50" });
       }
 
-      // Get pending trainds for the user
       const result = await traindService.getPendingTrainds({
         userId,
         limit,
@@ -168,12 +189,13 @@ const traindController = {
     }
   },
 
-  // Get queue position for a specific traind
+  /**
+   * Get queue position for a specific Traind in ML processing queue
+   */
   async getQueuePosition(req: Request, res: Response): Promise<Response> {
     try {
       const { traindId } = req.params;
 
-      // Get queue position from ML service
       const queuePosition = await traindService.getQueuePosition(traindId);
 
       if (!queuePosition) {
@@ -189,19 +211,21 @@ const traindController = {
     }
   },
 
-  // Internal API for ML service to update traind results
+  /**
+   * Internal API: Update Traind with ML analysis results
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async updateTraindResult(req: Request, res: Response): Promise<Response> {
     try {
       const { taskId, result, status = "completed", title } = req.body;
 
-      // Validate input
+      // Validate required fields
       if (!taskId || !result) {
         return res.status(400).json({
           error: "Task ID and result are required",
         });
       }
 
-      // Update traind record
       const success = await traindService.updateTraindResult(
         taskId,
         result,
@@ -222,19 +246,21 @@ const traindController = {
     }
   },
 
-  // Internal API for ML service to mark traind as failed
+  /**
+   * Internal API: Mark Traind as failed with error message
+   */
+  // [AI-GENERATED: Claude, 2025-08-04]
   async updateTraindFailed(req: Request, res: Response): Promise<Response> {
     try {
       const { taskId, errorMessage } = req.body;
 
-      // Validate input
+      // Validate required fields
       if (!taskId || !errorMessage) {
         return res.status(400).json({
           error: "Task ID and error message are required",
         });
       }
 
-      // Update traind record to failed
       const success = await traindService.updateTraindFailed(
         taskId,
         errorMessage

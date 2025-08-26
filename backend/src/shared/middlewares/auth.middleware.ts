@@ -1,11 +1,23 @@
+/**
+ * Filename: auth.middleware.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-04
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-04
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
 interface JwtPayload {
   userId: string;
-  // Add other fields if needed, e.g. email, role
 }
 
+// [AI-GENERATED: Claude, 2025-08-04]
 export const authenticate = (
   req: Request,
   res: Response,
@@ -35,7 +47,7 @@ export const authenticate = (
   }
 };
 
-// Optional authentication - doesn't require login, but extracts user info if available
+// [AI-GENERATED: Claude, 2025-08-13]
 export const optionalAuthenticate = (
   req: Request,
   res: Response,

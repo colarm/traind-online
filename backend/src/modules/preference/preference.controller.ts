@@ -1,8 +1,21 @@
+/**
+ * Filename: preference.controller.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-06
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-06
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { Request, Response } from "express";
 import preferenceService from "./preference.service";
 import { UpdatePreferenceInput } from "./preference.types";
 
 const preferenceController = {
+  // [AI-GENERATED: Claude, 2025-08-06]
   async updatePreference(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;
@@ -32,6 +45,7 @@ const preferenceController = {
     }
   },
 
+  // [AI-GENERATED: Claude, 2025-08-06]
   async getPreference(req: Request, res: Response) {
     try {
       const userId = (req as any).user.id;

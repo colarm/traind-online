@@ -1,3 +1,8 @@
+/**
+ * Help content API functions
+ * Handles fetching help documentation from the server
+ */
+
 import httpClient from "./axios";
 
 export interface HelpTitle {
@@ -11,6 +16,7 @@ export interface HelpContent {
   content: string;
 }
 
+// Fetch list of available help topics
 export const listHelpTitles = async (): Promise<HelpTitle[]> => {
   try {
     const response = await httpClient.get("/help");
@@ -21,6 +27,7 @@ export const listHelpTitles = async (): Promise<HelpTitle[]> => {
   }
 };
 
+// Fetch detailed content for a specific help topic
 export const getHelpById = async (id: string): Promise<HelpContent> => {
   try {
     const response = await httpClient.get(`/help/${id}`);

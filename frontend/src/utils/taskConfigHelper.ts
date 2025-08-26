@@ -1,3 +1,8 @@
+/**
+ * Task Configuration Helper
+ * Utility functions for loading and managing task configuration data
+ */
+
 import {
   TaskConfigs,
   ParamsType,
@@ -7,14 +12,23 @@ import {
 import taskConfigsData from "../config/task_configs.json";
 import uiConfigsData from "../config/ui_configs.json";
 
+/**
+ * Load task configuration data from JSON file
+ */
 const getTaskConfigs = (): TaskConfigs => {
   return taskConfigsData as TaskConfigs;
 };
 
+/**
+ * Load UI configuration data from JSON file
+ */
 const getUIConfigs = (): UIConfigs => {
   return uiConfigsData as UIConfigs;
 };
 
+/**
+ * Get default parameters for a specific task type
+ */
 export const getDefaultParams = (
   taskType: string = "reddit_analysis"
 ): ParamsType => {
@@ -23,6 +37,9 @@ export const getDefaultParams = (
     ?.default_params;
 };
 
+/**
+ * Get default UI configuration for a specific task type
+ */
 export const getDefaultUIConfigs = (
   taskType: string = "reddit_analysis"
 ): UIConfig => {

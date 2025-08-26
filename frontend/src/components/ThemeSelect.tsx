@@ -1,3 +1,8 @@
+/**
+ * Theme selection dropdown component
+ * Allows users to switch between available UI themes
+ */
+
 import { useState, useRef, useEffect } from "react";
 import styles from "./ThemeSelect.module.css";
 import {
@@ -11,12 +16,13 @@ const ThemeSelect = () => {
   const [selected, setSelected] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
+  // Initialize with current theme on mount
   useEffect(() => {
     const currentTheme = getCurrentThemeLocal();
     setSelected(currentTheme);
   }, []);
 
-  // Close menu when clicking outside
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
@@ -28,12 +34,14 @@ const ThemeSelect = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Handle theme selection and apply changes
   const handleThemeSelect = (themeValue: string) => {
     setSelected(themeValue);
-    changeTheme(themeValue);
+    changeTheme(themeValue); // Apply theme globally
     setOpen(false);
   };
 
+  // Extract icon and label from current theme
   const getCurrentThemeDisplay = () => {
     if (!selected) {
       return { icon: "🌫️", label: "Loading..." };

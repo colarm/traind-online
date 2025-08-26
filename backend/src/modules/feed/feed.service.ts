@@ -1,9 +1,22 @@
+/**
+ * Filename: feed.service.ts
+ * Author: Haicheng Zhao
+ * Date: 2025-08-12
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-12
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import { PrismaClient } from "@prisma/client";
 import { FeedUserProfile, FeedResult, SimilarUser } from "./feed.types";
 
 const prisma = new PrismaClient();
 
 // === Tool Functions ===
+// [STUDENT-WRITTEN] Mock placeholder functions
 
 // Extract content types (Mock)
 const extractContentTypes = (trainds: any[]): string[] => {
@@ -23,6 +36,7 @@ const extractTraindTopics = (traind: any): string[] => {
 };
 
 // === Algorithm Functions ===
+// [AI-GENERATED: Claude, 2025-08-12] Complex scoring algorithms
 
 // Calculate search relevance score
 const calculateSearchRelevanceScore = (traind: any, query: string): number => {
@@ -162,6 +176,7 @@ const calculateCollaborativeScore = async (
 };
 
 // === Data Retrieval Functions ===
+// [STUDENT-WRITTEN] Database query functions
 
 // Get candidate content for recommendations
 const getCandidateTrainds = async (userId: string): Promise<any[]> => {
@@ -349,8 +364,9 @@ const analyzeFeedUserProfile = async (
 };
 
 // === Public Interfaces ===
+// [STUDENT-WRITTEN] Service interface structure with AI-assisted algorithm implementation
 const feedService = {
-  // Generate personalized recommendations
+  // [AI-GENERATED: Claude, 2025-08-12]
   async getPersonalizedFeed(
     userId: string,
     collaborativeWeight: number = 0.4,
@@ -409,7 +425,7 @@ const feedService = {
     };
   },
 
-  // Get trending feed (public access)
+  // [STUDENT-WRITTEN] Basic trending feed with AI-assisted scoring
   async getTrendingFeed(userId?: string): Promise<FeedResult> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -474,7 +490,7 @@ const feedService = {
     };
   },
 
-  // Get specific subreddit content
+  // [STUDENT-WRITTEN] Simple subreddit filtering
   async getSubredditFeed(
     subreddit: string,
     userId?: string
@@ -528,7 +544,7 @@ const feedService = {
     return { trainds: traindsWithStarStatus, total };
   },
 
-  // Get personalized search results
+  // [AI-GENERATED: Claude, 2025-08-12] Personalized search with complex scoring
   async searchWithPersonalization(
     query: string,
     userId?: string

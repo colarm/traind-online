@@ -1,18 +1,20 @@
+/**
+ * User's personal trainds management page
+ * Allows viewing, managing, and deleting user's own analysis results
+ */
+
 import React, { useEffect, useState } from "react";
 import useRequireAuth from "../utils/useRequireAuth";
 import TraindStream from "../components/TraindStream";
 import { showSuccess, showError, showConfirm } from "../components/Toast";
 import { Traind } from "../types/traind";
-import {
-  getMyTrainds,
-  adaptTraindResponse,
-  deleteTraind,
-  setTraindVisibility,
-} from "../api/traind";
+import { getMyTrainds, adaptTraindResponse, deleteTraind } from "../api/traind";
 import styles from "./MyTraindsPage.module.css";
 
 const MyTraindsPage: React.FC = () => {
-  useRequireAuth();
+  useRequireAuth(); // Require authentication for this page
+
+  // State for trainds list and pagination
   const [trainds, setTrainds] = useState<Traind[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,10 +23,12 @@ const MyTraindsPage: React.FC = () => {
   const [cursor, setCursor] = useState<string | undefined>(undefined);
   const [loadingMore, setLoadingMore] = useState(false);
 
+  // Load user's trainds on component mount
   useEffect(() => {
     loadTrainds();
   }, []);
 
+  // Fetch trainds with pagination support
   const loadTrainds = async (isLoadMore = false) => {
     if (isLoadMore) {
       setLoadingMore(true);
@@ -42,7 +46,7 @@ const MyTraindsPage: React.FC = () => {
       });
       const traindsList = response.trainds || [];
 
-      // Adapt backend response to frontend format
+      // Convert backend format to frontend format
       const adaptedTrainds = traindsList.map(adaptTraindResponse);
       if (isLoadMore) {
         setTrainds((prev) => [...prev, ...adaptedTrainds]);
@@ -63,6 +67,7 @@ const MyTraindsPage: React.FC = () => {
     }
   };
 
+  // Handle traind deletion with confirmation
   const handleDelete = async (traindId: string) => {
     showConfirm({
       title: "Delete Traind",
@@ -79,8 +84,7 @@ const MyTraindsPage: React.FC = () => {
           }
 
           showSuccess("Traind deleted successfully!");
-          // Refresh the list to reflect the deletion
-          await loadTrainds();
+          await loadTrainds(); // Refresh list after deletion
         } catch (err: any) {
           console.error("Delete traind error:", err);
           showError(
@@ -91,28 +95,14 @@ const MyTraindsPage: React.FC = () => {
     });
   };
 
-  const handleVisibilityToggle = async (
-    traindId: string,
-    currentVisibility: boolean
-  ) => {
-    try {
-      await setTraindVisibility(traindId, !currentVisibility);
-      const newVisibility = !currentVisibility ? "public" : "private";
-      showSuccess(`Traind visibility updated to ${newVisibility}!`);
-      loadTrainds();
-    } catch (err: any) {
-      showError(
-        `Failed to update visibility: ${err.message || "Unknown error"}`
-      );
-    }
-  };
-
+  // Load more trainds for pagination
   const loadMoreTrainds = () => {
     if (!loadingMore && hasNextPage) {
       loadTrainds(true);
     }
   };
 
+  // Empty state message
   const getEmptyMessage = () => {
     return "You haven't created any trainds yet. Start by running your first analysis!";
   };
@@ -153,6 +143,7 @@ const MyTraindsPage: React.FC = () => {
       </div>
 
       <button
+        type="button"
         onClick={() => loadTrainds()}
         className={styles.refreshButton}
         disabled={loading}
@@ -163,7 +154,11 @@ const MyTraindsPage: React.FC = () => {
       {error && (
         <div className={styles.errorMessage}>
           <p>Error loading your trainds: {error}</p>
-          <button onClick={() => loadTrainds()} className={styles.retryButton}>
+          <button
+            type="button"
+            onClick={() => loadTrainds()}
+            className={styles.retryButton}
+          >
             Try Again
           </button>
         </div>
@@ -181,6 +176,7 @@ const MyTraindsPage: React.FC = () => {
       {!loading && trainds.length > 0 && hasNextPage && (
         <div className={styles.loadMoreSection}>
           <button
+            type="button"
             onClick={loadMoreTrainds}
             className={styles.loadMoreButton}
             disabled={loadingMore}

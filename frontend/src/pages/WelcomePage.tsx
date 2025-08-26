@@ -1,3 +1,15 @@
+/**
+ * Filename: WelcomePage.tsx
+ * Author: Haicheng Zhao
+ * Date: 2025-08-06
+ * AI Usage Declaration:
+ * - This file contains code generated with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-08-06
+ * - AI-generated sections are marked with comments: # [AI-GENERATED]
+ * I have reviewed, tested, and understood all AI-generated code.
+ */
+
 import React, { useEffect, useRef, useState } from "react";
 import { login, register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
@@ -6,17 +18,20 @@ import styles from "./WelcomePage.module.css";
 
 type AuthMode = "login" | "register";
 
+// # [STUDENT-WRITTEN]
 const WelcomePage = () => {
   const navigate = useNavigate();
   const { refreshAuth, isLoggedIn, authChecked } = useAuth();
 
   // Check if user is already logged in using AuthContext
+  // # [STUDENT-WRITTEN]
   useEffect(() => {
     if (authChecked && isLoggedIn) {
       navigate("/trainds");
     }
   }, [isLoggedIn, authChecked, navigate]);
 
+  // # [STUDENT-WRITTEN]
   const [showModal, setShowModal] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [mode, setMode] = useState<AuthMode>("login");
@@ -26,6 +41,7 @@ const WelcomePage = () => {
   const firstInputRef = useRef<HTMLInputElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
+  // # [STUDENT-WRITTEN]
   const open = (m: AuthMode, el?: HTMLButtonElement) => {
     if (el) {
       openerRef.current = el;
@@ -36,6 +52,7 @@ const WelcomePage = () => {
     setErrorMsg("");
   };
 
+  // # [STUDENT-WRITTEN]
   const close = () => {
     document.activeElement instanceof HTMLElement &&
       document.activeElement.blur();
@@ -47,6 +64,7 @@ const WelcomePage = () => {
     }, 200);
   };
 
+  // # [AI-GENERATED: Claude, 2025-08-06]
   useEffect(() => {
     if (!showModal) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -64,6 +82,7 @@ const WelcomePage = () => {
     };
   }, [showModal]);
 
+  // # [AI-GENERATED: Claude, 2025-08-06]
   useEffect(() => {
     if (!showModal || !dialogRef.current) return;
     const dialog = dialogRef.current;
@@ -88,6 +107,7 @@ const WelcomePage = () => {
     return () => dialog.removeEventListener("keydown", handle as any);
   }, [showModal]);
 
+  // # [STUDENT-WRITTEN]
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (submitting) {
