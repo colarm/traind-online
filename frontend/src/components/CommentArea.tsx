@@ -8,10 +8,6 @@ import {
 } from "../api/comment";
 import styles from "./CommentArea.module.css";
 
-interface CommentAreaProps {
-  traindId: string;
-}
-
 interface CommentItemProps {
   traindId: string;
   commentNode: CommentNode;
@@ -32,17 +28,27 @@ const CommentItem: React.FC<CommentItemProps> = ({
   const [replyContent, setReplyContent] = useState("");
   const [loadingReplies, setLoadingReplies] = useState(false);
   const [postingReply, setPostingReply] = useState(false);
+  const [replyError, setReplyError] = useState<string | null>(null);
 
   // Load replies for this comment
   const loadReplies = async () => {
     if (loadingReplies) return;
+
+    // If we already have replies loaded, just show them
+    if (replies.length > 0) {
+      setShowReplies(true);
+      return;
+    }
+
     setLoadingReplies(true);
+    setReplyError(null);
     try {
       const response = await getComments(traindId, commentNode.comment.id);
       setReplies(response.comments || []);
       setShowReplies(true);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Failed to load replies:", e);
+      setReplyError(e?.message || "Failed to load replies");
     }
     setLoadingReplies(false);
   };
@@ -52,6 +58,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
     e.preventDefault();
     if (!replyContent.trim()) return;
     setPostingReply(true);
+    setReplyError(null);
     try {
       const response = await replyToComment(
         traindId,
@@ -61,22 +68,32 @@ const CommentItem: React.FC<CommentItemProps> = ({
       setReplyContent("");
       setShowReplyForm(false);
 
-      // Update local state with new reply
+      // Create a new reply object and add it to the current replies
       const newReply: CommentNode = {
-        comment: response,
+        comment: {
+          id: response.id,
+          traindId: response.traindId,
+          userId: response.userId,
+          content: response.content,
+          createdAt: response.createdAt,
+          user: response.user,
+          parentId: response.parentId,
+        },
         repliesCount: 0,
       };
 
+      // Add the new reply to the local state
       setReplies((prevReplies) => [...prevReplies, newReply]);
-      commentNode.repliesCount += 1;
 
       if (!showReplies) {
         setShowReplies(true);
       }
 
+      // Notify parent about the reply
       onReplySuccess(commentNode.comment.id, newReply);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to reply:", err);
+      setReplyError(err?.message || "Failed to reply");
     }
     setPostingReply(false);
   };
@@ -95,8 +112,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
         </span>
         {commentNode.repliesCount > 0 && (
           <button
+            type="button"
             className={styles.repliesBtn}
-            onClick={loadReplies}
+            onClick={() => {
+              if (showReplies) {
+                setShowReplies(false);
+              } else {
+                loadReplies();
+              }
+            }}
             disabled={loadingReplies}
           >
             {loadingReplies
@@ -109,6 +133,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
       <div className={styles.content}>{commentNode.comment.content}</div>
       <div className={styles.actions}>
         <button
+          type="button"
           className={styles.replyBtn}
           onClick={() => setShowReplyForm(!showReplyForm)}
         >
@@ -137,7 +162,12 @@ const CommentItem: React.FC<CommentItemProps> = ({
               Cancel
             </button>
           </div>
+          {replyError && <div className={styles.error}>{replyError}</div>}
         </form>
+      )}
+
+      {replyError && !showReplyForm && (
+        <div className={styles.error}>{replyError}</div>
       )}
 
       {/* Nested replies with recursive rendering */}
@@ -150,14 +180,15 @@ const CommentItem: React.FC<CommentItemProps> = ({
               commentNode={reply}
               depth={depth + 1}
               onReplySuccess={(parentId, newReply) => {
-                // Update reply counts in nested structure
-                const updateReplies = (replies: CommentNode[]): CommentNode[] =>
-                  replies.map((reply) =>
+                // For nested replies, update the reply count of the nested comment
+                setReplies((prevReplies) =>
+                  prevReplies.map((reply) =>
                     reply.comment.id === parentId
                       ? { ...reply, repliesCount: reply.repliesCount + 1 }
                       : reply
-                  );
-                setReplies(updateReplies);
+                  )
+                );
+                // Propagate the reply success up the chain
                 onReplySuccess(parentId, newReply);
               }}
             />
@@ -183,10 +214,12 @@ const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
   // Load top-level comments for this traind
   const loadComments = async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await getComments(traindId);
       setComments(response.comments || []);
     } catch (e: any) {
+      console.error("Failed to load comments:", e);
       setError(e?.message || "Failed to load comments");
     }
     setLoading(false);
@@ -206,11 +239,23 @@ const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
     try {
       const response = await addComment(traindId, content);
       setContent("");
-      const newComment: CommentNode = {
-        comment: response,
+
+      // Create a temporary comment object to provide immediate feedback
+      const tempComment: CommentNode = {
+        comment: {
+          id: response.id,
+          traindId: response.traindId,
+          userId: response.userId,
+          content: response.content,
+          createdAt: response.createdAt,
+          user: response.user,
+          parentId: response.parentId,
+        },
         repliesCount: 0,
       };
-      setComments((prevComments) => [newComment, ...prevComments]);
+
+      // Add the new comment immediately for better UX
+      setComments((prevComments) => [tempComment, ...prevComments]);
     } catch (err: any) {
       setError(err?.message || "Failed to comment");
     }
@@ -232,6 +277,14 @@ const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
           <button type="submit" disabled={posting || !content.trim()}>
             {posting ? "Posting..." : "Post"}
           </button>
+          <button
+            type="button"
+            onClick={loadComments}
+            disabled={loading}
+            className={styles.refreshBtn}
+          >
+            {loading ? "Loading..." : "Refresh"}
+          </button>
           {error && <span className={styles.error}>{error}</span>}
         </div>
       </form>
@@ -247,6 +300,7 @@ const CommentArea: React.FC<CommentAreaProps> = ({ traindId }) => {
                 commentNode={commentNode}
                 depth={0}
                 onReplySuccess={(parentId, newReply) => {
+                  // Update the specific comment's reply count without reloading all comments
                   setComments((prevComments) =>
                     prevComments.map((comment) =>
                       comment.comment.id === parentId

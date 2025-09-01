@@ -33,11 +33,20 @@ const commentService = {
     }
 
     // create the comment
-    const comment = prisma.comment.create({
+    const comment = await prisma.comment.create({
       data: {
         userId: input.userId,
         traindId: input.traindId,
         content: input.text,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+          },
+        },
       },
     });
     if (!comment) {
@@ -66,12 +75,21 @@ const commentService = {
     }
 
     // Create the reply comment
-    const comment = prisma.comment.create({
+    const comment = await prisma.comment.create({
       data: {
         userId: input.userId,
         traindId: input.traindId,
         parentId: input.parentId,
         content: input.text,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            username: true,
+          },
+        },
       },
     });
     if (!comment) {

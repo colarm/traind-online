@@ -48,6 +48,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.refreshBtn {
+  background: var(--color-secondary) !important;
+  color: var(--color-text-main) !important;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  background: var(--color-border) !important;
+}
+
 .error {
   color: var(--color-error);
   font-size: 0.95rem;
@@ -69,19 +78,26 @@ button:disabled {
   background: var(--color-modal);
   border: 1px solid var(--color-border);
   border-radius: 16px;
-	padding: 16px;
+  padding: 16px;
   box-shadow: 0 2px 8px var(--color-overlay);
 }
 
 .commentItem.nested {
-	margin: 16px 0 0;
+  margin: 16px 0 0 24px;
   border-left: 2px solid var(--color-primary);
+  padding-left: 16px;
 }
 
-.commentItem[data-depth="1"],
-.commentItem[data-depth="2"],
+.commentItem[data-depth="1"] {
+  margin-left: 0px;
+}
+
+.commentItem[data-depth="2"] {
+  margin-left: 0px;
+}
+
 .commentItem[data-depth="3"] {
-  margin-left: 16px;
+  margin-left: 0px;
 }
 
 .commentItem[data-depth]:not([data-depth="1"]):not([data-depth="2"]):not(
@@ -158,9 +174,9 @@ button:disabled {
 }
 
 .replyForm {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin-top: 16px;
   padding: 8px;
   background: var(--color-bg-alt);
@@ -180,8 +196,8 @@ button:disabled {
 }
 
 .replyTextarea:focus {
-	outline: none;
-	border-color: var(--color-primary);
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 .replyActions {
