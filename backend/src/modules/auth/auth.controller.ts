@@ -26,6 +26,14 @@ const SECRET_KEY = process.env.JWT_SECRET as string;
 export const register = async (req: Request, res: Response) => {
   try {
     const { email, username, password } = req.body;
+
+    // Basic validation
+    if (!email || !username || !password) {
+      return res.status(400).json({
+        message: "Email, username, and password are required",
+      });
+    }
+
     const result = await authService.register(email, username, password);
 
     // Set secure HTTP-only cookie with JWT token
@@ -37,7 +45,10 @@ export const register = async (req: Request, res: Response) => {
         maxAge: 3600000 * 24 * 7, // 7 days
       })
       .status(201)
-      .json({ message: "Registration successful", user: result.user.id });
+      .json({
+        message: "Registration successful. Welcome email sent!",
+        user: result.user.id,
+      });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -50,6 +61,14 @@ export const register = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
+
+    // Basic validation
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
+
     const result = await authService.login(email, password);
 
     // Set secure HTTP-only cookie with JWT token
@@ -123,5 +142,55 @@ export const status = async (req: Request, res: Response) => {
     res
       .status(401)
       .json({ valid: false, message: err.message || "Unknown error" });
+  }
+};
+
+/**
+ * Request password reset - send reset email
+ */
+export const requestPasswordReset = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        message: "Email is required",
+      });
+    }
+
+    const result = await authService.requestPasswordReset(email);
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(500).json({
+      message: err.message || "Failed to process password reset request",
+    });
+  }
+};
+
+/**
+ * Reset password using token
+ */
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({
+        message: "Token and new password are required",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long",
+      });
+    }
+
+    const result = await authService.resetPassword(token, password);
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(400).json({
+      message: err.message || "Failed to reset password",
+    });
   }
 };

@@ -22,8 +22,10 @@ import {
   GetPendingTraindsInput,
 } from "./traind.types";
 import analysisClient from "../../shared/grpc/analysis.client";
+import { getEmailService } from "../email/email.service";
 
 const prisma = new PrismaClient();
+const emailService = getEmailService();
 
 const traindService = {
   /**
@@ -411,14 +413,48 @@ const traindService = {
       }
 
       // Update the traind record
-      await prisma.traind.update({
+      const updatedTraind = await prisma.traind.update({
         where: { id: traind.id },
         data: {
           result: result,
           status: status,
           ...(title && { title: title }),
         },
+        include: {
+          user: {
+            include: {
+              preference: true,
+            },
+          },
+        },
       });
+
+      // Send analysis complete email notification if status is completed and user has email notifications enabled
+      if (status === "completed") {
+        const userPreference = updatedTraind.user.preference;
+        const emailNotificationsEnabled =
+          userPreference?.emailNotifications ?? true; // Default to true if no preference set
+
+        if (emailNotificationsEnabled) {
+          const frontendUrl =
+            process.env.FRONTEND_URL || "https://traind.online";
+          const traindUrl = `${frontendUrl}/traind/${updatedTraind.id}`;
+
+          emailService
+            .sendAnalysisCompleteEmail(updatedTraind.user.email, {
+              username: updatedTraind.user.username,
+              traindTitle: updatedTraind.title || "Untitled Analysis",
+              traindUrl: traindUrl,
+            })
+            .catch((error) => {
+              console.error("Failed to send analysis complete email:", error);
+            });
+        } else {
+          console.log(
+            `Skipping analysis complete email for user ${updatedTraind.user.email} - email notifications disabled`
+          );
+        }
+      }
 
       return true;
     } catch (error) {
@@ -462,14 +498,45 @@ const traindService = {
       };
 
       // Update the traind record to failed status
-      await prisma.traind.update({
+      const updatedTraind = await prisma.traind.update({
         where: { id: traind.id },
         data: {
           result: errorResult,
           status: "failed",
           title: "Analysis Failed",
         },
+        include: {
+          user: {
+            include: {
+              preference: true,
+            },
+          },
+        },
       });
+
+      // Send analysis failed email notification if user has email notifications enabled
+      const userPreference = updatedTraind.user.preference;
+      const emailNotificationsEnabled =
+        userPreference?.emailNotifications ?? true; // Default to true if no preference set
+
+      if (emailNotificationsEnabled) {
+        const frontendUrl = process.env.FRONTEND_URL || "https://traind.online";
+        const traindUrl = `${frontendUrl}/traind/${updatedTraind.id}`;
+
+        emailService
+          .sendAnalysisFailedEmail(updatedTraind.user.email, {
+            username: updatedTraind.user.username,
+            traindTitle: traind.title || "Untitled Analysis",
+            traindUrl: traindUrl,
+          })
+          .catch((error) => {
+            console.error("Failed to send analysis failed email:", error);
+          });
+      } else {
+        console.log(
+          `Skipping analysis failed email for user ${updatedTraind.user.email} - email notifications disabled`
+        );
+      }
 
       return true;
     } catch (error) {
