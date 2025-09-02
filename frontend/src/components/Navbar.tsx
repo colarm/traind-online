@@ -27,7 +27,6 @@ const Navbar = () => {
   const navItems = [
     { path: "/trainds", label: "Trainds" },
     { path: "/training", label: "Training" },
-    { path: "/help", label: "Help" },
     { path: "/me", label: "Me" },
   ];
 
@@ -111,8 +110,8 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link to="/help" className={styles.actionButton}>
-              Help
+            <Link to="/help-security" className={styles.actionButton}>
+              Help & Security
             </Link>
             <button
               type="button"

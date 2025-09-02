@@ -17,6 +17,7 @@ import {
 import { getMyTrainds, TraindWithPagination } from "../api/traind";
 import TraindStream from "../components/TraindStream";
 import ThemeSelect from "../components/ThemeSelect";
+import PasswordReset from "../components/PasswordReset";
 import JsonTreeView from "../components/JsonTreeView";
 import { showError, showSuccess } from "../components/Toast";
 import styles from "./MePage.module.css";
@@ -25,8 +26,11 @@ const MePage: React.FC = () => {
   const [myTrainds, setMyTrainds] = useState<TraindWithPagination[]>([]);
   useRequireAuth();
   const [activeTab, setActiveTab] = useState<
-    "overview" | "history" | "starred" | "parameters" | "preferences"
+    "overview" | "history" | "starred" | "parameters" | "settings"
   >("overview");
+  const [activeSettingsTab, setActiveSettingsTab] = useState<
+    "theme" | "preferences" | "password" | "help"
+  >("theme");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,7 +62,7 @@ const MePage: React.FC = () => {
     { key: "history", label: "History", icon: "📚" },
     { key: "starred", label: "Starred", icon: "⭐" },
     { key: "parameters", label: "Parameters", icon: "⚙️" },
-    { key: "preferences", label: "Preferences", icon: "🔧" },
+    { key: "settings", label: "Settings", icon: "🔧" },
   ] as const;
 
   // Stat card configuration
@@ -104,7 +108,7 @@ const MePage: React.FC = () => {
       case "parameters":
         loadParameterSets();
         break;
-      case "preferences":
+      case "settings":
         loadPreferences();
         break;
     }
@@ -368,62 +372,166 @@ const MePage: React.FC = () => {
     </>
   );
 
-  const renderPreferences = () => (
-    <>
-      <h3 className={styles.sectionTitle}>Preferences</h3>
-      <div className={styles.preferencesForm}>
+  const renderSettings = () => {
+    const settingsTabs = [
+      { key: "theme", label: "Theme", icon: "🎨" },
+      { key: "preferences", label: "Preferences", icon: "⚙️" },
+      { key: "password", label: "Password Reset", icon: "🔑" },
+      { key: "help", label: "Help", icon: "❓" },
+    ] as const;
+
+    const renderTheme = () => (
+      <div className={styles.settingsSubContent}>
+        <h4>🎨 Theme Settings</h4>
+        <p>
+          Select a theme that suits your preference. This setting is saved to
+          your account.
+        </p>
         <div className={styles.preferenceGroup}>
           <label htmlFor="themeSelector">Theme:</label>
           <div className={styles.themeSelectWrapper}>
             <ThemeSelect />
           </div>
         </div>
-
-        <div className={styles.preferenceGroup}>
-          <label htmlFor="publicByDefault" className={styles.checkboxLabel}>
-            <input
-              id="publicByDefault"
-              type="checkbox"
-              checked={preferences.makeTraindsPublicAsDefault || false}
-              onChange={(e) =>
-                setPreferences((prev) => ({
-                  ...prev,
-                  makeTraindsPublicAsDefault: e.target.checked,
-                }))
-              }
-              className={styles.checkbox}
-            />
-            Make trainds public by default
-          </label>
-        </div>
-
-        <div className={styles.preferenceGroup}>
-          <label htmlFor="emailNotifications" className={styles.checkboxLabel}>
-            <input
-              id="emailNotifications"
-              type="checkbox"
-              checked={preferences.emailNotifications || false}
-              onChange={(e) =>
-                setPreferences((prev) => ({
-                  ...prev,
-                  emailNotifications: e.target.checked,
-                }))
-              }
-              className={styles.checkbox}
-            />
-            Email notifications
-          </label>
-        </div>
-
-        <ActionButton
-          onClick={() => handlePreferenceUpdate(preferences)}
-          variant="primary"
-        >
-          💾 Save Preferences
-        </ActionButton>
       </div>
-    </>
-  );
+    );
+
+    const renderPreferences = () => (
+      <div className={styles.settingsSubContent}>
+        <h4>⚙️ Preference Settings</h4>
+        <div className={styles.preferencesForm}>
+          <div className={styles.preferenceGroup}>
+            <label htmlFor="publicByDefault" className={styles.checkboxLabel}>
+              <input
+                id="publicByDefault"
+                type="checkbox"
+                checked={preferences.makeTraindsPublicAsDefault || false}
+                onChange={(e) =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    makeTraindsPublicAsDefault: e.target.checked,
+                  }))
+                }
+                className={styles.checkbox}
+              />
+              Make trainds public by default
+            </label>
+          </div>
+
+          <div className={styles.preferenceGroup}>
+            <label
+              htmlFor="emailNotifications"
+              className={styles.checkboxLabel}
+            >
+              <input
+                id="emailNotifications"
+                type="checkbox"
+                checked={preferences.emailNotifications || false}
+                onChange={(e) =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    emailNotifications: e.target.checked,
+                  }))
+                }
+                className={styles.checkbox}
+              />
+              Email notifications
+            </label>
+          </div>
+
+          <ActionButton
+            onClick={() => handlePreferenceUpdate(preferences)}
+            variant="primary"
+          >
+            💾 Save Preferences
+          </ActionButton>
+        </div>
+      </div>
+    );
+
+    const renderPasswordReset = () => (
+      <div className={styles.settingsSubContent}>
+        <h4>🔑 Password Reset</h4>
+        <p>
+          Reset your password if you've forgotten it or want to change it for
+          security reasons.
+        </p>
+        <PasswordReset />
+
+        <div className={styles.securityTip}>
+          <h5>🛡️ Security Best Practices</h5>
+          <ul>
+            <li>
+              Use a strong password with uppercase, lowercase, numbers, and
+              special characters
+            </li>
+            <li>Don't use the same password on multiple websites</li>
+            <li>Update your password regularly</li>
+            <li>Remember to log out when using public devices</li>
+          </ul>
+        </div>
+      </div>
+    );
+
+    const renderHelp = () => (
+      <div className={styles.settingsSubContent}>
+        <h4>❓ Help & Support</h4>
+
+        <div className={styles.helpEntries}>
+          <div className={styles.helpEntry}>
+            <h5>📚 User Guide</h5>
+            <p>Learn how to use Traind.online effectively</p>
+            <button
+              onClick={() => navigate("/help")}
+              className={`${styles.actionButton} ${styles.secondary}`}
+            >
+              Open Help Center
+            </button>
+          </div>
+
+          <div className={styles.helpEntry}>
+            <h5>💬 Contact Support</h5>
+            <p>Get help with technical issues or account problems</p>
+            <button
+              type="button"
+              onClick={() => window.open("mailto:support@traind.online")}
+              className={`${styles.actionButton} ${styles.secondary}`}
+            >
+              Send Email
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
+    return (
+      <>
+        <h3 className={styles.sectionTitle}>Settings</h3>
+
+        <div className={styles.settingsTabs}>
+          {settingsTabs.map((tab) => (
+            <button
+              key={tab.key}
+              className={`${styles.settingsTab} ${
+                activeSettingsTab === tab.key ? styles.active : ""
+              }`}
+              onClick={() => setActiveSettingsTab(tab.key as any)}
+            >
+              <span className={styles.tabIcon}>{tab.icon}</span>
+              <span className={styles.tabLabel}>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.settingsContent}>
+          {activeSettingsTab === "theme" && renderTheme()}
+          {activeSettingsTab === "preferences" && renderPreferences()}
+          {activeSettingsTab === "password" && renderPasswordReset()}
+          {activeSettingsTab === "help" && renderHelp()}
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className={styles.mePage}>
@@ -463,7 +571,7 @@ const MePage: React.FC = () => {
             {activeTab === "history" && renderHistory()}
             {activeTab === "starred" && renderStarred()}
             {activeTab === "parameters" && renderParameters()}
-            {activeTab === "preferences" && renderPreferences()}
+            {activeTab === "settings" && renderSettings()}
           </>
         )}
       </div>

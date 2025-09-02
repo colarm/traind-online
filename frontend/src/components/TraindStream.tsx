@@ -184,7 +184,6 @@ const TraindStream: React.FC<TraindStreamProps> = ({
             <div className={styles.traindHeader}>
               <h3 className={styles.traindTitle}>{traind.title}</h3>
               <div className={styles.traindMeta}>
-                <div className={styles.subreddit}>r/{traind.subreddit}</div>
                 <div className={styles.timestamp}>
                   {formatDate(traind.createdAt)}
                 </div>

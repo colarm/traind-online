@@ -13,6 +13,8 @@ import MePage from "../pages/MePage";
 import NotFound from "../pages/NotFoundPage";
 import TraindDetailPage from "../pages/TraindDetailPage";
 import HelpPage from "../pages/HelpPage";
+import HelpSecurityPage from "../pages/HelpSecurityPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 // Route definitions for all application pages
 const routes = [
@@ -27,6 +29,16 @@ const routes = [
   />,
   <Route path="/me" element={<MePage />} key="me" />,
   <Route path="/help" element={<HelpPage />} key="help" />,
+  <Route
+    path="/help-security"
+    element={<HelpSecurityPage />}
+    key="help-security"
+  />,
+  <Route
+    path="/reset-password"
+    element={<ResetPasswordPage />}
+    key="reset-password"
+  />,
   <Route path="*" element={<NotFound />} key="notfound" />,
 ];
 

@@ -600,3 +600,217 @@
     flex-direction: column;
   }
 }
+
+/* Settings links section */
+.settingsLinks {
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+
+.settingsLinks h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 16px 0;
+}
+
+@media (max-width: 768px) {
+  .settingsLinks {
+    margin-top: 16px;
+    padding: 16px;
+  }
+}
+
+/* Settings sub-tabs styles */
+.settingsTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  padding: 6px;
+  background: var(--color-background-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 2px 6px var(--color-overlay);
+}
+
+.settingsTab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  justify-content: center;
+}
+
+.settingsTab:hover {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
+.settingsTab.active {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 2px 8px var(--color-primary-alpha);
+  transform: translateY(-1px);
+}
+
+.settingsContent {
+  background: var(--color-modal);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--color-overlay);
+  min-height: 300px;
+}
+
+.settingsSubContent {
+  padding: 24px;
+}
+
+.settingsSubContent h4 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.settingsSubContent h5 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settingsSubContent p {
+  color: var(--color-text-secondary);
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* PasswordReset component spacing in settings */
+.settingsSubContent > div:not(.securityTip):not(.helpEntries):not(.helpEntry) {
+  margin-bottom: 16px;
+}
+
+/* Security tip section */
+.securityTip {
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.securityTip ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.securityTip li {
+  margin-bottom: 6px;
+}
+
+/* Help entries */
+.helpEntries {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.helpEntry {
+  padding: 20px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.helpEntry h5 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.helpEntry p {
+  color: var(--color-text-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.helpIcon {
+  font-size: 18px;
+}
+
+.supportSection {
+  padding: 20px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.supportSection h5 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.supportSection p {
+  color: var(--color-text-secondary);
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+/* Help actions - removed, now using helpEntries structure */
+
+/* Mobile responsive for settings tabs */
+@media (max-width: 768px) {
+  .settingsTabs {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .settingsTab {
+    justify-content: flex-start;
+    padding: 10px 12px;
+  }
+
+  .settingsSubContent {
+    padding: 20px 16px;
+  }
+
+  .helpEntry,
+  .securityTip,
+  .supportSection {
+    padding: 16px;
+  }
+}

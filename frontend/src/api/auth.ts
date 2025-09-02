@@ -40,3 +40,28 @@ export async function checkStatus() {
     return { error: error?.response?.data?.message || "Status check failed" };
   }
 }
+
+export async function requestPasswordReset(email: string) {
+  try {
+    const response = await httpClient.post("/auth/request-password-reset", {
+      email,
+    });
+    return response.data;
+  } catch (error: any) {
+    return {
+      error: error?.response?.data?.message || "Password reset request failed",
+    };
+  }
+}
+
+export async function resetPassword(token: string, password: string) {
+  try {
+    const response = await httpClient.post("/auth/reset-password", {
+      token,
+      password,
+    });
+    return response.data;
+  } catch (error: any) {
+    return { error: error?.response?.data?.message || "Password reset failed" };
+  }
+}
