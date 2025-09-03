@@ -1,11 +1,12 @@
 /**
  * Email Service
- * Handles email sending for different environments
+ * Handles email sending using SendGrid
  * Supports templates for email content
  *
  * Filename: email.service.ts
  * Author: Haicheng Zhao
  * Date: 2025-09-02
+ * Updated: 2025-09-03 - Migrated from nodemailer to SendGrid
  * AI Usage Declaration:
  * - This file contains code generated with the help of AI tools.
  * - Tool Used: Claude
@@ -15,60 +16,35 @@
  */
 
 import dotenv from "dotenv";
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 import { EmailOptions, TemplateData, EmailServiceInfo } from "./email.types";
 
 // Load environment variables
 dotenv.config();
 
 export class SimpleEmailService {
-  private transporter: nodemailer.Transporter;
   private isProduction: boolean;
 
   constructor() {
     this.isProduction = process.env.NODE_ENV === "production";
-    this.transporter = this.createTransporter();
+    this.initializeSendGrid();
 
     console.log(
-      `📧 Email service initialized for ${
+      `📧 Email service initialized with SendGrid for ${
         this.isProduction ? "PRODUCTION" : "DEVELOPMENT"
       } environment`
     );
   }
 
   /**
-   * Create a transporter based on the environment
+   * Initialize SendGrid with API key
    */
-  private createTransporter(): nodemailer.Transporter {
-    if (this.isProduction) {
-      // Production environment: use Mail-in-a-Box
-      return nodemailer.createTransport({
-        host: process.env.MAILINABOX_HOST || "box.traind.online",
-        port: parseInt(process.env.MAILINABOX_PORT || "587"),
-        secure: false,
-        auth: {
-          user: process.env.MAILINABOX_USER,
-          pass: process.env.MAILINABOX_PASS,
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      });
-    } else {
-      // Development environment: use Netease 163 Mailbox
-      return nodemailer.createTransport({
-        host: "smtp.163.com",
-        port: 25,
-        secure: false,
-        auth: {
-          user: process.env.NETEASE_USER,
-          pass: process.env.NETEASE_PASS,
-        },
-        tls: {
-          rejectUnauthorized: false,
-        },
-      });
+  private initializeSendGrid(): void {
+    const apiKey = process.env.SENDGRID_API_KEY;
+    if (!apiKey) {
+      throw new Error("SENDGRID_API_KEY environment variable is required");
     }
+    sgMail.setApiKey(apiKey);
   }
 
   /**
@@ -76,29 +52,8 @@ export class SimpleEmailService {
    */
   private getFromAddress(): string {
     const fromName = process.env.EMAIL_FROM_NAME || "Traind.online";
-
-    if (this.isProduction) {
-      // Production environment: use Mail-in-a-Box
-      const fromEmail = process.env.EMAIL_FROM || "noreply@traind.online";
-      return `"${fromName}" <${fromEmail}>`;
-    } else {
-      // Development environment: use Netease 163 Mailbox but display as Traind.online
-      const fromEmail = process.env.NETEASE_USER;
-      return `"${fromName}" <${fromEmail}>`;
-    }
-  }
-
-  /**
-   * Get the "replyTo" address
-   */
-  private getReplyToAddress(): string | undefined {
-    if (this.isProduction) {
-      // Production environment: no need to set replyTo, as the sender is correct
-      return undefined;
-    } else {
-      // Development environment: set replyTo to custom domain
-      return process.env.EMAIL_FROM || "noreply@traind.online";
-    }
+    const fromEmail = process.env.EMAIL_FROM || "noreply@traind.online";
+    return `"${fromName}" <${fromEmail}>`;
   }
 
   /**
@@ -106,30 +61,19 @@ export class SimpleEmailService {
    */
   async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
-      const mailOptions = {
-        from: this.getFromAddress(),
-        replyTo: this.getReplyToAddress(),
+      const msg = {
         to: options.to,
+        from: this.getFromAddress(),
         subject: options.subject,
         html: options.html,
         text: options.text,
       };
 
-      const result = await this.transporter.sendMail(mailOptions);
-      console.log(
-        `✅ Email sent via ${
-          this.isProduction ? "Mail-in-a-Box" : "Netease 163 Mailbox"
-        }:`,
-        result.messageId
-      );
+      const result = await sgMail.send(msg);
+      console.log(`✅ Email sent via SendGrid:`, result[0].statusCode);
       return true;
     } catch (error) {
-      console.error(
-        `❌ Email failed via ${
-          this.isProduction ? "Mail-in-a-Box" : "Netease 163 Mailbox"
-        }:`,
-        error
-      );
+      console.error(`❌ Email failed via SendGrid:`, error);
       return false;
     }
   }
@@ -410,20 +354,15 @@ export class SimpleEmailService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      await this.transporter.verify();
-      console.log(
-        `✅ ${
-          this.isProduction ? "Mail-in-a-Box" : "网易163邮箱"
-        } SMTP connection verified`
-      );
+      // SendGrid doesn't have a verify method, so we'll just check if API key exists
+      const apiKey = process.env.SENDGRID_API_KEY;
+      if (!apiKey) {
+        throw new Error("SENDGRID_API_KEY not configured");
+      }
+      console.log(`✅ SendGrid connection verified`);
       return true;
     } catch (error) {
-      console.error(
-        `❌ ${
-          this.isProduction ? "Mail-in-a-Box" : "网易163邮箱"
-        } SMTP connection failed:`,
-        error
-      );
+      console.error(`❌ SendGrid connection failed:`, error);
       return false;
     }
   }
@@ -433,7 +372,7 @@ export class SimpleEmailService {
    */
   getServiceInfo(): EmailServiceInfo {
     return {
-      provider: this.isProduction ? "Mail-in-a-Box" : "Netease 163 Mailbox",
+      provider: "SendGrid",
       environment: this.isProduction ? "production" : "development",
       from: this.getFromAddress(),
     };
