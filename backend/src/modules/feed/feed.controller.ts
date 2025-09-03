@@ -71,7 +71,7 @@ const feedController = {
         });
       }
 
-      const feed = await feedService.getPersonalizedFeed(
+      const feed = await feedService.getPersonalisedFeed(
         userId,
         collaborativeWeight / 100,
         contentWeight / 100,
@@ -98,90 +98,6 @@ const feedController = {
         success: false,
         error: "Internal server error",
         message: "Failed to fetch feed recommendations",
-      });
-    }
-  },
-
-  // [AI-GENERATED: Claude, 2025-08-12]
-  async getSubredditFeed(req: Request, res: Response) {
-    try {
-      const { subreddit } = req.params;
-      const userId = (req as any).user?.id;
-
-      if (
-        !subreddit ||
-        typeof subreddit !== "string" ||
-        subreddit.trim().length === 0
-      ) {
-        return res.status(400).json({
-          success: false,
-          error: "Invalid subreddit parameter",
-        });
-      }
-
-      const feed = await feedService.getSubredditFeed(subreddit.trim(), userId);
-
-      res.json({
-        success: true,
-        data: feed,
-        meta: {
-          subreddit: subreddit.trim(),
-          isAuthenticated: !!userId,
-          userId: userId || null,
-          generatedAt: new Date().toISOString(),
-        },
-      });
-    } catch (error) {
-      console.error("Error getting subreddit feed:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error",
-        message: `Failed to fetch content for subreddit: ${req.params.subreddit}`,
-      });
-    }
-  },
-
-  // [AI-GENERATED: Claude, 2025-08-12]
-  async searchWithPersonalization(req: Request, res: Response) {
-    try {
-      const userId = (req as any).user?.id;
-      const query = req.query.q as string;
-
-      if (!query || typeof query !== "string" || query.trim().length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: "Search query is required and cannot be empty",
-        });
-      }
-
-      if (query.trim().length > 200) {
-        return res.status(400).json({
-          success: false,
-          error: "Search query is too long (maximum 200 characters)",
-        });
-      }
-
-      const results = await feedService.searchWithPersonalization(
-        query.trim(),
-        userId
-      );
-
-      res.json({
-        success: true,
-        data: results,
-        meta: {
-          query: query.trim(),
-          isPersonalized: !!userId,
-          userId: userId || null,
-          generatedAt: new Date().toISOString(),
-        },
-      });
-    } catch (error) {
-      console.error("Error searching with personalization:", error);
-      res.status(500).json({
-        success: false,
-        error: "Internal server error",
-        message: "Failed to perform search",
       });
     }
   },

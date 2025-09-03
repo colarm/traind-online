@@ -19,7 +19,6 @@ export interface FeedResponse {
       content: number;
       trending: number;
     };
-    query?: string;
     subreddit?: string;
   };
 }
@@ -28,10 +27,6 @@ export interface FeedParams {
   collaborative?: number; // 0-100
   content?: number; // 0-100
   trending?: number; // 0-100
-}
-
-export interface SearchParams {
-  q: string; // query string
 }
 
 // Get personalized feed
@@ -78,27 +73,6 @@ export async function getSubredditFeed(
       error?.response?.data?.error ||
         error?.response?.data?.message ||
         "Failed to get subreddit feed"
-    );
-  }
-}
-
-// Search with personalization
-export async function searchWithPersonalization(
-  params: SearchParams
-): Promise<FeedResponse> {
-  try {
-    const queryParams = new URLSearchParams();
-    queryParams.append("q", params.q);
-
-    const response = await httpClient.get(
-      `/feed/search?${queryParams.toString()}`
-    );
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error?.response?.data?.error ||
-        error?.response?.data?.message ||
-        "Failed to search"
     );
   }
 }
