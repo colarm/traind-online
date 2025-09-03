@@ -141,6 +141,7 @@ const getCandidateTrainds = async (userId: string): Promise<any[]> => {
   return await prisma.traind.findMany({
     where: {
       isPublic: true,
+      status: "completed", // Only include successfully completed trainds
       createdAt: { gte: thirtyDaysAgo },
       // Exclude content user has already interacted with
       NOT: {
@@ -167,12 +168,13 @@ const findSimilarUsers = async (
   return await prisma.user.findMany({
     where: {
       NOT: { id: userId },
-      // Find users who have interacted with content in user's favourite subreddits
+      // Find users who have interacted with completed content in user's favourite subreddits
       OR: ["stars", "history", "comments"].map((relation) => ({
         [relation]: {
           some: {
             traind: {
               subreddit: { in: userSubreddits },
+              status: "completed", // Only consider completed trainds
             },
           },
         },
@@ -190,17 +192,26 @@ const analyseFeedUserProfile = async (
   // Fetch user interaction data in parallel for performance
   const [starredTrainds, viewHistory, userComments] = await Promise.all([
     prisma.star.findMany({
-      where: { userId },
+      where: {
+        userId,
+        traind: { status: "completed" }, // Only learn from completed trainds
+      },
       include: { traind: { select: { subreddit: true, createdAt: true } } },
     }),
     prisma.history.findMany({
-      where: { userId },
+      where: {
+        userId,
+        traind: { status: "completed" }, // Only learn from completed trainds
+      },
       include: { traind: { select: { subreddit: true, createdAt: true } } },
       orderBy: { viewedAt: "desc" },
       take: 100, // Consider recent 100 views only
     }),
     prisma.comment.findMany({
-      where: { userId },
+      where: {
+        userId,
+        traind: { status: "completed" }, // Only learn from completed trainds
+      },
       include: { traind: { select: { subreddit: true } } },
     }),
   ]);
@@ -320,7 +331,11 @@ const feedService = {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const trainds = await prisma.traind.findMany({
-      where: { isPublic: true, createdAt: { gte: thirtyDaysAgo } },
+      where: {
+        isPublic: true,
+        status: "completed", // Only include successfully completed trainds
+        createdAt: { gte: thirtyDaysAgo },
+      },
       include: getTraindInclude(userId),
       orderBy: { createdAt: "desc" },
       take: 500,
