@@ -138,6 +138,8 @@
   gap: 16px;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
+  padding: 16px;
 }
 
 .actions button {
@@ -155,6 +157,11 @@
   align-items: center;
   justify-content: center;
 }
+.actions button:hover:not(:disabled) {
+  background: var(--color-primary-light, var(--color-primary));
+  transform: translateY(-1px);
+}
+
 .actions button:disabled {
   background: var(--color-secondary);
   cursor: not-allowed;

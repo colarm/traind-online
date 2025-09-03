@@ -163,17 +163,3 @@ export async function getMyTrainds(params?: {
     );
   }
 }
-
-/**
- * Export Traind analysis results in specified format
- */
-export async function exportResult(traindId: string, format: string = "json") {
-  try {
-    const response = await httpClient.get(`/traind/${traindId}/export`, {
-      params: { format },
-    });
-    return response.data;
-  } catch (error: any) {
-    return { error: error?.response?.data?.message || "Export result failed" };
-  }
-}

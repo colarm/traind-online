@@ -1,13 +1,22 @@
 /**
  * Individual traind detail view page
  * Displays full analysis results, parameters, and allows interaction
+ * Filename: TraindDetailPage.tsx
+ * Date: 2025-09-03
+ *
+ * AI Usage Declaration:
+ * - This file contains code and comments that were generated or revised with the help of AI tools.
+ * - Tool Used: Claude
+ * - Date Generated: 2025-09-03
+ * - AI-generated or AI-revised sections are marked with comments:
+ *   # [AI-GENERATED] or # [AI-GENERATED: Claude, 2025-09-03]
+ * The author has reviewed, tested, and understood all AI-generated code/comments.
  */
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   getTraindById,
-  exportResult,
   getParameterSetId,
   setTraindVisibility,
 } from "../api/traind";
@@ -85,27 +94,226 @@ const TraindDetailPage: React.FC = () => {
     loadTraindDetail();
   }, [id, isLoggedIn]);
 
+  // # [AI-GENERATED: Claude, 2025-09-03]
   const handleExport = async (format: string) => {
-    if (!id) return;
+    if (!id || !traind) return;
     setExporting(true);
 
-    // Mock implementation
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log(`Mock export: Traind ${id} exported as ${format} format`);
-      console.log("Export data:", {
-        traindId: id,
-        title: traind.title,
-        format: format,
-        timestamp: new Date().toISOString(),
-      });
+      // Use the existing traind data for export instead of calling API
+      let exportData: any;
+      let filename: string;
+      let mimeType: string;
 
+      if (format === "json") {
+        // Export all traind data as JSON
+        exportData = {
+          id: traind.id,
+          title: traind.title,
+          postId: traind.postId,
+          subreddit: traind.subreddit,
+          result: traind.result,
+          createdAt: traind.createdAt,
+          isPublic: traind.isPublic,
+          user: traind.user,
+          parameterSet: parameterSet,
+        };
+        const jsonData = JSON.stringify(exportData, null, 2);
+        filename = `traind-${id}-export.json`;
+        mimeType = "application/json";
+        downloadFile(jsonData, filename, mimeType);
+      } else if (format === "csv") {
+        // Export basic traind info and result summary as CSV
+        const csvData = convertToCSV(traind);
+        filename = `traind-${id}-export.csv`;
+        mimeType = "text/csv";
+        downloadFile(csvData, filename, mimeType);
+      }
+
+      showSuccess(`${format.toUpperCase()} export completed successfully!`);
+    } catch (error: any) {
+      console.error("Export error:", error);
+      showError(`Export failed: ${error.message || "Export processing error"}`);
+    } finally {
       setExporting(false);
-      alert(`Mock export completed: ${format.toUpperCase()}`);
-    } catch (e) {
-      setExporting(false);
-      alert("Mock export failed");
     }
+  };
+
+  // Helper function to convert traind data to CSV format
+  const convertToCSV = (traindData: any) => {
+    const csvRows: string[] = [];
+
+    // Add basic information
+    csvRows.push("Section,Field,Value");
+    csvRows.push(`Basic Info,ID,${traindData.id}`);
+    csvRows.push(`Basic Info,Title,${traindData.title || "N/A"}`);
+    csvRows.push(`Basic Info,Post ID,${traindData.postId || "N/A"}`);
+    csvRows.push(`Basic Info,Subreddit,${traindData.subreddit || "N/A"}`);
+    csvRows.push(
+      `Basic Info,Created At,${new Date(traindData.createdAt).toLocaleString()}`
+    );
+    csvRows.push(`Basic Info,Is Public,${traindData.isPublic ? "Yes" : "No"}`);
+    csvRows.push(`Basic Info,Status,${traindData.status || "Completed"}`);
+    csvRows.push(`Basic Info,Author,${traindData.user?.username || "Unknown"}`);
+
+    // Add post information if available
+    if (traindData.result?.post_info) {
+      const postInfo = traindData.result.post_info;
+      csvRows.push(`Post Info,URL,${postInfo.url || "N/A"}`);
+      csvRows.push(`Post Info,Score,${postInfo.score || "N/A"}`);
+      csvRows.push(`Post Info,Author,${postInfo.author || "N/A"}`);
+      csvRows.push(
+        `Post Info,Comments Count,${postInfo.num_comments || "N/A"}`
+      );
+      csvRows.push(`Post Info,Upvote Ratio,${postInfo.upvote_ratio || "N/A"}`);
+      csvRows.push(
+        `Post Info,Self Text,${(postInfo.selftext || "").replace(/"/g, '""')}`
+      );
+    }
+
+    // Add analysis results
+    if (traindData.result) {
+      csvRows.push(
+        `Analysis,Success,${traindData.result.success ? "Yes" : "No"}`
+      );
+      csvRows.push(
+        `Analysis,Number of Clusters,${traindData.result.num_clusters || "N/A"}`
+      );
+      csvRows.push(
+        `Analysis,Total Processed,${traindData.result.total_processed || "N/A"}`
+      );
+      csvRows.push(
+        `Analysis,Noise Ratio,${traindData.result.noise_ratio || "N/A"}`
+      );
+
+      // Add cluster data
+      if (traindData.result.clusters) {
+        Object.entries(traindData.result.clusters).forEach(
+          ([clusterId, comments]: [string, any]) => {
+            if (Array.isArray(comments)) {
+              comments.forEach((comment, index) => {
+                csvRows.push(
+                  `Cluster ${clusterId},Comment ${index + 1},${comment.replace(
+                    /"/g,
+                    '""'
+                  )}`
+                );
+              });
+            }
+          }
+        );
+      }
+
+      // Add cluster summaries
+      if (
+        traindData.result.summaries &&
+        Array.isArray(traindData.result.summaries)
+      ) {
+        traindData.result.summaries.forEach((summary: any, index: number) => {
+          csvRows.push(`Summary ${index + 1},Rank,${summary.rank}`);
+          csvRows.push(`Summary ${index + 1},Size,${summary.size}`);
+          csvRows.push(`Summary ${index + 1},Cluster ID,${summary.cluster_id}`);
+          csvRows.push(
+            `Summary ${index + 1},Summary,${summary.summary.replace(
+              /"/g,
+              '""'
+            )}`
+          );
+          csvRows.push(
+            `Summary ${index + 1},Keywords,${
+              summary.keywords ? summary.keywords.join("; ") : "N/A"
+            }`
+          );
+
+          if (
+            summary.sample_comments &&
+            Array.isArray(summary.sample_comments)
+          ) {
+            summary.sample_comments.forEach(
+              (comment: string, commentIndex: number) => {
+                csvRows.push(
+                  `Summary ${index + 1},Sample Comment ${
+                    commentIndex + 1
+                  },${comment.replace(/"/g, '""')}`
+                );
+              }
+            );
+          }
+        });
+      }
+    }
+
+    // Add parameter set information if available
+    if (traindData.parameterSet) {
+      csvRows.push(`Parameters,Parameter Set ID,${traindData.parameterSet.id}`);
+      csvRows.push(
+        `Parameters,Parameter Set Name,${traindData.parameterSet.name}`
+      );
+
+      if (traindData.parameterSet.parameters) {
+        const params = traindData.parameterSet.parameters;
+        csvRows.push(`Parameters,Min Score,${params.min_score || "N/A"}`);
+        csvRows.push(`Parameters,Max Comments,${params.max_comments || "N/A"}`);
+        csvRows.push(
+          `Parameters,Skip Deleted,${params.skip_deleted ? "Yes" : "No"}`
+        );
+        csvRows.push(
+          `Parameters,Skip Removed,${params.skip_removed ? "Yes" : "No"}`
+        );
+
+        if (params.hdbscan_params) {
+          csvRows.push(
+            `Parameters,HDBSCAN Min Cluster Size,${params.hdbscan_params.min_cluster_size}`
+          );
+          csvRows.push(
+            `Parameters,HDBSCAN Min Samples,${params.hdbscan_params.min_samples}`
+          );
+          csvRows.push(
+            `Parameters,HDBSCAN Metric,${params.hdbscan_params.metric}`
+          );
+          csvRows.push(
+            `Parameters,HDBSCAN Alpha,${params.hdbscan_params.alpha}`
+          );
+        }
+
+        if (params.model_params) {
+          csvRows.push(
+            `Parameters,Model Batch Size,${params.model_params.batch_size}`
+          );
+          csvRows.push(
+            `Parameters,Model Normalization,${params.model_params.normalization}`
+          );
+          csvRows.push(
+            `Parameters,Sentence Transformer Model,${params.model_params.sentence_transformer_model}`
+          );
+        }
+      }
+    }
+
+    // Convert to CSV format with proper escaping
+    return csvRows
+      .map((row) => {
+        const parts = row.split(",");
+        return parts.map((part) => `"${part}"`).join(",");
+      })
+      .join("\n");
+  };
+
+  // Helper function to download text/JSON/CSV files
+  const downloadFile = (
+    content: string,
+    filename: string,
+    mimeType: string
+  ) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleVisibilityToggle = async () => {
@@ -188,8 +396,6 @@ const TraindDetailPage: React.FC = () => {
         <CommentArea traindId={id!} />
       </div>
 
-      {/* Action Buttons (Block until export backend is ready) */}
-      {/* 
       <div className={styles.section + " " + styles.actions}>
         <button
           type="button"
@@ -197,7 +403,7 @@ const TraindDetailPage: React.FC = () => {
           onClick={() => handleExport("json")}
           disabled={exporting}
         >
-          Export JSON
+          {exporting ? "Exporting..." : "Export JSON"}
         </button>
         <button
           type="button"
@@ -205,18 +411,9 @@ const TraindDetailPage: React.FC = () => {
           onClick={() => handleExport("csv")}
           disabled={exporting}
         >
-          Export CSV
-        </button>
-        <button
-          type="button"
-          className={styles.exportButton}
-          onClick={() => handleExport("png")}
-          disabled={exporting}
-        >
-          Export PNG
+          {exporting ? "Exporting..." : "Export CSV"}
         </button>
       </div>
-      */}
     </div>
   );
 };

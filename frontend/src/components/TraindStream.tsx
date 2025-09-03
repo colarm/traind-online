@@ -244,9 +244,6 @@ const TraindStream: React.FC<TraindStreamProps> = ({
                 </div>
 
                 <div className={styles.actionGroup}>
-                  <button className={styles.actionButton} title="Export result">
-                    📥 Export
-                  </button>
                   {onDelete && (
                     <button
                       className={`${styles.actionButton} ${styles.delete}`}
