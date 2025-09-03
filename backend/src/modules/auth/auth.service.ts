@@ -157,7 +157,7 @@ const authService = {
     });
 
     // Create reset URL
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = "https://traind.online";
     const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     // Send password reset email

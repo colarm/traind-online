@@ -329,9 +329,7 @@ export class SimpleEmailService {
             `
                 : `
             <p>You can start a new analysis from your dashboard:</p>
-            <a href="${
-              process.env.FRONTEND_URL || "http://localhost:5173"
-            }/dashboard" class="button">Go to Dashboard</a>
+            <a href="https://traind.online/training" class="button">Go to Dashboard</a>
             `
             }
             

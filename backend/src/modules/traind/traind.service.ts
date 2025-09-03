@@ -436,8 +436,7 @@ const traindService = {
           userPreference?.emailNotifications ?? true; // Default to true if no preference set
 
         if (emailNotificationsEnabled) {
-          const frontendUrl =
-            process.env.FRONTEND_URL || "https://traind.online";
+          const frontendUrl = "https://traind.online";
           const traindUrl = `${frontendUrl}/traind/${updatedTraind.id}`;
 
           emailService
@@ -520,7 +519,7 @@ const traindService = {
         userPreference?.emailNotifications ?? true; // Default to true if no preference set
 
       if (emailNotificationsEnabled) {
-        const frontendUrl = process.env.FRONTEND_URL || "https://traind.online";
+        const frontendUrl = "https://traind.online";
         const traindUrl = `${frontendUrl}/traind/${updatedTraind.id}`;
 
         emailService
